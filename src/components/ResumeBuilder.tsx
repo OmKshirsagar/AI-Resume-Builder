@@ -8,6 +8,8 @@ import { ParsedDataReview } from "~/components/editor/ParsedDataReview";
 import { useResumeStore } from "~/store/useResumeStore";
 import type { ResumeData } from "~/schemas/resume";
 import { RefineButton } from "~/components/ai/RefineButton";
+import { JobTailorModal } from "~/components/ai/JobTailorModal";
+import { Wand2 } from "lucide-react";
 
 import { type Layout } from "react-resizable-panels";
 
@@ -16,8 +18,9 @@ interface ResumeBuilderProps {
 }
 
 export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
-	const { data, setResume, updatePersonalInfo } = useResumeStore();
+	const { data, setResume, updatePersonalInfo, updateExperience } = useResumeStore();
 	const [pendingExtractedData, setPendingExtractedData] = useState<ResumeData | null>(null);
+	const [isTailorModalOpen, setIsTailorModalOpen] = useState(false);
 
 	const handleExtracted = (extractedData: ResumeData) => {
 		setPendingExtractedData(extractedData);
@@ -36,11 +39,20 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 
 	const Editor = (
 		<div className="mx-auto flex max-w-2xl flex-col space-y-8 p-6">
-			<header className="flex flex-col gap-1">
-				<h1 className="font-bold text-2xl text-slate-900">Resume Editor</h1>
-				<p className="text-slate-500 text-sm">
-					Fill in your details to build your resume.
-				</p>
+			<header className="flex items-center justify-between">
+				<div className="flex flex-col gap-1">
+					<h1 className="font-bold text-2xl text-slate-900">Resume Editor</h1>
+					<p className="text-slate-500 text-sm">
+						Fill in your details to build your resume.
+					</p>
+				</div>
+				<button
+					onClick={() => setIsTailorModalOpen(true)}
+					className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all active:scale-95"
+				>
+					<Wand2 className="h-3.5 w-3.5" />
+					Tailor for Job
+				</button>
 			</header>
 
 			<section className="space-y-4">
@@ -109,13 +121,13 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 					<div className="space-y-6">
 						{data.experience.map((exp) => (
 							<div key={exp.id} className="rounded border bg-white p-4 shadow-sm space-y-4">
-								<div className="flex justify-between items-start">
+								<div className="flex justify-between items-start border-b border-slate-50 pb-3">
 									<div>
 										<p className="font-bold text-slate-900">{exp.position}</p>
-										<p className="text-sm text-slate-600">{exp.company}</p>
+										<p className="text-sm text-slate-600 font-medium">{exp.company}</p>
 									</div>
-									<span className="text-xs text-slate-400 uppercase">
-										{exp.startDate} - {exp.current ? "Present" : exp.endDate}
+									<span className="text-[10px] bg-slate-100 px-2 py-1 rounded font-bold text-slate-500 uppercase">
+										{exp.startDate} — {exp.current ? "Present" : exp.endDate}
 									</span>
 								</div>
 								
@@ -126,7 +138,7 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 									{exp.description.map((bullet, idx) => (
 										<div key={idx} className="group relative space-y-1">
 											<div className="flex justify-between items-center mb-1">
-												<span className="text-[10px] text-slate-400">Bullet {idx + 1}</span>
+												<span className="text-[10px] text-slate-400 font-medium uppercase">Bullet {idx + 1}</span>
 												<RefineButton
 													text={bullet}
 													onApply={(newText) => {
@@ -143,7 +155,7 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 													newDescription[idx] = e.target.value;
 													updateExperience(exp.id, { description: newDescription });
 												}}
-												className="w-full rounded border border-slate-200 bg-slate-50 p-2 text-xs shadow-sm focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+												className="w-full rounded border border-slate-200 bg-slate-50 p-2 text-xs shadow-sm focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
 												rows={2}
 											/>
 										</div>
@@ -201,34 +213,34 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 
 				{data.personalInfo.summary && (
 					<section>
-						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-2">
+						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-2 text-slate-900">
 							Professional Summary
 						</h2>
-						<p className="text-sm leading-relaxed">{data.personalInfo.summary}</p>
+						<p className="text-sm leading-relaxed text-slate-800">{data.personalInfo.summary}</p>
 					</section>
 				)}
 
 				{data.experience.length > 0 && (
 					<section>
-						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-3">
+						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-3 text-slate-900">
 							Experience
 						</h2>
 						<div className="space-y-4">
 							{data.experience.map((exp) => (
 								<div key={exp.id}>
-									<div className="flex justify-between font-bold text-sm">
+									<div className="flex justify-between font-bold text-sm text-slate-900">
 										<span>{exp.company}</span>
 										<span>
 											{exp.startDate} — {exp.current ? "Present" : exp.endDate}
 										</span>
 									</div>
-									<div className="flex justify-between italic text-sm mb-1">
+									<div className="flex justify-between italic text-sm mb-1 text-slate-700 font-medium">
 										<span>{exp.position}</span>
 										<span>{exp.location}</span>
 									</div>
 									<ul className="list-disc ml-4 space-y-1">
 										{exp.description.map((bullet, idx) => (
-											<li key={idx} className="text-xs leading-relaxed">
+											<li key={idx} className="text-xs leading-relaxed text-slate-800">
 												{bullet}
 											</li>
 										))}
@@ -241,17 +253,17 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 
 				{data.education.length > 0 && (
 					<section>
-						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-3">
+						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-3 text-slate-900">
 							Education
 						</h2>
 						<div className="space-y-3">
 							{data.education.map((edu) => (
 								<div key={edu.id}>
-									<div className="flex justify-between font-bold text-sm">
+									<div className="flex justify-between font-bold text-sm text-slate-900">
 										<span>{edu.school}</span>
 										<span>{edu.endDate}</span>
 									</div>
-									<div className="flex justify-between italic text-sm">
+									<div className="flex justify-between italic text-sm text-slate-700 font-medium">
 										<span>
 											{edu.degree}
 											{edu.fieldOfStudy ? `, ${edu.fieldOfStudy}` : ""}
@@ -266,10 +278,10 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 
 				{data.skills.length > 0 && (
 					<section>
-						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-2">
+						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-2 text-slate-900">
 							Skills
 						</h2>
-						<div className="text-sm">
+						<div className="text-sm text-slate-800">
 							<span className="font-bold">Technical Skills: </span>
 							<span>{data.skills.map((s) => s.name).join(", ")}</span>
 						</div>
@@ -292,6 +304,9 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 					onConfirm={handleConfirmExtraction}
 					onCancel={handleCancelExtraction}
 				/>
+			)}
+			{isTailorModalOpen && (
+				<JobTailorModal onClose={() => setIsTailorModalOpen(false)} />
 			)}
 		</>
 	);

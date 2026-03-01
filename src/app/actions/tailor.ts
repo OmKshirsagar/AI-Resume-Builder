@@ -2,7 +2,7 @@
 
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { streamObject } from "ai";
-import { createStreamableValue } from "ai/rsc";
+import { createStreamableValue } from "@ai-sdk/rsc";
 import { z } from "zod";
 import { env } from "~/env";
 import { JOB_TAILOR_SYSTEM_PROMPT } from "~/lib/ai/prompts";
@@ -26,7 +26,9 @@ const SuggestionsSchema = z.object({
 export type TailorSuggestions = z.infer<typeof SuggestionsSchema>;
 
 export async function tailorResume(resumeData: ResumeData, jobDescription: string) {
-	const stream = createStreamableValue<Partial<TailorSuggestions>>();
+	// Using any here because streamObject's PartialObject type is highly recursive 
+	// and difficult to cast to a simple Partial<T> without deep utility types.
+	const stream = createStreamableValue<any>();
 
 	(async () => {
 		try {

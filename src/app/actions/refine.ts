@@ -2,7 +2,7 @@
 
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { streamText } from "ai";
-import { createStreamableValue } from "ai/rsc";
+import { createStreamableValue } from "@ai-sdk/rsc";
 import { env } from "~/env";
 import { REFINE_SYSTEM_PROMPT } from "~/lib/ai/prompts";
 

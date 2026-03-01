@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Sparkles, Check, X, Loader2 } from "lucide-react";
-import { readStreamableValue } from "ai/rsc";
+import { readStreamableValue } from "@ai-sdk/rsc";
 import { refineText } from "~/app/actions/refine";
 
 interface RefineButtonProps {
