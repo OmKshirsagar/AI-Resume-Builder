@@ -28,9 +28,10 @@
 - [x] 03-ai-enhancement-01-PLAN.md — Implement "Refine Section" Server Action and UI (X-Y-Z formula, streaming).
 - [x] 03-ai-enhancement-02-PLAN.md — Implement "Job Tailor" flow (JD input, multi-step alignment, suggestions).
 
-## Phase 4: Dynamic Sections & Content Condensation (NEW)
+## Phase 4: Dynamic Sections & Content Condensation
 **Goal:** Upgrade the data architecture to support dynamic sections and implement the core "Condense to 1-Page" AI workflow.
 **Requirements:** [DYN-SCHEMA, DRAFT-STATE, AI-CONDENSE, DYN-UI]
+
 **Plans:** 2 plans
 - [ ] 04-dynamic-sections-01-PLAN.md — Upgrade Zod schema/Zustand store for `customSections` and Master/Draft state. Update PDF extraction to grab all arbitrary sections.
 - [ ] 04-dynamic-sections-02-PLAN.md — Build the "Condense" AI flow and dynamic form UI to handle arbitrary sections.
