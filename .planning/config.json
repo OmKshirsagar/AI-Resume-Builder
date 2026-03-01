@@ -1,0 +1,21 @@
+{
+	"workflow": "new-project",
+	"tech_stack": {
+		"framework": "Next.js (App Router, TypeScript)",
+		"styling": "Tailwind CSS + Shadcn UI",
+		"data_fetching": "TanStack Query",
+		"validation": "Zod",
+		"persistence": "Browser (LocalStorage / IndexedDB)",
+		"ai": "Vercel AI SDK + Google Gemini",
+		"deployment": "Vercel"
+	},
+	"ai_model": "Gemini",
+	"features": [
+		"PDF resume parsing (Serverless)",
+		"Resume editing/enhancement with Gemini",
+		"Role-specific customization",
+		"Resume creation from scratch",
+		"Browser-based resume management",
+		"Best-practices adherence (ATS-friendly templates)"
+	]
+}
