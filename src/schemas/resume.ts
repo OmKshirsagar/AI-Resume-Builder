@@ -52,12 +52,27 @@ export const ProjectSchema = z.object({
 	endDate: z.string().optional().or(z.literal("")),
 });
 
+export const CustomSectionItemSchema = z.object({
+	id: z.string(),
+	title: z.string().min(1, "Title is required"),
+	subtitle: z.string().optional().or(z.literal("")),
+	date: z.string().optional().or(z.literal("")),
+	description: z.array(z.string()).default([]),
+});
+
+export const CustomSectionSchema = z.object({
+	id: z.string(),
+	title: z.string().min(1, "Section title is required"),
+	items: z.array(CustomSectionItemSchema).default([]),
+});
+
 export const ResumeSchema = z.object({
 	personalInfo: PersonalInformationSchema,
 	experience: z.array(ExperienceSchema).default([]),
 	education: z.array(EducationSchema).default([]),
 	skills: z.array(SkillSchema).default([]),
 	projects: z.array(ProjectSchema).default([]),
+	customSections: z.array(CustomSectionSchema).default([]),
 });
 
 export type PersonalInformation = z.infer<typeof PersonalInformationSchema>;
@@ -65,6 +80,8 @@ export type Experience = z.infer<typeof ExperienceSchema>;
 export type Education = z.infer<typeof EducationSchema>;
 export type Skill = z.infer<typeof SkillSchema>;
 export type Project = z.infer<typeof ProjectSchema>;
+export type CustomSectionItem = z.infer<typeof CustomSectionItemSchema>;
+export type CustomSection = z.infer<typeof CustomSectionSchema>;
 export type ResumeData = z.infer<typeof ResumeSchema>;
 
 export const DEFAULT_RESUME: ResumeData = {
@@ -82,4 +99,5 @@ export const DEFAULT_RESUME: ResumeData = {
 	education: [],
 	skills: [],
 	projects: [],
+	customSections: [],
 };
