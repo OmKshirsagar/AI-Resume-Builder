@@ -1,28 +1,20 @@
-# Phase 1, Plan 01 Summary
+# Phase 01-01 Summary: Layout & Persistence
 
-## Completed Tasks
-- **Task 1: Project Initialization & Test Scaffold**
-  - Next.js 14+ app initialized.
-  - Shadcn UI configured using `npx shadcn@latest init`.
-  - Vitest environment set up with `@testing-library/react`.
-  - Dependencies installed: `lucide-react`, `clsx`, `tailwind-merge`, `react-resizable-panels`, `zod`, `react-hook-form`, `@hookform/resolvers`.
-  - Smoke test verified.
-- **Task 2: Resizable Split-Pane Layout**
-  - `MainLayout` component created using `react-resizable-panels`.
-  - RHS/LHS resizable panes implemented.
-  - Verified with Vitest tests.
-- **Task 3: Editor & Preview Skeletons**
-  - `EditorSkeleton` and `PreviewSkeleton` components created.
-  - Skeletons integrated into the main layout.
-  - Verified with integration tests.
+## Status: COMPLETE
+**Completed on:** 2026-03-01
 
-## Artifacts
-- `components/MainLayout.tsx`
-- `components/editor/EditorSkeleton.tsx`
-- `components/preview/PreviewSkeleton.tsx`
-- `vitest.config.ts`
-- `tests/MainLayout.test.tsx`
-- `tests/Skeletons.test.tsx`
+## Accomplishments
+- Refined Tailwind 4 theme with A4 constants (`--a4-width`, `--a4-height`) and semantic colors.
+- Implemented a resizable split-pane layout using `react-resizable-panels`.
+- Added SSR-safe layout persistence via cookies, eliminating layout shift (CLS) on page load.
+- Verified that resizing the panes updates the cookie and persists across page refreshes.
 
-## Status
-Wave 1 complete. Ready for Wave 2: Resume State & Persistence.
+## Artifacts Created/Modified
+- `src/styles/globals.css`: Tailwind 4 theme definition.
+- `src/components/layout/MainLayout.tsx`: Resizable layout with persistence logic.
+- `src/app/layout.tsx`: Root layout reading the persistence cookie.
+- `src/app/page.tsx`: Home page orchestrating the Editor and Preview slots.
+
+## Verification
+- Manual verification: Resizing panes and refreshing the page confirms persistence.
+- Automated verification: `grep` confirms A4 constants and `cookies()` usage.

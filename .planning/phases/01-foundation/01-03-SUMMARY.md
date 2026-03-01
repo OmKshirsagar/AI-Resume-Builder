@@ -1,22 +1,21 @@
-# Phase 1, Plan 03 Summary
+# Phase 01-03 Summary: A4 Preview Engine
 
-## Completed Tasks
-- **Task 1: A4 Scaling Container & useScaling Hook**
-  - `useScaling` hook implemented to calculate scale factor based on container width.
-  - `A4Preview` component created with fixed A4 dimensions and dynamic `transform: scale()`.
-  - Integrated into `MainLayout`.
-  - Verified with `tests/useScaling.test.ts`.
-- **Task 2: Content Overflow Detection Hook**
-  - `useOverflow` hook implemented using `ResizeObserver` to monitor `scrollHeight`.
-  - Integrated into `A4Preview` to show a visual warning and red border when content exceeds 297mm.
-  - Verified with `tests/useOverflow.test.ts`.
+## Status: COMPLETE
+**Completed on:** 2026-03-01
 
-## Artifacts
-- `hooks/useScaling.ts`
-- `hooks/useOverflow.ts`
-- `components/preview/A4Preview.tsx`
-- `tests/useScaling.test.ts`
-- `tests/useOverflow.test.ts`
+## Accomplishments
+- Implemented A4 scaling calculation logic in `src/lib/scaling.ts` (96 DPI standard).
+- Created `A4Page.tsx` component with fixed physical dimensions and Container Query support.
+- Developed `PreviewPane.tsx` with `ResizeObserver` for dynamic, real-time scaling.
+- Implemented overflow detection that monitors content height and provides a visual warning if content exceeds the A4 page limit.
+- Verified smooth scaling when resizing the split-pane layout.
 
-## Status
-Wave 3 complete. Phase 1 (Foundation) is fully finished.
+## Artifacts Created/Modified
+- `src/lib/scaling.ts`: Scaling and DPI utility functions.
+- `src/components/preview/A4Page.tsx`: Physical-proportions container component.
+- `src/components/preview/PreviewPane.tsx`: Resizable preview orchestrator with scaling and overflow detection.
+- `src/components/layout/MainLayout.tsx`: Updated to use the refined `PreviewPane`.
+
+## Verification
+- Manual verification: Scaling works correctly when resizing the browser and split-pane handle.
+- Visual overflow detection: Verified that excessive content triggers the warning badge.

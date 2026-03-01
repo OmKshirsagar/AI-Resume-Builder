@@ -13,7 +13,11 @@
 	--color-editor-bg: var(--color-slate-50);
 	--color-preview-bg: var(--color-slate-200);
 	--color-resume-paper: var(--color-white);
-	--color-resume-shadow: color-mix(in srgb, var(--color-slate-950) 15%, transparent);
+	--color-resume-shadow: color-mix(
+		in srgb,
+		var(--color-slate-950) 15%,
+		transparent
+	);
 
 	/* Spacing for convenience */
 	--spacing-a4-w: 210mm;
