@@ -14,8 +14,10 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
+		"@ai-sdk/google": "^3.0.34",
 		"@hookform/resolvers": "^5.2.2",
 		"@t3-oss/env-nextjs": "^0.12.0",
+		"ai": "^6.0.105",
 		"clsx": "^2.1.1",
 		"lucide-react": "^0.575.0",
 		"next": "^15.2.3",
