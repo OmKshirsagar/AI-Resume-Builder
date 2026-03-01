@@ -4,6 +4,7 @@
 **Completed on:** 2026-03-01
 
 ## Accomplishments
+- **Schema Refinement:** Updated Zod schemas to remove unions with empty literals (e.g., `.or(z.literal(""))`), switching to `.default("")` for maximum compatibility with Gemini's structured output API.
 - **AI Condensation:** Implemented `condenseResume` Server Action using Gemini 3 Flash to intelligently prune multi-page resumes into high-impact A4 1-pagers.
 - **Dynamic Editor:** Created `CustomSections.tsx` using React Hook Form's `useFieldArray`, allowing users to add/edit arbitrary resume sections (Certifications, Awards, etc.).
 - **Safe Preview Flow:** Integrated a "Previewing AI Draft" banner in `ResumeBuilder.tsx`. Users can trigger condensation, review the 1-page version in the preview pane, and either "Apply to Master" or "Discard."

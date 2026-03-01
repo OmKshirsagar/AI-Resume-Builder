@@ -4,7 +4,7 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ResumeSchema, type ResumeData, type CustomSection } from "~/schemas/resume";
 import { Plus, Trash2, ChevronDown, ChevronRight } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface CustomSectionsProps {
 	data: ResumeData;
@@ -15,7 +15,7 @@ interface CustomSectionsProps {
 export function CustomSections({ data, onChange, disabled }: CustomSectionsProps) {
 	// Using any for resolver because the strict ResumeSchema type sometimes conflicts with
 	// the recursive nature of useFieldArray's internal representation.
-	const { control, watch } = useForm<ResumeData>({
+	const { control, watch, reset } = useForm<ResumeData>({
 		resolver: zodResolver(ResumeSchema as any),
 		defaultValues: data,
 	});
@@ -25,14 +25,30 @@ export function CustomSections({ data, onChange, disabled }: CustomSectionsProps
 		name: "customSections",
 	});
 
+	// Use ref to prevent circular updates
+	const isResetting = useRef(false);
+
+	// Reset form when external data changes (e.g. after extraction)
+	useEffect(() => {
+		isResetting.current = true;
+		reset(data);
+		// Reset the flag after RHF has processed the reset
+		setTimeout(() => {
+			isResetting.current = false;
+		}, 0);
+	}, [data, reset]);
+
 	// Watch for changes and sync back to parent
 	const watchedSections = watch("customSections");
 	
 	useEffect(() => {
-		if (watchedSections) {
-			onChange(watchedSections);
+		if (watchedSections && !isResetting.current) {
+			// Deep compare to avoid unnecessary updates if data hasn't changed
+			if (JSON.stringify(watchedSections) !== JSON.stringify(data.customSections)) {
+				onChange(watchedSections);
+			}
 		}
-	}, [watchedSections, onChange]);
+	}, [watchedSections, onChange, data.customSections]);
 
 	return (
 		<div className="space-y-6">

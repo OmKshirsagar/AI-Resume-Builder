@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { MainLayout } from "~/components/layout/MainLayout";
 import { PreviewPane } from "~/components/preview/PreviewPane";
 import { PDFUpload } from "~/components/editor/PDFUpload";
@@ -11,7 +11,7 @@ import { RefineButton } from "~/components/ai/RefineButton";
 import { JobTailorModal } from "~/components/ai/JobTailorModal";
 import { CustomSections } from "~/components/editor/CustomSections";
 import { condenseResume } from "~/app/actions/condense";
-import { Wand2, AlertCircle, Check, X, Loader2, Sparkles } from "lucide-react";
+import { Wand2, Check, X, Loader2, Sparkles } from "lucide-react";
 
 import { type Layout } from "react-resizable-panels";
 
@@ -29,7 +29,7 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 		discardDraft, 
 		updatePersonalInfo, 
 		updateExperience,
-		updateCustomSection
+		setCustomSections
 	} = useResumeStore();
 	
 	const [pendingExtractedData, setPendingExtractedData] = useState<ResumeData | null>(null);
@@ -54,6 +54,12 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 	const handleCancelExtraction = () => {
 		setPendingExtractedData(null);
 	};
+
+	const handleCustomSectionsChange = useCallback((sections: any) => {
+		if (!isPreviewingDraft) {
+			setCustomSections(sections);
+		}
+	}, [isPreviewingDraft, setCustomSections]);
 
 	const handleCondense = async () => {
 		setIsCondensing(true);
@@ -251,11 +257,7 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 
 			<CustomSections 
 				data={activeData} 
-				onChange={(sections) => {
-					// In a real app, you'd map these to individual update calls
-					// For now, let's assume updateCustomSection handles the full array replacement if needed
-					// or we'd add a setCustomSections action.
-				}}
+				onChange={handleCustomSectionsChange}
 				disabled={isPreviewingDraft}
 			/>
 

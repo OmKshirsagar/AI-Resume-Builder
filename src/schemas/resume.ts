@@ -1,23 +1,30 @@
 import { z } from "zod";
 
+/**
+ * AI-friendly Resume Schemas.
+ * We avoid .or(z.literal("")) because Gemini's structured output
+ * doesn't support empty literals in unions well.
+ * Instead, we use .default("") or simply z.string().
+ */
+
 export const PersonalInformationSchema = z.object({
 	fullName: z.string().min(1, "Full name is required"),
-	email: z.string().email("Invalid email address").or(z.literal("")),
-	phone: z.string().optional().or(z.literal("")),
-	location: z.string().optional().or(z.literal("")),
-	website: z.string().url("Invalid URL").optional().or(z.literal("")),
-	linkedin: z.string().url("Invalid URL").optional().or(z.literal("")),
-	github: z.string().url("Invalid URL").optional().or(z.literal("")),
-	summary: z.string().optional().or(z.literal("")),
+	email: z.string().default(""),
+	phone: z.string().default(""),
+	location: z.string().default(""),
+	website: z.string().default(""),
+	linkedin: z.string().default(""),
+	github: z.string().default(""),
+	summary: z.string().default(""),
 });
 
 export const ExperienceSchema = z.object({
 	id: z.string(),
 	company: z.string().min(1, "Company name is required"),
 	position: z.string().min(1, "Position is required"),
-	location: z.string().optional().or(z.literal("")),
-	startDate: z.string().optional().or(z.literal("")),
-	endDate: z.string().optional().or(z.literal("")),
+	location: z.string().default(""),
+	startDate: z.string().default(""),
+	endDate: z.string().default(""),
 	current: z.boolean().default(false),
 	description: z.array(z.string()).default([]),
 });
@@ -26,10 +33,10 @@ export const EducationSchema = z.object({
 	id: z.string(),
 	school: z.string().min(1, "School name is required"),
 	degree: z.string().min(1, "Degree is required"),
-	fieldOfStudy: z.string().optional().or(z.literal("")),
-	location: z.string().optional().or(z.literal("")),
-	startDate: z.string().optional().or(z.literal("")),
-	endDate: z.string().optional().or(z.literal("")),
+	fieldOfStudy: z.string().default(""),
+	location: z.string().default(""),
+	startDate: z.string().default(""),
+	endDate: z.string().default(""),
 	current: z.boolean().default(false),
 	description: z.array(z.string()).default([]),
 });
@@ -37,26 +44,23 @@ export const EducationSchema = z.object({
 export const SkillSchema = z.object({
 	id: z.string(),
 	name: z.string().min(1, "Skill name is required"),
-	level: z
-		.enum(["Beginner", "Intermediate", "Advanced", "Expert"])
-		.optional()
-		.or(z.literal("")),
+	level: z.string().default(""),
 });
 
 export const ProjectSchema = z.object({
 	id: z.string(),
 	name: z.string().min(1, "Project name is required"),
 	description: z.array(z.string()).default([]),
-	link: z.string().url("Invalid URL").optional().or(z.literal("")),
-	startDate: z.string().optional().or(z.literal("")),
-	endDate: z.string().optional().or(z.literal("")),
+	link: z.string().default(""),
+	startDate: z.string().default(""),
+	endDate: z.string().default(""),
 });
 
 export const CustomSectionItemSchema = z.object({
 	id: z.string(),
 	title: z.string().min(1, "Title is required"),
-	subtitle: z.string().optional().or(z.literal("")),
-	date: z.string().optional().or(z.literal("")),
+	subtitle: z.string().default(""),
+	date: z.string().default(""),
 	description: z.array(z.string()).default([]),
 });
 

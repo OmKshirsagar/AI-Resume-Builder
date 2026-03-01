@@ -22,6 +22,7 @@ export function MainLayout({ editor, preview, defaultLayout }: MainLayoutProps) 
 	return (
 		<div className="h-screen w-screen overflow-hidden">
 			<Group 
+				id="main-group"
 				orientation="horizontal" 
 				onLayoutChange={onLayoutChange} 
 			>
@@ -34,7 +35,7 @@ export function MainLayout({ editor, preview, defaultLayout }: MainLayoutProps) 
 						{editor}
 					</div>
 				</Panel>
-				<Separator className="w-1.5 transition-colors hover:bg-blue-400/20 active:bg-blue-400/30" />
+				<Separator id="separator" className="w-1.5 transition-colors hover:bg-blue-400/20 active:bg-blue-400/30" />
 				<Panel 
 					id="preview-panel"
 					defaultSize={defaultLayout?.["preview-panel"] ?? 70} 

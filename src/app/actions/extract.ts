@@ -13,17 +13,17 @@ const google = createGoogleGenerativeAI({
 const ExtractionPersonalInformationSchema = z.object({
 	fullName: z.string().describe("The person's full name"),
 	email: z.string().email().describe("The person's email address"),
-	phone: z.string().optional().describe("Phone number, if available"),
-	location: z.string().optional().describe("City and State/Country"),
-	summary: z.string().optional().describe("A brief professional summary or about me section"),
+	phone: z.string().default("").describe("Phone number, if available"),
+	location: z.string().default("").describe("City and State/Country"),
+	summary: z.string().default("").describe("A brief professional summary or about me section"),
 });
 
 const ExtractionExperienceSchema = z.object({
 	company: z.string().describe("Company name"),
 	position: z.string().describe("Job title"),
-	location: z.string().optional().describe("Office location"),
-	startDate: z.string().describe("Start date (e.g., 'Jan 2020')"),
-	endDate: z.string().optional().describe("End date or 'Present'"),
+	location: z.string().default("").describe("Office location"),
+	startDate: z.string().default("").describe("Start date (e.g., 'Jan 2020')"),
+	endDate: z.string().default("").describe("End date or 'Present'"),
 	current: z.boolean().describe("Is this the current role?"),
 	description: z.array(z.string()).describe("List of accomplishments and responsibilities"),
 });
@@ -31,30 +31,30 @@ const ExtractionExperienceSchema = z.object({
 const ExtractionEducationSchema = z.object({
 	school: z.string().describe("University or school name"),
 	degree: z.string().describe("Degree name (e.g., 'Bachelor of Science')"),
-	fieldOfStudy: z.string().optional().describe("Major or field of study"),
-	location: z.string().optional().describe("School location"),
-	startDate: z.string().optional().describe("Start date"),
-	endDate: z.string().optional().describe("Graduation date (e.g., 'May 2022')"),
+	fieldOfStudy: z.string().default("").describe("Major or field of study"),
+	location: z.string().default("").describe("School location"),
+	startDate: z.string().default("").describe("Start date"),
+	endDate: z.string().default("").describe("Graduation date (e.g., 'May 2022')"),
 });
 
 const ExtractionSkillSchema = z.object({
 	name: z.string().describe("Skill name (e.g., 'TypeScript')"),
-	level: z.enum(["Beginner", "Intermediate", "Advanced", "Expert"]).optional(),
-	category: z.string().optional().describe("Skill category (e.g., 'Languages')"),
+	level: z.string().default("").describe("Skill level or proficiency"),
+	category: z.string().default("").describe("Skill category (e.g., 'Languages')"),
 });
 
 const ExtractionProjectSchema = z.object({
 	name: z.string().describe("Project name"),
 	description: z.string().describe("Brief project description"),
-	link: z.string().optional().describe("Project URL"),
-	startDate: z.string().optional(),
-	endDate: z.string().optional(),
+	link: z.string().default("").describe("Project URL"),
+	startDate: z.string().default(""),
+	endDate: z.string().default(""),
 });
 
 const ExtractionCustomSectionItemSchema = z.object({
 	title: z.string().describe("The item title (e.g., 'AWS Certified Solutions Architect')"),
-	subtitle: z.string().optional().describe("Secondary detail (e.g., 'Amazon Web Services')"),
-	date: z.string().optional().describe("Date or date range"),
+	subtitle: z.string().default("").describe("Secondary detail (e.g., 'Amazon Web Services')"),
+	date: z.string().default("").describe("Date or date range"),
 	description: z.array(z.string()).describe("List of details or accomplishments for this item"),
 });
 

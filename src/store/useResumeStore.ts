@@ -44,6 +44,7 @@ interface ResumeState {
 	removeProject: (id: string) => void;
 
 	// Custom Section Actions
+	setCustomSections: (sections: CustomSection[]) => void;
 	addCustomSection: (section: CustomSection) => void;
 	updateCustomSection: (id: string, section: Partial<CustomSection>) => void;
 	removeCustomSection: (id: string) => void;
@@ -191,6 +192,11 @@ export const useResumeStore = create<ResumeState>()(
 				}),
 
 			// Custom Section Actions
+			setCustomSections: (sections) =>
+				set((state) => {
+					state.original.customSections = sections;
+				}),
+
 			addCustomSection: (section) =>
 				set((state) => {
 					state.original.customSections.push(section);
