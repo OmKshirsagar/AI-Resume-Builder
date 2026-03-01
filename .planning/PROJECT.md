@@ -12,10 +12,11 @@ A web application that leverages Gemini models to help users build, enhance, and
 - **Multi-Template Design:** ATS-optimized, single-column templates.
 
 ## Tech Stack
-- **Framework:** Next.js (App Router) with TypeScript.
-- **Styling:** Tailwind CSS + Shadcn UI (Radix UI primitives).
-- **Data Management:** TanStack Query for state; Browser `localStorage` for persistence.
-- **Validation:** Zod for schema-first type safety.
+- **Framework:** Next.js 15 (App Router) with TypeScript & Turbopack.
+- **Styling:** Tailwind CSS 4.
+- **State Management:** Zustand for global resume state.
+- **Forms:** React Hook Form + Zod for schema-first validation.
 - **AI Integration:** Vercel AI SDK with Google Gemini API.
-- **Deployment:** Vercel.
+- **Tooling:** Biome for linting and formatting.
+- **Environment:** @t3-oss/env-nextjs for type-safe environment variables.
 

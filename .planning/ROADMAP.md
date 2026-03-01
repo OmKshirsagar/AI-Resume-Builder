@@ -1,13 +1,13 @@
 # Roadmap: Gemini Resume Builder
 
 ## Phase 1: Foundation & Scaffolding
-**Goal:** Establish a robust project foundation with a resizable split-pane UI, state management, and a responsive A4 preview scaling engine.
+**Goal:** Establish a robust project foundation with a resizable split-pane UI, Zustand state management, and a responsive A4 preview scaling engine using Tailwind 4.
 
-**Requirements:** [PHASE1-INIT, PHASE1-LAYOUT, PHASE1-TEST-SETUP, PHASE1-STATE, PHASE1-PERSIST, PHASE1-SCALING, PHASE1-OVERFLOW]
+**Requirements:** [PHASE1-INIT, PHASE1-LAYOUT, PHASE1-STATE, PHASE1-PERSIST, PHASE1-SCALING, PHASE1-OVERFLOW]
 
 **Plans:** 3 plans
-- [ ] 01-foundation-01-PLAN.md — Initialize Next.js project with Tailwind, Shadcn, and Vitest, and implement the main resizable split-pane layout.
-- [ ] 01-foundation-02-PLAN.md — Implement resume state management using React Context and Zod for schema validation, with LocalStorage persistence.
+- [ ] 01-foundation-01-PLAN.md — Initialize project structure and implement the main resizable split-pane layout using Tailwind 4.
+- [ ] 01-foundation-02-PLAN.md — Implement resume state management using Zustand and Zod for schema validation, with persistence.
 - [ ] 01-foundation-03-PLAN.md — Create the "One-Page" preview container with scaling logic (transform: scale) and overflow detection.
 
 ## Phase 2: PDF Parsing & Data Extraction
