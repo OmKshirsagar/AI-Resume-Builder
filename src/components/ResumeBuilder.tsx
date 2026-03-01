@@ -7,6 +7,7 @@ import { PDFUpload } from "~/components/editor/PDFUpload";
 import { ParsedDataReview } from "~/components/editor/ParsedDataReview";
 import { useResumeStore } from "~/store/useResumeStore";
 import type { ResumeData } from "~/schemas/resume";
+import { RefineButton } from "~/components/ai/RefineButton";
 
 import { type Layout } from "react-resizable-panels";
 
@@ -62,7 +63,7 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 							type="text"
 							value={data.personalInfo.fullName}
 							onChange={(e) => updatePersonalInfo({ fullName: e.target.value })}
-							className="h-10 w-full rounded border bg-white px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+							className="h-10 w-full rounded border bg-white px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
 							placeholder="John Doe"
 						/>
 					</div>
@@ -74,10 +75,27 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 							type="email"
 							value={data.personalInfo.email}
 							onChange={(e) => updatePersonalInfo({ email: e.target.value })}
-							className="h-10 w-full rounded border bg-white px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+							className="h-10 w-full rounded border bg-white px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
 							placeholder="john@example.com"
 						/>
 					</div>
+				</div>
+				<div className="space-y-2">
+					<div className="flex items-center justify-between">
+						<label className="font-medium text-slate-500 text-xs uppercase">
+							Professional Summary
+						</label>
+						<RefineButton
+							text={data.personalInfo.summary || ""}
+							onApply={(newText) => updatePersonalInfo({ summary: newText })}
+						/>
+					</div>
+					<textarea
+						value={data.personalInfo.summary || ""}
+						onChange={(e) => updatePersonalInfo({ summary: e.target.value })}
+						className="min-h-[100px] w-full rounded border bg-white p-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
+						placeholder="Briefly describe your professional background and goals..."
+					/>
 				</div>
 			</section>
 
@@ -88,11 +106,49 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 				{data.experience.length === 0 ? (
 					<p className="text-sm text-slate-400 italic">No experience added yet.</p>
 				) : (
-					<div className="space-y-4">
+					<div className="space-y-6">
 						{data.experience.map((exp) => (
-							<div key={exp.id} className="rounded border bg-white p-4 shadow-sm">
-								<p className="font-bold">{exp.position}</p>
-								<p className="text-sm text-slate-600">{exp.company}</p>
+							<div key={exp.id} className="rounded border bg-white p-4 shadow-sm space-y-4">
+								<div className="flex justify-between items-start">
+									<div>
+										<p className="font-bold text-slate-900">{exp.position}</p>
+										<p className="text-sm text-slate-600">{exp.company}</p>
+									</div>
+									<span className="text-xs text-slate-400 uppercase">
+										{exp.startDate} - {exp.current ? "Present" : exp.endDate}
+									</span>
+								</div>
+								
+								<div className="space-y-3">
+									<label className="font-medium text-slate-500 text-xs uppercase">
+										Experience Bullets
+									</label>
+									{exp.description.map((bullet, idx) => (
+										<div key={idx} className="group relative space-y-1">
+											<div className="flex justify-between items-center mb-1">
+												<span className="text-[10px] text-slate-400">Bullet {idx + 1}</span>
+												<RefineButton
+													text={bullet}
+													onApply={(newText) => {
+														const newDescription = [...exp.description];
+														newDescription[idx] = newText;
+														updateExperience(exp.id, { description: newDescription });
+													}}
+												/>
+											</div>
+											<textarea
+												value={bullet}
+												onChange={(e) => {
+													const newDescription = [...exp.description];
+													newDescription[idx] = e.target.value;
+													updateExperience(exp.id, { description: newDescription });
+												}}
+												className="w-full rounded border border-slate-200 bg-slate-50 p-2 text-xs shadow-sm focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+												rows={2}
+											/>
+										</div>
+									))}
+								</div>
 							</div>
 						))}
 					</div>
