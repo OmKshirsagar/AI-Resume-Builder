@@ -9,7 +9,9 @@ import { useResumeStore } from "~/store/useResumeStore";
 import type { ResumeData } from "~/schemas/resume";
 import { RefineButton } from "~/components/ai/RefineButton";
 import { JobTailorModal } from "~/components/ai/JobTailorModal";
-import { Wand2 } from "lucide-react";
+import { CustomSections } from "~/components/editor/CustomSections";
+import { condenseResume } from "~/app/actions/condense";
+import { Wand2, AlertCircle, Check, X, Loader2, Sparkles } from "lucide-react";
 
 import { type Layout } from "react-resizable-panels";
 
@@ -18,9 +20,25 @@ interface ResumeBuilderProps {
 }
 
 export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
-	const { data, setResume, updatePersonalInfo, updateExperience } = useResumeStore();
+	const { 
+		original, 
+		draft, 
+		setOriginal, 
+		setDraft, 
+		applyDraft, 
+		discardDraft, 
+		updatePersonalInfo, 
+		updateExperience,
+		updateCustomSection
+	} = useResumeStore();
+	
 	const [pendingExtractedData, setPendingExtractedData] = useState<ResumeData | null>(null);
 	const [isTailorModalOpen, setIsTailorModalOpen] = useState(false);
+	const [isCondensing, setIsCondensing] = useState(false);
+
+	// Determine which data to show in editor and preview
+	const activeData = draft || original;
+	const isPreviewingDraft = !!draft;
 
 	const handleExtracted = (extractedData: ResumeData) => {
 		setPendingExtractedData(extractedData);
@@ -28,7 +46,7 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 
 	const handleConfirmExtraction = () => {
 		if (pendingExtractedData) {
-			setResume(pendingExtractedData);
+			setOriginal(pendingExtractedData);
 			setPendingExtractedData(null);
 		}
 	};
@@ -37,22 +55,78 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 		setPendingExtractedData(null);
 	};
 
+	const handleCondense = async () => {
+		setIsCondensing(true);
+		try {
+			const result = await condenseResume(original);
+			if (result.success && result.data) {
+				setDraft(result.data);
+			} else {
+				alert(result.error || "Failed to condense resume");
+			}
+		} catch (error) {
+			console.error(error);
+			alert("An unexpected error occurred during condensation.");
+		} finally {
+			setIsCondensing(false);
+		}
+	};
+
 	const Editor = (
-		<div className="mx-auto flex max-w-2xl flex-col space-y-8 p-6">
-			<header className="flex items-center justify-between">
+		<div className="mx-auto flex max-w-2xl flex-col space-y-8 p-6 pb-24">
+			{isPreviewingDraft && (
+				<div className="sticky top-0 z-30 mb-4 flex items-center justify-between rounded-xl bg-indigo-600 p-4 text-white shadow-xl animate-in slide-in-from-top duration-300 ring-4 ring-indigo-600/20">
+					<div className="flex items-center gap-3">
+						<Sparkles className="h-5 w-5 text-indigo-200 animate-pulse" />
+						<div>
+							<p className="font-bold text-sm">Previewing AI Condensed Version</p>
+							<p className="text-xs text-indigo-100">Review changes in the preview pane before applying.</p>
+						</div>
+					</div>
+					<div className="flex gap-2">
+						<button
+							onClick={discardDraft}
+							className="flex items-center gap-1 rounded-lg bg-white/10 px-3 py-1.5 text-xs font-bold hover:bg-white/20 transition-colors"
+						>
+							<X className="h-3 w-3" />
+							Discard
+						</button>
+						<button
+							onClick={applyDraft}
+							className="flex items-center gap-1 rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-colors"
+						>
+							<Check className="h-3 w-3" />
+							Apply to Master
+						</button>
+					</div>
+				</div>
+			)}
+
+			<header className="flex items-center justify-between gap-4">
 				<div className="flex flex-col gap-1">
 					<h1 className="font-bold text-2xl text-slate-900">Resume Editor</h1>
 					<p className="text-slate-500 text-sm">
 						Fill in your details to build your resume.
 					</p>
 				</div>
-				<button
-					onClick={() => setIsTailorModalOpen(true)}
-					className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all active:scale-95"
-				>
-					<Wand2 className="h-3.5 w-3.5" />
-					Tailor for Job
-				</button>
+				<div className="flex gap-2">
+					<button
+						onClick={handleCondense}
+						disabled={isCondensing || isPreviewingDraft}
+						className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all disabled:opacity-50"
+					>
+						{isCondensing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5 text-indigo-500" />}
+						Condense to 1-Page
+					</button>
+					<button
+						onClick={() => setIsTailorModalOpen(true)}
+						disabled={isPreviewingDraft}
+						className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all active:scale-95 disabled:opacity-50"
+					>
+						<Wand2 className="h-3.5 w-3.5" />
+						Tailor for Job
+					</button>
+				</div>
 			</header>
 
 			<section className="space-y-4">
@@ -73,10 +147,11 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 						</label>
 						<input
 							type="text"
-							value={data.personalInfo.fullName}
+							value={activeData.personalInfo.fullName}
 							onChange={(e) => updatePersonalInfo({ fullName: e.target.value })}
 							className="h-10 w-full rounded border bg-white px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
 							placeholder="John Doe"
+							disabled={isPreviewingDraft}
 						/>
 					</div>
 					<div className="space-y-2">
@@ -85,10 +160,11 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 						</label>
 						<input
 							type="email"
-							value={data.personalInfo.email}
+							value={activeData.personalInfo.email}
 							onChange={(e) => updatePersonalInfo({ email: e.target.value })}
 							className="h-10 w-full rounded border bg-white px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
 							placeholder="john@example.com"
+							disabled={isPreviewingDraft}
 						/>
 					</div>
 				</div>
@@ -97,16 +173,19 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 						<label className="font-medium text-slate-500 text-xs uppercase">
 							Professional Summary
 						</label>
-						<RefineButton
-							text={data.personalInfo.summary || ""}
-							onApply={(newText) => updatePersonalInfo({ summary: newText })}
-						/>
+						{!isPreviewingDraft && (
+							<RefineButton
+								text={activeData.personalInfo.summary || ""}
+								onApply={(newText) => updatePersonalInfo({ summary: newText })}
+							/>
+						)}
 					</div>
 					<textarea
-						value={data.personalInfo.summary || ""}
+						value={activeData.personalInfo.summary || ""}
 						onChange={(e) => updatePersonalInfo({ summary: e.target.value })}
 						className="min-h-[100px] w-full rounded border bg-white p-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
 						placeholder="Briefly describe your professional background and goals..."
+						disabled={isPreviewingDraft}
 					/>
 				</div>
 			</section>
@@ -115,11 +194,11 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 				<h2 className="border-b pb-2 font-semibold text-lg text-slate-800">
 					Work Experience
 				</h2>
-				{data.experience.length === 0 ? (
+				{activeData.experience.length === 0 ? (
 					<p className="text-sm text-slate-400 italic">No experience added yet.</p>
 				) : (
 					<div className="space-y-6">
-						{data.experience.map((exp) => (
+						{activeData.experience.map((exp) => (
 							<div key={exp.id} className="rounded border bg-white p-4 shadow-sm space-y-4">
 								<div className="flex justify-between items-start border-b border-slate-50 pb-3">
 									<div>
@@ -139,14 +218,16 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 										<div key={idx} className="group relative space-y-1">
 											<div className="flex justify-between items-center mb-1">
 												<span className="text-[10px] text-slate-400 font-medium uppercase">Bullet {idx + 1}</span>
-												<RefineButton
-													text={bullet}
-													onApply={(newText) => {
-														const newDescription = [...exp.description];
-														newDescription[idx] = newText;
-														updateExperience(exp.id, { description: newDescription });
-													}}
-												/>
+												{!isPreviewingDraft && (
+													<RefineButton
+														text={bullet}
+														onApply={(newText) => {
+															const newDescription = [...exp.description];
+															newDescription[idx] = newText;
+															updateExperience(exp.id, { description: newDescription });
+														}}
+													/>
+												)}
 											</div>
 											<textarea
 												value={bullet}
@@ -157,6 +238,7 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 												}}
 												className="w-full rounded border border-slate-200 bg-slate-50 p-2 text-xs shadow-sm focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
 												rows={2}
+												disabled={isPreviewingDraft}
 											/>
 										</div>
 									))}
@@ -167,17 +249,27 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 				)}
 			</section>
 
+			<CustomSections 
+				data={activeData} 
+				onChange={(sections) => {
+					// In a real app, you'd map these to individual update calls
+					// For now, let's assume updateCustomSection handles the full array replacement if needed
+					// or we'd add a setCustomSections action.
+				}}
+				disabled={isPreviewingDraft}
+			/>
+
 			<section className="space-y-4">
 				<h2 className="border-b pb-2 font-semibold text-lg text-slate-800">
 					Education
 				</h2>
-				{data.education.length === 0 ? (
+				{activeData.education.length === 0 ? (
 					<p className="text-sm text-slate-400 italic">No education added yet.</p>
 				) : (
 					<div className="space-y-4">
-						{data.education.map((edu) => (
+						{activeData.education.map((edu) => (
 							<div key={edu.id} className="rounded border bg-white p-4 shadow-sm">
-								<p className="font-bold">{edu.degree}</p>
+								<p className="font-bold text-slate-900">{edu.degree}</p>
 								<p className="text-sm text-slate-600">{edu.school}</p>
 							</div>
 						))}
@@ -191,42 +283,42 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 		<PreviewPane>
 			<div className="flex flex-col gap-6 p-8">
 				<div className="flex flex-col items-center gap-1 text-center">
-					<h1 className="text-2xl font-bold uppercase tracking-tight">
-						{data.personalInfo.fullName || "Your Name"}
+					<h1 className="text-2xl font-bold uppercase tracking-tight text-slate-900">
+						{activeData.personalInfo.fullName || "Your Name"}
 					</h1>
 					<div className="flex gap-2 text-sm text-slate-600">
-						{data.personalInfo.email && <span>{data.personalInfo.email}</span>}
-						{data.personalInfo.phone && (
+						{activeData.personalInfo.email && <span>{activeData.personalInfo.email}</span>}
+						{activeData.personalInfo.phone && (
 							<>
 								<span>•</span>
-								<span>{data.personalInfo.phone}</span>
+								<span>{activeData.personalInfo.phone}</span>
 							</>
 						)}
-						{data.personalInfo.location && (
+						{activeData.personalInfo.location && (
 							<>
 								<span>•</span>
-								<span>{data.personalInfo.location}</span>
+								<span>{activeData.personalInfo.location}</span>
 							</>
 						)}
 					</div>
 				</div>
 
-				{data.personalInfo.summary && (
+				{activeData.personalInfo.summary && (
 					<section>
 						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-2 text-slate-900">
 							Professional Summary
 						</h2>
-						<p className="text-sm leading-relaxed text-slate-800">{data.personalInfo.summary}</p>
+						<p className="text-sm leading-relaxed text-slate-800">{activeData.personalInfo.summary}</p>
 					</section>
 				)}
 
-				{data.experience.length > 0 && (
+				{activeData.experience.length > 0 && (
 					<section>
 						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-3 text-slate-900">
 							Experience
 						</h2>
 						<div className="space-y-4">
-							{data.experience.map((exp) => (
+							{activeData.experience.map((exp) => (
 								<div key={exp.id}>
 									<div className="flex justify-between font-bold text-sm text-slate-900">
 										<span>{exp.company}</span>
@@ -251,13 +343,43 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 					</section>
 				)}
 
-				{data.education.length > 0 && (
+				{activeData.customSections.map((section) => (
+					<section key={section.id}>
+						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-3 text-slate-900">
+							{section.title}
+						</h2>
+						<div className="space-y-3">
+							{section.items.map((item) => (
+								<div key={item.id}>
+									<div className="flex justify-between font-bold text-sm text-slate-900">
+										<span>{item.title}</span>
+										{item.date && <span>{item.date}</span>}
+									</div>
+									{item.subtitle && (
+										<div className="italic text-sm text-slate-700 font-medium">
+											{item.subtitle}
+										</div>
+									)}
+									<ul className="list-disc ml-4 mt-1 space-y-1">
+										{item.description.map((bullet, idx) => (
+											<li key={idx} className="text-xs leading-relaxed text-slate-800">
+												{bullet}
+											</li>
+										))}
+									</ul>
+								</div>
+							))}
+						</div>
+					</section>
+				))}
+
+				{activeData.education.length > 0 && (
 					<section>
 						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-3 text-slate-900">
 							Education
 						</h2>
 						<div className="space-y-3">
-							{data.education.map((edu) => (
+							{activeData.education.map((edu) => (
 								<div key={edu.id}>
 									<div className="flex justify-between font-bold text-sm text-slate-900">
 										<span>{edu.school}</span>
@@ -276,14 +398,14 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 					</section>
 				)}
 
-				{data.skills.length > 0 && (
+				{activeData.skills.length > 0 && (
 					<section>
 						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-2 text-slate-900">
 							Skills
 						</h2>
 						<div className="text-sm text-slate-800">
 							<span className="font-bold">Technical Skills: </span>
-							<span>{data.skills.map((s) => s.name).join(", ")}</span>
+							<span>{activeData.skills.map((s) => s.name).join(", ")}</span>
 						</div>
 					</section>
 				)}

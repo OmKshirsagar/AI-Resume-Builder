@@ -82,6 +82,16 @@ export function PDFUpload({ onExtracted }: PDFUploadProps) {
 						startDate: project.startDate ?? "",
 						endDate: project.endDate ?? "",
 					})),
+					customSections: (result.data.customSections || []).map((section) => ({
+						id: crypto.randomUUID(),
+						title: section.title,
+						items: section.items.map((item) => ({
+							...item,
+							id: crypto.randomUUID(),
+							subtitle: item.subtitle ?? "",
+							date: item.date ?? "",
+						})),
+					})),
 				};
 
 				onExtracted(dataWithIds);

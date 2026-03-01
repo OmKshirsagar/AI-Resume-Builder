@@ -14,13 +14,14 @@ import {
 import { tailorResume, type TailorSuggestions } from "~/app/actions/tailor";
 import { useResumeStore } from "~/store/useResumeStore";
 import { clsx } from "clsx";
+import type { Experience } from "~/schemas/resume";
 
 interface JobTailorModalProps {
 	onClose: () => void;
 }
 
 export function JobTailorModal({ onClose }: JobTailorModalProps) {
-	const { data: resumeData, updatePersonalInfo, updateExperience } = useResumeStore();
+	const { original: resumeData, updatePersonalInfo, updateExperience } = useResumeStore();
 	const [jobDescription, setJobDescription] = useState("");
 	const [isAnalyzing, setIsAnalyzing] = useState(false);
 	const [suggestions, setSuggestions] = useState<Partial<TailorSuggestions> | null>(null);
@@ -76,7 +77,7 @@ export function JobTailorModal({ onClose }: JobTailorModalProps) {
 		if (suggestions.experienceChanges) {
 			suggestions.experienceChanges.forEach((change, idx) => {
 				if (change && selectedChanges.experience[idx]) {
-					const experienceEntry = resumeData.experience.find(e => e.id === change.experienceId);
+					const experienceEntry = resumeData.experience.find((e: Experience) => e.id === change.experienceId);
 					if (experienceEntry) {
 						const newDescription = [...experienceEntry.description];
 						newDescription[change.bulletIndex] = change.newBullet;
@@ -172,7 +173,7 @@ export function JobTailorModal({ onClose }: JobTailorModalProps) {
 											<div className="flex items-center justify-between border-b bg-slate-50 px-4 py-2">
 												<div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase">
 													<Briefcase className="h-3 w-3" />
-													{resumeData.experience.find(e => e.id === change?.experienceId)?.company}
+													{resumeData.experience.find((e: Experience) => e.id === change?.experienceId)?.company}
 												</div>
 												<button 
 													onClick={() => toggleExperience(idx)}

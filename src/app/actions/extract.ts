@@ -51,12 +51,25 @@ const ExtractionProjectSchema = z.object({
 	endDate: z.string().optional(),
 });
 
+const ExtractionCustomSectionItemSchema = z.object({
+	title: z.string().describe("The item title (e.g., 'AWS Certified Solutions Architect')"),
+	subtitle: z.string().optional().describe("Secondary detail (e.g., 'Amazon Web Services')"),
+	date: z.string().optional().describe("Date or date range"),
+	description: z.array(z.string()).describe("List of details or accomplishments for this item"),
+});
+
+const ExtractionCustomSectionSchema = z.object({
+	title: z.string().describe("The section title (e.g., 'Certifications', 'Languages', 'Awards')"),
+	items: z.array(ExtractionCustomSectionItemSchema),
+});
+
 const ExtractionResumeSchema = z.object({
 	personalInfo: ExtractionPersonalInformationSchema,
 	experience: z.array(ExtractionExperienceSchema),
 	education: z.array(ExtractionEducationSchema),
 	skills: z.array(ExtractionSkillSchema),
 	projects: z.array(ExtractionProjectSchema),
+	customSections: z.array(ExtractionCustomSectionSchema).describe("Capture any other sections like Certifications, Languages, Awards, Volunteering, etc."),
 });
 
 export async function extractResumeFromPDF(formData: FormData) {
@@ -70,14 +83,14 @@ export async function extractResumeFromPDF(formData: FormData) {
 
 		const { output } = await generateText({
 			model: google("gemini-3-flash"),
-			system: "You are an expert resume parser. Extract the information from the provided PDF resume accurately into the structured format. If a piece of information is missing, omit it or use an empty array/null where appropriate.",
+			system: "You are an expert resume parser. Extract the information from the provided PDF resume accurately into the structured format. Identify sections that do not fit into Experience, Education, Skills, or Projects (e.g., Certifications, Awards, Volunteering, Languages, Publications) and map them to the `customSections` array. Each custom section should have a clear title reflecting its content. If a piece of information is missing, omit it or use an empty array/null where appropriate.",
 			messages: [
 				{
 					role: "user",
 					content: [
 						{
 							type: "text",
-							text: "Extract the structured data from this resume PDF.",
+							text: "Extract all structured data from this resume PDF.",
 						},
 						{
 							type: "file",
