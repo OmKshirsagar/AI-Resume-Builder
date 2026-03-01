@@ -6,9 +6,9 @@
 **Requirements:** [PHASE1-INIT, PHASE1-LAYOUT, PHASE1-STATE, PHASE1-PERSIST, PHASE1-SCALING, PHASE1-OVERFLOW]
 
 **Plans:** 3 plans
-- [ ] 01-foundation-01-PLAN.md — Initialize project structure and implement the main resizable split-pane layout using Tailwind 4.
-- [ ] 01-foundation-02-PLAN.md — Implement resume state management using Zustand and Zod for schema validation, with persistence.
-- [ ] 01-foundation-03-PLAN.md — Create the "One-Page" preview container with scaling logic (transform: scale) and overflow detection.
+- [ ] 01-foundation-01-PLAN.md — Refine layout with cookie-based persistence and Tailwind 4 theme variables for A4 dimensions.
+- [ ] 01-foundation-02-PLAN.md — Implement Zustand 5 store with SSR-safe hydration and Zod schema validation.
+- [ ] 01-foundation-03-PLAN.md — Implement auto-scaling A4 preview using CSS transforms and Container Queries.
 
 ## Phase 2: PDF Parsing & Data Extraction
 - [ ] Integrate a PDF parsing library.

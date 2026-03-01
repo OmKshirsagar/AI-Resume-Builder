@@ -4,4 +4,48 @@
 	--font-sans:
 		var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
 		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+	/* A4 Dimensions */
+	--a4-width: 210mm;
+	--a4-height: 297mm;
+
+	/* Semantic Colors */
+	--color-editor-bg: var(--color-slate-50);
+	--color-preview-bg: var(--color-slate-200);
+	--color-resume-paper: var(--color-white);
+	--color-resume-shadow: color-mix(in srgb, var(--color-slate-950) 15%, transparent);
+
+	/* Spacing for convenience */
+	--spacing-a4-w: 210mm;
+	--spacing-a4-h: 297mm;
+}
+
+@layer base {
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-slate-200, currentColor);
+	}
+
+	body {
+		background-color: var(--color-slate-50);
+		color: var(--color-slate-900);
+	}
+}
+
+@media print {
+	@page {
+		size: A4;
+		margin: 0;
+	}
+
+	body {
+		background-color: white;
+	}
+
+	.no-print {
+		display: none !important;
+	}
 }
