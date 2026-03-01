@@ -1,6 +1,6 @@
 # Gemini Resume Builder 🚀
 
-A high-performance, AI-powered resume builder designed for the 2026 talent landscape. Built with **Next.js 15**, **Tailwind CSS 4**, and **Google Gemini 2.0 Flash**, this application helps you build ATS-optimized, single-column resumes that pass the "10-second recruiter scan."
+A high-performance, AI-powered resume builder designed for the 2026 talent landscape. Built with **Next.js 15**, **Tailwind CSS 4**, and **Google Gemini 3 Flash**, this application helps you build ATS-optimized, single-column resumes that pass the "10-second recruiter scan."
 
 ## ✨ Key Features
 
@@ -14,7 +14,7 @@ A high-performance, AI-powered resume builder designed for the 2026 talent lands
 ## 🛠️ Tech Stack
 
 - **Framework:** [Next.js 15](https://nextjs.org/) (App Router, Turbopack)
-- **AI Engine:** [Google Gemini 2.0 Flash](https://ai.google.dev/) via [Vercel AI SDK](https://sdk.vercel.ai/)
+- **AI Engine:** [Google Gemini 3 Flash](https://ai.google.dev/) via [Vercel AI SDK](https://sdk.vercel.ai/)
 - **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
 - **State Management:** [Zustand 5](https://zustand-demo.pmnd.rs/)
 - **Form Handling:** [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)

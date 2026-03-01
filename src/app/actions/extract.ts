@@ -1,7 +1,7 @@
 "use server";
 
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { generateObject } from "ai";
+import { generateText, Output } from "ai";
 import { z } from "zod";
 import { env } from "~/env";
 
@@ -34,7 +34,7 @@ const ExtractionEducationSchema = z.object({
 	fieldOfStudy: z.string().optional().describe("Major or field of study"),
 	location: z.string().optional().describe("School location"),
 	startDate: z.string().optional().describe("Start date"),
-	endDate: z.string().describe("Graduation date (e.g., 'May 2022')"),
+	endDate: z.string().optional().describe("Graduation date (e.g., 'May 2022')"),
 });
 
 const ExtractionSkillSchema = z.object({
@@ -68,9 +68,8 @@ export async function extractResumeFromPDF(formData: FormData) {
 
 		const buffer = await file.arrayBuffer();
 
-		const { object } = await generateObject({
-			model: google("gemini-2.5-flash"),
-			schema: ExtractionResumeSchema,
+		const { output } = await generateText({
+			model: google("gemini-3-flash"),
 			system: "You are an expert resume parser. Extract the information from the provided PDF resume accurately into the structured format. If a piece of information is missing, omit it or use an empty array/null where appropriate.",
 			messages: [
 				{
@@ -88,9 +87,12 @@ export async function extractResumeFromPDF(formData: FormData) {
 					],
 				},
 			],
+			output: Output.object({
+				schema: ExtractionResumeSchema,
+			}),
 		});
 
-		return { success: true, data: object };
+		return { success: true, data: output };
 	} catch (error) {
 		console.error("Extraction error:", error);
 		return {
