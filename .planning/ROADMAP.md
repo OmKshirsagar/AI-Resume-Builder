@@ -35,17 +35,22 @@
 **Plans:** 4 plans
 - [x] 04-dynamic-sections-01-PLAN.md — Upgrade Zod schema/Zustand store for `customSections` and Master/Draft state. Update PDF extraction to grab all arbitrary sections.
 - [x] 04-dynamic-sections-02-PLAN.md — Build the "Condense" AI flow and dynamic form UI to handle arbitrary sections.
-- [ ] 04-dynamic-sections-03-PLAN.md — Initialize Mastra, configure with Gemini 3 Flash, and set up base Mastra instance in src/mastra/index.ts.
-- [ ] 04-dynamic-sections-04-PLAN.md — Implement the "Resume Fabrication Workflow" in Mastra (Audit, Architect, Fabricate) and update UI.
+- [x] 04-dynamic-sections-03-PLAN.md — Initialize Mastra, configure with Gemini 3 Flash, and set up base Mastra instance in src/mastra/index.ts.
+- [x] 04-dynamic-sections-04-PLAN.md — Implement the "Resume Fabrication Workflow" in Mastra (Audit, Architect, Fabricate) and update UI.
 
-## Phase 5: UI Editor & PDF Export
-- [ ] Build a robust, sectioned resume editor on the LHS with React Hook Form + Zod (supporting dynamic fields).
-- [ ] Implement multiple 1-pager design templates for the RHS preview using Tailwind 4 and Container Queries.
-- [ ] Ensure the RHS preview accurately reflects the 1-page PDF output.
+## Phase 5: Visual Orchestration & Dynamic Templates
+**Goal:** Transition from content fabrication to document design by having the AI choose and configure the visual layout.
+**Requirements:** [DESIGN-SCHEMA, STYLIST-AGENT, MULTI-LAYOUT, SMART-INLINE]
+**Plans:** 2 plans
+- [ ] 05-visual-orchestration-01-PLAN.md — Add design settings to schema and implement the Stylist Agent in the Mastra workflow.
+- [ ] 05-visual-orchestration-02-PLAN.md — Implement the dynamic Multi-Layout preview engine and smart inline list rendering.
+
+## Phase 6: UI Editor & PDF Export
+- [ ] Build a robust, sectioned resume editor on the LHS with React Hook Form + Zod.
 - [ ] Integrate a PDF generation library (@react-pdf/renderer) for high-quality exports.
+- [ ] Ensure RHS preview accurately reflects the PDF output.
 
-## Phase 6: Persistence & Deployment
-- [ ] Add user authentication (optional, or local storage/session-based via Zustand).
-- [ ] Ensure all data is saved and versions are manageable.
+## Phase 7: Persistence & Deployment
+- [ ] Add user authentication (optional).
 - [ ] Deploy to Vercel and perform E2E testing.
 - [ ] Verify linting and formatting with Biome.

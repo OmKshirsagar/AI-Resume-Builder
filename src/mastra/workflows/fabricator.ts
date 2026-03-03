@@ -1,6 +1,6 @@
 import { createStep, createWorkflow } from "@mastra/core/workflows";
 import { z } from "zod";
-import { ResumeSchema, type ResumeData } from "~/schemas/resume";
+import { ResumeSchema, DesignSchema, type ResumeData } from "~/schemas/resume";
 
 const cleanAndParseJson = (text: string) => {
 	const clean = text
@@ -56,6 +56,10 @@ Return ONLY the raw JSON object. No preamble.
 // Step 2: Architect Space Budget
 const architectStep = createStep({
 	id: "architect-layout",
+	inputSchema: z.object({
+		audit: z.string(),
+		impactMap: z.record(z.string(), z.number()),
+	}),
 	outputSchema: z.object({
 		budget: z.record(z.string(), z.number()),
 		strategy: z.string(),
@@ -68,6 +72,8 @@ const architectStep = createStep({
 			audit: string;
 			impactMap: Record<string, number>;
 		}>("audit-resume");
+
+		if (!auditResult) throw new Error("Audit result not found");
 
 		const prompt = `
 Create a space budget (bullet counts) for a 1-page resume based on this audit.
@@ -99,6 +105,10 @@ Return ONLY the raw JSON object. No preamble.
 // Step 3: Fabricate final JSON
 const fabricateStep = createStep({
 	id: "fabricate-resume",
+	inputSchema: z.object({
+		budget: z.record(z.string(), z.number()),
+		strategy: z.string(),
+	}),
 	outputSchema: ResumeSchema,
 	execute: async ({ mastra, getInitData, getStepResult }) => {
 		const fabricator = mastra?.getAgent("fabricator-agent");
@@ -109,6 +119,8 @@ const fabricateStep = createStep({
 			budget: Record<string, number>;
 			strategy: string;
 		}>("architect-layout");
+
+		if (!architectResult) throw new Error("Architect result not found");
 
 		const prompt = `
 Semantically reconstruct this resume into a high-density 1-page version.
@@ -140,6 +152,59 @@ Return a valid Resume JSON object matching the input structure. NO preamble.
 	},
 });
 
+// Step 4: Stylist Orchestration
+const stylistStep = createStep({
+	id: "stylist-orchestration",
+	inputSchema: ResumeSchema,
+	outputSchema: ResumeSchema,
+	execute: async ({ mastra, getStepResult }) => {
+		const stylist = mastra?.getAgent("stylist-agent");
+		if (!stylist) throw new Error("Stylist agent not found");
+
+		const fabricatedResume = getStepResult<ResumeData>("fabricate-resume");
+		if (!fabricatedResume) throw new Error("Fabricated resume not found");
+
+		const prompt = `
+Choose the optimal design layout and theme for this resume.
+
+### RESUME DATA
+${JSON.stringify(fabricatedResume)}
+
+### OUTPUT SCHEMA (DesignSchema)
+{
+  "template": "classic" | "modern" | "sidebar",
+  "theme": {
+    "primaryColor": "hex_string",
+    "fontSize": "small" | "medium" | "large",
+    "lineHeight": "tight" | "relaxed"
+  },
+  "layout": {
+    "mainSections": ["experience", "education", "..."],
+    "sidebarSections": ["skills", "..."]
+  }
+}
+
+### INSTRUCTION
+Return ONLY the raw JSON object for the design settings.
+`;
+
+		const result = await stylist.generate(prompt);
+		try {
+			const designSettings = cleanAndParseJson(result.text);
+			const validatedDesign = DesignSchema.parse(designSettings);
+			
+			return {
+				...fabricatedResume,
+				design: validatedDesign
+			};
+		} catch (e) {
+			console.error("Stylist Parse Error:", result.text);
+			// Fallback to default design if stylist fails
+			return fabricatedResume;
+		}
+	},
+});
+
 export const fabricatorWorkflow = createWorkflow({
 	id: "fabricator-workflow",
 	inputSchema: z.object({
@@ -150,4 +215,5 @@ export const fabricatorWorkflow = createWorkflow({
 	.then(auditStep)
 	.then(architectStep)
 	.then(fabricateStep)
+	.then(stylistStep)
 	.commit();

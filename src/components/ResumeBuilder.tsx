@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef } from "react";
 import { MainLayout } from "~/components/layout/MainLayout";
 import { PreviewPane } from "~/components/preview/PreviewPane";
+import { ResumeRenderer } from "~/components/preview/ResumeRenderer";
 import { PDFUpload } from "~/components/editor/PDFUpload";
 import { ParsedDataReview } from "~/components/editor/ParsedDataReview";
 import { useResumeStore } from "~/store/useResumeStore";
@@ -110,7 +111,7 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 							throw new Error(update.error);
 						}
 					} catch (e) {
-						console.error("❌ Failed to parse NDJSON line:", e, line);
+						console.error("Error parsing NDJSON line:", e);
 					}
 				}
 			}
@@ -337,135 +338,7 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 
 	const Preview = (
 		<PreviewPane>
-			<div className="flex flex-col gap-6 p-8 text-slate-900">
-				<div className="flex flex-col items-center gap-1 text-center">
-					<h1 className="text-2xl font-bold uppercase tracking-tight">
-						{activeData.personalInfo.fullName || "Your Name"}
-					</h1>
-					<div className="flex gap-2 text-sm text-slate-600">
-						{activeData.personalInfo.email && <span>{activeData.personalInfo.email}</span>}
-						{activeData.personalInfo.phone && (
-							<>
-								<span>•</span>
-								<span>{activeData.personalInfo.phone}</span>
-							</>
-						)}
-						{activeData.personalInfo.location && (
-							<>
-								<span>•</span>
-								<span>{activeData.personalInfo.location}</span>
-							</>
-						)}
-					</div>
-				</div>
-
-				{activeData.personalInfo.summary && (
-					<section>
-						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-2">
-							Professional Summary
-						</h2>
-						<p className="text-sm leading-relaxed">{activeData.personalInfo.summary}</p>
-					</section>
-				)}
-
-				{(activeData.experience || []).length > 0 && (
-					<section>
-						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-3">
-							Experience
-						</h2>
-						<div className="space-y-4">
-							{activeData.experience.map((exp) => (
-								<div key={exp.id}>
-									<div className="flex justify-between font-bold text-sm">
-										<span>{exp.company}</span>
-										<span>
-											{exp.startDate} — {exp.current ? "Present" : exp.endDate}
-										</span>
-									</div>
-									<div className="flex justify-between italic text-sm mb-1 text-slate-700 font-medium">
-										<span>{exp.position}</span>
-										<span>{exp.location}</span>
-									</div>
-									<ul className="list-disc ml-4 space-y-1">
-										{(exp.description || []).map((bullet, idx) => (
-											<li key={idx} className="text-xs leading-relaxed">
-												{bullet}
-											</li>
-										))}
-									</ul>
-								</div>
-							))}
-						</div>
-					</section>
-				)}
-
-				{(activeData.customSections || []).map((section) => (
-					<section key={section.id}>
-						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-3">
-							{section.title}
-						</h2>
-						<div className="space-y-3">
-							{(section.items || []).map((item) => (
-								<div key={item.id}>
-									<div className="flex justify-between font-bold text-sm">
-										<span>{item.title}</span>
-										{item.date && <span>{item.date}</span>}
-									</div>
-									{item.subtitle && (
-										<div className="italic text-sm text-slate-700 font-medium">
-											{item.subtitle}
-										</div>
-									)}
-									<ul className="list-disc ml-4 mt-1 space-y-1">
-										{(item.description || []).map((bullet, idx) => (
-											<li key={idx} className="text-xs leading-relaxed">
-												{bullet}
-											</li>
-										))}
-									</ul>
-								</div>
-							))}
-						</div>
-					</section>
-				))}
-
-				{(activeData.education || []).length > 0 && (
-					<section>
-						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-3">
-							Education
-						</h2>
-						<div className="space-y-3">
-							{activeData.education.map((edu) => (
-								<div key={edu.id}>
-									<div className="flex justify-between font-bold text-sm">
-										<span>{edu.school}</span>
-										<span>{edu.endDate}</span>
-									</div>
-									<div className="flex justify-between italic text-sm text-slate-700 font-medium">
-										<span>
-											{edu.degree}
-											{edu.fieldOfStudy ? `, ${edu.fieldOfStudy}` : ""}
-										</span>
-										<span>{edu.location}</span>
-									</div>
-								</div>
-							))}
-						</div>
-					</section>
-				)}
-
-				{(activeData.skills || []).length > 0 && (
-					<section>
-						<h2 className="border-b border-slate-900 font-bold uppercase tracking-wider text-sm mb-2">
-							Skills
-						</h2>
-						<div className="text-sm">
-							<span className="font-bold">Technical Skills: </span>
-							<span>{(activeData.skills || []).map((s) => s.name).join(", ")}</span>
-						</div>
-					</section>
-				)}
-			</div>
+			<ResumeRenderer data={activeData} />
 		</PreviewPane>
 	);
 

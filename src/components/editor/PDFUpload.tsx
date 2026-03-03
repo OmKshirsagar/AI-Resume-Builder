@@ -92,6 +92,18 @@ export function PDFUpload({ onExtracted }: PDFUploadProps) {
 							date: item.date ?? "",
 						})),
 					})),
+					design: {
+						template: "classic",
+						theme: {
+							primaryColor: "#000000",
+							fontSize: "medium",
+							lineHeight: "relaxed",
+						},
+						layout: {
+							mainSections: ["experience", "education", "projects"],
+							sidebarSections: ["skills"],
+						},
+					},
 				};
 
 				onExtracted(dataWithIds);
