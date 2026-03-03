@@ -30,11 +30,13 @@
 
 ## Phase 4: Dynamic Sections & Content Condensation
 **Goal:** Upgrade the data architecture to support dynamic sections and implement the core "Condense to 1-Page" AI workflow.
-**Requirements:** [DYN-SCHEMA, DRAFT-STATE, AI-CONDENSE, DYN-UI]
+**Requirements:** [DYN-SCHEMA, DRAFT-STATE, AI-CONDENSE, DYN-UI, MASTRA-INIT, MASTRA-FABRICATE]
 
-**Plans:** 2 plans
-- [ ] 04-dynamic-sections-01-PLAN.md — Upgrade Zod schema/Zustand store for `customSections` and Master/Draft state. Update PDF extraction to grab all arbitrary sections.
-- [ ] 04-dynamic-sections-02-PLAN.md — Build the "Condense" AI flow and dynamic form UI to handle arbitrary sections.
+**Plans:** 4 plans
+- [x] 04-dynamic-sections-01-PLAN.md — Upgrade Zod schema/Zustand store for `customSections` and Master/Draft state. Update PDF extraction to grab all arbitrary sections.
+- [x] 04-dynamic-sections-02-PLAN.md — Build the "Condense" AI flow and dynamic form UI to handle arbitrary sections.
+- [ ] 04-dynamic-sections-03-PLAN.md — Initialize Mastra, configure with Gemini 3 Flash, and set up base Mastra instance in src/mastra/index.ts.
+- [ ] 04-dynamic-sections-04-PLAN.md — Implement the "Resume Fabrication Workflow" in Mastra (Audit, Architect, Fabricate) and update UI.
 
 ## Phase 5: UI Editor & PDF Export
 - [ ] Build a robust, sectioned resume editor on the LHS with React Hook Form + Zod (supporting dynamic fields).

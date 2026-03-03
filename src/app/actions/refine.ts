@@ -10,19 +10,18 @@ const google = createGoogleGenerativeAI({
 	apiKey: env.GOOGLE_GENERATIVE_AI_API_KEY,
 });
 
-export async function refineText(originalText: string) {
+export async function refineText(text: string) {
 	const stream = createStreamableValue("");
 
 	(async () => {
 		const { textStream } = streamText({
-			model: google("gemini-3-flash"),
+			model: google("gemini-3-flash-preview"),
 			system: REFINE_SYSTEM_PROMPT,
 			messages: [
 				{
 					role: "user",
-					content: `Refine the following resume text using the X-Y-Z formula:
-
-${originalText}`,
+					content: `Refine the following text for a resume:
+"${text}"`,
 				},
 			],
 		});

@@ -82,7 +82,7 @@ export async function extractResumeFromPDF(formData: FormData) {
 		const buffer = await file.arrayBuffer();
 
 		const { output } = await generateText({
-			model: google("gemini-3-flash"),
+			model: google("gemini-3-flash-preview"),
 			system: "You are an expert resume parser. Extract the information from the provided PDF resume accurately into the structured format. Identify sections that do not fit into Experience, Education, Skills, or Projects (e.g., Certifications, Awards, Volunteering, Languages, Publications) and map them to the `customSections` array. Each custom section should have a clear title reflecting its content. If a piece of information is missing, omit it or use an empty array/null where appropriate.",
 			messages: [
 				{

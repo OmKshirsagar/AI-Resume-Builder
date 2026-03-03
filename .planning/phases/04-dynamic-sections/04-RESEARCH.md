@@ -1,120 +1,170 @@
-# Phase 4: Dynamic Sections & Content Condensation - Research
+# Phase 4: Dynamic Sections & Agentic Resume Fabrication - Research
 
-**Researched:** 2024-05-24 (Updated 2024-12-05 with Agentic Patterns)
-**Domain:** Dynamic Schemas, State Management, Agentic LLM Patterns
+**Researched:** 2024-12-05 (Updated 2024-12-10 for Agentic Fabricator)
+**Domain:** Dynamic Schemas, Multi-step Agentic Workflows, Semantic Compression, State Management
 **Confidence:** HIGH
 
 ## Summary
 
-This phase focuses on making the resume builder highly flexible by allowing users to add custom sections (e.g., Certifications, Awards, Volunteering) and using AI to condense long resumes into a single A4 page.
+The current "Condense" feature is evolved into an **Agentic Resume Fabricator**. Instead of a single-step summarization that blindly cuts text, we use a multi-step pipeline that:
+1.  **Analyzes & Ranks Sections:** Assigns importance scores to entire sections based on role relevance.
+2.  **Analyzes & Ranks Content:** Evaluates individual bullet points and items within sections for impact and "signal".
+3.  **Fabricates Optimized Resume:** Reconstructs the resume from the ground up using **Semantic Compression** and **STAR-R** patterns to fit an A4 page while maximizing impact.
 
-**Primary recommendation:** Implement an **Agentic Condensation Pipeline** using Gemini Flash. Move from a single-step "summarize" prompt to a multi-step **Analysis -> Allocation -> Execution** chain. Use "Semantic Compression" techniques to preserve vital short sections (Skills/Education) while fragmenting experience bullets into high-impact shorthand rather than deleting them.
+**Primary recommendation:** Use Vercel AI SDK's `generateText` with `output` schema for structured ranking steps and `createStreamableValue` from `@ai-sdk/rsc` to provide real-time progress updates to the UI.
 
 ## Standard Stack
 
 ### Core
 | Library | Version | Purpose | Why Standard |
 |---------|---------|---------|--------------|
-| Zod | ^3.22 | Schema validation | Excellent for recursive/dynamic structures and TS integration. |
-| React Hook Form | ^7.48 | Form state management | `useFieldArray` is the industry standard for dynamic lists. |
-| Zustand | ^4.4 | Global state management | Lightweight, supports middleware like `persist` and `immer`. |
-| Vercel AI SDK | ^3.0 | Gemini integration | Streamlined interface for Google's Gemini Flash. |
+| Zod | ^3.24 | Schema validation | Excellent for structured ranking output and TS integration. |
+| Vercel AI SDK | ^6.0 | AI Orchestration | Standard for Next.js AI apps; supports `maxSteps` and structured output. |
+| @ai-sdk/rsc | ^2.0 | Streamable Values | Essential for multi-step progress reporting from Server Actions. |
+| Zustand | ^5.0 | State management | Handles `original` vs `draft` state for "Preview and Apply" workflow. |
 
 ### Supporting
 | Library | Version | Purpose | When to Use |
 |---------|---------|---------|--------------|
-| Immer | ^10.0 | Immutable state updates | Essential for updating deeply nested Zustand state without boilerplate. |
-| Lucide React | ^0.294 | Icons | Visual cues for adding/removing sections. |
+| Immer | ^11.1 | Immutable updates | Simplifies deep updates in complex resume schemas. |
+| Lucide React | ^0.575 | UI Icons | Visual indicators for progress steps (Loading, Success, Warning). |
 
 ## Architecture Patterns
 
-### Recommended Project Structure
-```
-src/
-├── schemas/
-│   └── resume.ts        # Updated to include CustomSectionSchema
-├── store/
-│   └── useResumeStore.ts # Updated for Original/Draft state + commit logic
-├── lib/
-│   └── ai/
-│       └── condensation.ts # Agentic orchestration logic
-└── components/
-    └── editor/
-        ├── CustomSections.tsx  # Parent for custom section management
-        └── CustomSectionItem.tsx # Individual items within a section
-```
+### Pattern: The Agentic Resume Fabricator (Multi-Step Workflow)
+Instead of a single "condense" call, we use a deterministic chain of agents to ensure high-fidelity optimization.
 
-### Pattern 1: Agentic Condensation Pipeline
-Instead of a single prompt, use a state-machine approach to ensure reliability and A4 fit.
+1.  **Section Ranking Agent (Structured):**
+    *   **Input:** Resume JSON + Job Description (optional).
+    *   **Operation:** `generateText({ output: Output.object({ schema: SectionRankSchema }) })`.
+    *   **Output:** Importance score (1-10) for each section.
+2.  **Content Evaluation Agent (Structured):**
+    *   **Input:** Resume Section Data + Ranking Context.
+    *   **Operation:** For high-priority sections (e.g., Experience), evaluate each item/bullet point.
+    *   **Output:** Importance score (1-10) and "Impact Factor" for each item.
+3.  **Fabrication Agent (Generative):**
+    *   **Input:** Original data + Rankings + Page Budget (overflow %).
+    *   **Operation:** `generateText({ output: Output.object({ schema: ResumeSchema }) })`.
+    *   **Constraint:** "Fabricate" the resume by rewriting for brevity and impact (Semantic Compression), not just deleting.
 
-1.  **Analysis Node:** Calculate current "Page Overflow" (e.g., 1.5 pages). Identify section types.
-2.  **Allocation Node:** Assign a "Space Budget" (lines/tokens) to each section based on relevance to the Target Role.
-3.  **Execution Node:** Compress each section to fit its budget using **Semantic Compression**.
-4.  **Validation Node:** Re-calculate fit. If still too long, perform a second pass on low-priority sections.
-
-### Pattern 2: Master vs Draft State (Shadow State)
-Instead of editing the "live" resume directly during AI refinement, we keep two versions. This allows users to preview changes and discard them if the AI "hallucinates" or prunes too aggressively.
+### Pattern: Progress-Aware State Management
+To prevent the user from feeling "stuck" during a 10-20 second AI process, use **Streamable Values** to push step-by-step updates.
 
 ```typescript
-interface ResumeState {
-    original: ResumeData | null; // The full-length resume
-    draft: ResumeData | null;    // The condensed version
-    mode: "edit" | "refine";
-    
-    setOriginal: (data: ResumeData) => void;
-    applyDraft: () => void;      // Commit draft to original
-    discardDraft: () => void;    // Reset draft to null
-}
+// Server Action Flow
+const progress = createStreamableValue({ status: "idle", step: 0 });
+// ... Step 1: Ranking ...
+progress.update({ status: "Ranking sections...", step: 1 });
+// ... Step 2: Evaluating ...
+progress.update({ status: "Evaluating experience impact...", step: 2 });
+// ... Step 3: Fabricating ...
+progress.update({ status: "Drafting optimized resume...", step: 3 });
+progress.done({ status: "Complete", data: finalResume });
 ```
 
 ### Anti-Patterns to Avoid
-- **Literal Deletion:** Removing entire bullet points to save space (use Fragmenting instead).
-- **Auto-Committing AI Changes:** Never overwrite the user's primary data without a confirmation step ("Apply Changes").
-- **Single-Step Complex Prompts:** Forcing Gemini Flash to handle budget allocation AND compression in one call leads to dropped sections (Education/Skills).
+- **"Blind Pruning":** Automatically deleting the last N bullet points to fit space. Use "Impact Ranking" instead.
+- **Lost Context:** Not providing the job description to the ranker agent (if available).
+- **Single-State Mutation:** Overwriting the user's `original` resume without a `draft` preview step.
 
 ## Don't Hand-Roll
 
 | Problem | Don't Build | Use Instead | Why |
 |---------|-------------|-------------|-----|
-| Deep state updates | Native spread `...` | `immer` | Nested arrays in custom sections become unmanageable with native spreads. |
-| Undo/Redo | Custom history stack | `zundo` | Built-in middleware for Zustand that handles time travel reliably. |
-| Agent Orchestration | Manual fetch loops | Vercel AI SDK / LangGraph | Handles streaming and state transitions more cleanly. |
+| AI Step Progress | Custom EventSource/SSE | `createStreamableValue` | Handles streaming status, logs, and partial results natively in Next.js RSC. |
+| Schema Extraction | Regex or manual parsing | `Output.object` | The standard way to get type-safe JSON from LLMs in Vercel AI SDK. |
+| Budget Calculation | Simple char counts | `scaling.ts` logic | Character counts don't account for font sizes or layout-induced overflow. |
 
 ## Common Pitfalls
 
-### Pitfall 1: "Attention Dilution" (Section Dropping)
-**What goes wrong:** AI drops Education or Skills because they are short and seen as "low-signal" compared to long job descriptions.
-**How to avoid:** Use **Structural Anchoring** (XML tags) and **R-Codes** (Retention Codes).
-**Prompt Hint:** `R1: [SKILLS/EDUCATION] = ZERO-LOSS. Preserve 100% of keywords.`
+### Pitfall 1: "The 10-Score Trap"
+**What goes wrong:** AI ranks everything as "10" (Critical) because it's afraid to lose information.
+**How to avoid:** Use a **Relative Ranking** prompt. "You MUST assign at least one section a score of 5 or lower." or "Rank sections in order of descending importance."
 
-### Pitfall 2: AI Hallucinations in Custom Sections
-**What goes wrong:** AI invents certifications or volunteer work to "fill space" or make the resume "better".
-**How to avoid:** Explicitly prompt for **Extractive Compression** only. "Do not add information not present in the source JSON."
+### Pitfall 2: Fragmenting Narrative
+**What goes wrong:** By ranking bullets individually, the AI might keep a "Result" bullet but remove the "Action" bullet that explains it.
+**How to avoid:** Group related bullets into "Impact Units" and rank the unit as a whole.
 
 ## Code Examples
 
-### Semantic Compression Prompt (Execution Node)
-```markdown
-### OBJECTIVE
-Condense the Experience section to fit a budget of [X] lines while preserving logic.
+### Agentic Fabrication Server Action
+```typescript
+"use server";
 
-### RULES
-1. Use **Dense Logic Seeds**: [Action Verb] + [Metric/Result] + [Tool/Tech].
-2. **Semantic Compression**: Convert "I was responsible for managing a team of five developers" to "Managed 5-dev team."
-3. **No Literal Deletion**: Do not remove achievements; convert them into high-impact fragments.
-4. Omit articles (a, an, the) and filler phrases (Successfully, Effectively).
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { generateText, Output } from "ai";
+import { createStreamableValue } from "ai/rsc";
+import { z } from "zod";
+import { ResumeSchema, type ResumeData } from "~/schemas/resume";
 
-### INPUT
-[Section JSON]
+const google = createGoogleGenerativeAI({ apiKey: process.env.GOOGLE_API_KEY });
+
+export async function fabricateResume(resumeData: ResumeData, jobDescription?: string) {
+  const stream = createStreamableValue({ status: "Starting fabrication...", step: 0 });
+
+  (async () => {
+    try {
+      // Step 1: Section Ranking
+      stream.update({ status: "Ranking sections...", step: 1 });
+      const { output: sectionRanks } = await generateText({
+        model: google("gemini-1.5-flash"),
+        output: Output.object({
+          schema: z.object({
+            ranks: z.array(z.object({ sectionId: z.string(), score: z.number().min(1).max(10) }))
+          }),
+        }),
+        prompt: `Rank these sections by relevance to: ${jobDescription || "Standard Best Practices"}\n${JSON.stringify(resumeData.experience)}`,
+      });
+
+      // Step 2: Content Ranking (Example: Experience Bullets)
+      stream.update({ status: "Evaluating experience impact...", step: 2 });
+      // ... similar generateText call for bullet-level ranking ...
+
+      // Step 3: Fabrication
+      stream.update({ status: "Drafting optimized resume...", step: 3 });
+      const { output: optimizedResume } = await generateText({
+        model: google("gemini-1.5-pro"), // Use a "Pro" model for final fabrication for higher logic fidelity
+        output: Output.object({ schema: ResumeSchema }),
+        prompt: `Fabricate a new, highly-optimized resume using these rankings: ${JSON.stringify(sectionRanks)}...`,
+      });
+
+      stream.done({ status: "Completed", step: 4, data: optimizedResume });
+    } catch (error) {
+      stream.error(error);
+    }
+  })();
+
+  return { progress: stream.value };
+}
 ```
 
-### Allocation Logic (Pseudo-code)
-```typescript
-function allocateBudget(overflowRatio: number, sections: Section[]) {
-  return sections.map(s => {
-    if (s.type === 'education' || s.type === 'skills') return { ...s, budget: 1.0 }; // Keep 100%
-    return { ...s, budget: 1.0 / overflowRatio }; // Scale down others
-  });
+### Consuming Progress in UI
+```tsx
+"use client";
+
+import { useStreamableValue } from "ai/rsc";
+import { fabricateResume } from "./actions";
+
+export function FabricateButton({ resumeData }) {
+  const [progress, setProgress] = useState(null);
+  const [currentStatus] = useStreamableValue(progress);
+
+  const handleFabricate = async () => {
+    const { progress: stream } = await fabricateResume(resumeData);
+    setProgress(stream);
+  };
+
+  return (
+    <div>
+      <button onClick={handleFabricate}>Optimize Resume</button>
+      {currentStatus && (
+        <div className="status-overlay">
+          <p>{currentStatus.status}</p>
+          <div className="progress-bar" style={{ width: `${(currentStatus.step / 4) * 100}%` }} />
+        </div>
+      )}
+    </div>
+  );
 }
 ```
 
@@ -122,37 +172,35 @@ function allocateBudget(overflowRatio: number, sections: Section[]) {
 
 | Old Approach | Current Approach | When Changed | Impact |
 |--------------|------------------|--------------|--------|
-| Summarization | Semantic Compression | 2024 | Logic retention is higher; no "narrative loss". |
-| Single Prompt | Multi-step Agentic Chain | 2024 | Drastic improvement in reliability for Flash-class models. |
+| Multi-prompt Loop | `maxSteps` + Tools | 2024 | Easier to let the model decide when it's done optimizing. |
+| Object Parsing | `Output.object` | 2024 | Type-safety for intermediate agent results. |
 
 ## Open Questions
 
-1. **Gemini Flash Reliability:**
-   - What we know: Single complex prompts frequently fail constraints.
-   - What's unclear: Is Gemini 2.0 Flash Thinking capable of handling the entire pipeline in one "thinking" pass?
-   - Recommendation: Use a multi-step pipeline for MVP to ensure predictable performance.
+1.  **Fabrication Model Choice:**
+    *   What we know: Flash is fast for ranking; Pro is better for "Fabrication".
+    *   What's unclear: Is the latency of Gemini Pro acceptable for a live UI?
+    *   Recommendation: Benchmarking with "Thinking" models for the final step.
 
-2. **Measuring A4 Fit:**
-   - What we know: Character counts are a proxy, but font size and layout matter.
-   - Recommendation: Use the `scaling.ts` logic to calculate a "Fill %" and feed it back to the AI as a numerical constraint.
+2.  **Recursive Ranking:**
+    *   Should we rank subsections of custom sections too?
+    *   Recommendation: Focus on Experience and Projects first as they have the highest "noise-to-signal" ratio.
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- [Gemini API Docs](https://ai.google.dev/docs) - Model capabilities and function calling.
-- [Vercel AI SDK Core](https://sdk.vercel.ai/docs) - Prompting and orchestration patterns.
-- [Zod Documentation](https://zod.dev) - Recursive and dynamic schemas.
+- [Vercel AI SDK v6 Docs](https://sdk.vercel.ai/docs) - `Output.object` and Agentic patterns.
+- [@ai-sdk/rsc Documentation](https://sdk.vercel.ai/docs/advanced/rsc) - `createStreamableValue` patterns.
 
 ### Secondary (MEDIUM confidence)
-- "Semantic Compression for LLMs" - Emerging pattern in agentic workflows.
-- "Dense Logic Seeds" - Shorthand syntax for high-impact resume writing.
+- "STAR-R for LLMs" - Emerging pattern for achievement-oriented rewriting.
 
 ## Metadata
 
 **Confidence breakdown:**
-- Agentic Patterns: HIGH - Proven for Flash-class models.
-- Semantic Compression: MEDIUM - Requires fine-tuning of the "fragmentation" prompt.
-- Architecture: HIGH - Multi-step pipelines are the industry standard for complex LLM tasks.
+- Multi-step Pipeline: HIGH - Proven approach for reliable complex outputs.
+- Progress Streaming: HIGH - Standard Next.js AI pattern.
+- Ranking Accuracy: MEDIUM - Heavily dependent on prompt quality and job description presence.
 
-**Research date:** 2024-12-05
-**Valid until:** 2025-01-05
+**Research date:** 2024-12-10
+**Valid until:** 2025-01-15

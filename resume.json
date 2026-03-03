@@ -1,0 +1,239 @@
+{
+    "personalInfo": {
+        "fullName": "Om Kshirsagar",
+        "email": "kshirsagar.om38018@gmail.com",
+        "phone": ",",
+        "location": "Mumbai, Maharashtra, India",
+        "website": "",
+        "linkedin": "",
+        "github": "",
+        "summary": "Full-Stack GenAI Engineer with experience designing and delivering real-time, production-grade AI systems across enterprise client engagements at Deloitte USI. Proven track record of building agentic GenAI solutions, scalable backend services, and cloud-native deployments, with ownership across frontend, backend, DevOps, and Azure OpenAI infrastructure. Led rapid prototyping efforts in lean teams to deliver client-ready GenAI POCs within weeks, including real-time\ncall center agents and tool-augmented AI systems integrated with\nenterprise platforms such as EPIC."
+    },
+    "experience": [
+        {
+            "company": "Deloitte",
+            "position": "Associate Analyst",
+            "location": "Mumbai, Maharashtra, India",
+            "startDate": "Feb 2024",
+            "endDate": "Present",
+            "current": true,
+            "description": [
+                "Realtime GenAI Call Center POC — Exact Sciences (Client Engagement) | Jul 2025 – Present",
+                "Built a real-time AI call center agent using GPT Realtime and the OpenAI Agents SDK, enabling low-latency voice and SMS interactions.",
+                "Integrated Azure Communication Services (ACS) and Five9 for real-time telephony and agent orchestration.",
+                "Developed tool-augmented GenAI agents, integrating enterprise APIs including EPIC to extend agent functionality.",
+                "Designed an SMS context persistence solution using Braze, ensuring reliable conversation continuity across sessions.",
+                "Owned end-to-end deployment and DevOps, provisioning Azure infrastructure and deploying GPT models via Azure OpenAI.",
+                "Contributed across frontend, backend, and agentic GenAI development in a lean 4-member team.",
+                "Deloitte Internal GenAI Initiatives | Nov 2024 – Jun 2025",
+                "Delivered client-ready agentic GenAI POCs for LSHC use cases using rapid AI-assisted development workflows.",
+                "Shipped production-quality prototypes within ~2 weeks, accelerating GenAI adoption for internal and client stakeholders.",
+                "Mentored new team members and contributed to architectural and integration decisions.",
+                "Predictive Insight Center — Takeda (Client Engagement) | Mar 2024 – Nov 2024",
+                "Led backend architecture for a unified manufacturing application supporting medicine and plasma production workflows.",
+                "Built scalable services using FastAPI and PostgreSQL, aligned with enterprise performance and compliance requirements.",
+                "Modernized a legacy system by migrating from Plotly–Redis to a FastAPI–Angular–Celery architecture, leveraging AWS SQS for scalability.",
+                "Served as backend MVP, owning performance, integration, and delivery in collaboration with cross-functional teams."
+            ],
+            "id": "98664fba-0a12-4504-862d-b7a6093514ea"
+        },
+        {
+            "company": "Bine Digital",
+            "position": "Software Engineer Intern",
+            "location": "Work from home",
+            "startDate": "May 2022",
+            "endDate": "Oct 2022",
+            "current": false,
+            "description": [
+                "Development in frappe framework."
+            ],
+            "id": "438c3fff-a5ca-4ee5-9c42-5d67e907eb7e"
+        },
+        {
+            "company": "CyberSmithSECURE",
+            "position": "Analyst (Intern)",
+            "location": "Mumbai, Maharashtra, India",
+            "startDate": "Sep 2021",
+            "endDate": "Feb 2022",
+            "current": false,
+            "description": [],
+            "id": "ba162625-1567-430e-b7a0-6407618bfd6a"
+        }
+    ],
+    "education": [
+        {
+            "school": "JAI HIND COLLEGE, MUMBAI",
+            "degree": "Bachelor of Science - BS",
+            "fieldOfStudy": "Information Technology",
+            "location": ",",
+            "startDate": "2020",
+            "endDate": "2023",
+            "id": "4c706244-1681-403d-99dc-2605fc6ba383",
+            "current": false,
+            "description": []
+        }
+    ],
+    "skills": [
+        {
+            "name": "FastAPI (Python)",
+            "category": "Programming Frameworks",
+            "id": "da65db77-4ef8-4844-8d1d-3e3b087038b9",
+            "level": ""
+        },
+        {
+            "name": "NextJS",
+            "category": "Programming Frameworks",
+            "id": "dba2bc7d-aad4-409f-a57c-c9e72b2576d7",
+            "level": ""
+        },
+        {
+            "name": "Langchain",
+            "category": "AI Frameworks",
+            "id": "621a1a20-b7fe-4b30-8c8c-ed5987c85830",
+            "level": ""
+        },
+        {
+            "name": "PostgreSQL",
+            "category": "Databases",
+            "id": "aca63b4b-6370-41be-a9ae-27c70140bfb6",
+            "level": ""
+        },
+        {
+            "name": "Docker",
+            "category": "DevOps",
+            "id": "5a362b4e-56fd-4818-8a37-f44ba086dab0",
+            "level": ""
+        },
+        {
+            "name": "AWS Cloud",
+            "category": "Cloud Platforms",
+            "id": "3c8c0445-5d1c-4ee7-934d-111cf466a22e",
+            "level": ""
+        },
+        {
+            "name": "Azure",
+            "category": "Cloud Platforms",
+            "id": "840041e5-0c27-4d46-af98-6dfae651021f",
+            "level": ""
+        },
+        {
+            "name": "OpenAI",
+            "category": "AI Tools",
+            "id": "7440ac95-f98d-4d2a-84ae-db2d3a77f1fb",
+            "level": ""
+        },
+        {
+            "name": "Microsoft Azure",
+            "category": "Cloud Platforms",
+            "id": "301448bf-992e-4d96-8fdd-ea4750b02eb4",
+            "level": ""
+        },
+        {
+            "name": "Five9",
+            "category": "Telephony Tools",
+            "id": "611a4c09-920d-4b15-9959-7131081490ef",
+            "level": ""
+        },
+        {
+            "name": "Braze",
+            "category": "Engagement Platforms",
+            "id": "f5c70638-48f4-40a4-987e-4dd0f371aef4",
+            "level": ""
+        }
+    ],
+    "projects": [],
+    "customSections": [
+        {
+            "id": "d3efd34d-b0eb-47f2-97fd-f655caefbc41",
+            "title": "Languages",
+            "items": [
+                {
+                    "title": "English",
+                    "description": [
+                        "Full Professional"
+                    ],
+                    "id": "39230950-d53a-4c3d-9adf-024b31b89d01",
+                    "subtitle": "",
+                    "date": ""
+                },
+                {
+                    "title": "Marathi",
+                    "description": [
+                        "Native or Bilingual"
+                    ],
+                    "id": "6e5e1e50-b992-44d7-b85b-77947f3ca399",
+                    "subtitle": "",
+                    "date": ""
+                },
+                {
+                    "title": "Hindi",
+                    "description": [
+                        "Native or Bilingual"
+                    ],
+                    "id": "3edcbddd-8d3e-4afc-a1ce-55608e09fd3b",
+                    "subtitle": "",
+                    "date": ""
+                }
+            ]
+        },
+        {
+            "id": "3998eab7-1d27-45d1-b8e3-81d155078884",
+            "title": "Certifications",
+            "items": [
+                {
+                    "title": "Modern JavaScript From The Beginning 2.0 - 2023 Revamp",
+                    "description": [],
+                    "id": "212f6d5e-2fc4-458b-b99c-2f7eae580f6b",
+                    "subtitle": "",
+                    "date": ""
+                },
+                {
+                    "title": "SDLC Overview - Software Development Life Cycle",
+                    "description": [],
+                    "id": "729f0e6b-36cc-4526-8d17-7fd1dc395738",
+                    "subtitle": "",
+                    "date": ""
+                }
+            ]
+        },
+        {
+            "id": "c9986847-6cef-4c19-878c-37e5c0871890",
+            "title": "Honors-Awards",
+            "items": [
+                {
+                    "title": "Outstanding Performance Award",
+                    "date": "2025",
+                    "description": [
+                        "Recognized for exceptional contributions."
+                    ],
+                    "id": "e4d879a3-fd6a-4b7c-a911-e77cfcc3888e",
+                    "subtitle": ""
+                },
+                {
+                    "title": "Outstanding performance Award",
+                    "date": "2024",
+                    "description": [
+                        "Recognized for exceptional contributions."
+                    ],
+                    "id": "ecd05008-3bc6-4df7-9208-f5ee7bb2f110",
+                    "subtitle": ""
+                }
+            ]
+        },
+        {
+            "id": "96fec31f-a526-45b3-aba2-ec2b46188536",
+            "title": "Publications",
+            "items": [
+                {
+                    "title": "AlphaZero Vs StockFish – A Review of Chess Engines",
+                    "description": [
+                        "A comparative analysis of chess engine architectures."
+                    ],
+                    "id": "5f9b53e1-0bcf-4d35-b38f-394fd10e9b5d",
+                    "subtitle": "",
+                    "date": ""
+                }
+            ]
+        }
+    ]
+}
