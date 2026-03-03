@@ -70,6 +70,26 @@ export const CustomSectionSchema = z.object({
 	items: z.array(CustomSectionItemSchema).default([]),
 });
 
+export const DesignSchema = z.object({
+	template: z.enum(["classic", "modern", "sidebar"]).default("classic"),
+	theme: z.object({
+		primaryColor: z.string().default("#000000"),
+		fontSize: z.enum(["small", "medium", "large"]).default("medium"),
+		lineHeight: z.enum(["tight", "relaxed"]).default("relaxed"),
+	}).default({
+		primaryColor: "#000000",
+		fontSize: "medium",
+		lineHeight: "relaxed",
+	}),
+	layout: z.object({
+		mainSections: z.array(z.string()).default([]),
+		sidebarSections: z.array(z.string()).default([]),
+	}).default({
+		mainSections: ["experience", "education", "projects"],
+		sidebarSections: ["skills"],
+	}),
+});
+
 export const ResumeSchema = z.object({
 	personalInfo: PersonalInformationSchema,
 	experience: z.array(ExperienceSchema).default([]),
@@ -77,6 +97,18 @@ export const ResumeSchema = z.object({
 	skills: z.array(SkillSchema).default([]),
 	projects: z.array(ProjectSchema).default([]),
 	customSections: z.array(CustomSectionSchema).default([]),
+	design: DesignSchema.default({
+		template: "classic",
+		theme: {
+			primaryColor: "#000000",
+			fontSize: "medium",
+			lineHeight: "relaxed",
+		},
+		layout: {
+			mainSections: ["experience", "education", "projects"],
+			sidebarSections: ["skills"],
+		},
+	}),
 });
 
 export type PersonalInformation = z.infer<typeof PersonalInformationSchema>;
@@ -86,6 +118,7 @@ export type Skill = z.infer<typeof SkillSchema>;
 export type Project = z.infer<typeof ProjectSchema>;
 export type CustomSectionItem = z.infer<typeof CustomSectionItemSchema>;
 export type CustomSection = z.infer<typeof CustomSectionSchema>;
+export type Design = z.infer<typeof DesignSchema>;
 export type ResumeData = z.infer<typeof ResumeSchema>;
 
 export const DEFAULT_RESUME: ResumeData = {
@@ -104,4 +137,16 @@ export const DEFAULT_RESUME: ResumeData = {
 	skills: [],
 	projects: [],
 	customSections: [],
+	design: {
+		template: "classic",
+		theme: {
+			primaryColor: "#000000",
+			fontSize: "medium",
+			lineHeight: "relaxed",
+		},
+		layout: {
+			mainSections: ["experience", "education", "projects"],
+			sidebarSections: ["skills"],
+		},
+	},
 };
