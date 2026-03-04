@@ -84,9 +84,11 @@ export const DesignSchema = z.object({
 	layout: z.object({
 		mainSections: z.array(z.string()).default([]),
 		sidebarSections: z.array(z.string()).default([]),
+		inlineSections: z.array(z.string()).default([]).describe("IDs or titles of sections to render horizontally"),
 	}).default({
 		mainSections: ["experience", "education", "projects"],
 		sidebarSections: ["skills"],
+		inlineSections: ["skills", "languages"],
 	}),
 });
 
@@ -107,6 +109,7 @@ export const ResumeSchema = z.object({
 		layout: {
 			mainSections: ["experience", "education", "projects"],
 			sidebarSections: ["skills"],
+			inlineSections: ["skills", "languages"],
 		},
 	}),
 });
@@ -147,6 +150,7 @@ export const DEFAULT_RESUME: ResumeData = {
 		layout: {
 			mainSections: ["experience", "education", "projects"],
 			sidebarSections: ["skills"],
+			inlineSections: ["skills", "languages"],
 		},
 	},
 };

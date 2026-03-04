@@ -11,7 +11,7 @@ Non-negotiable: Education, Skills, and Certifications.
 ### JSON RULES:
 Your response must be ONLY a valid JSON object matching the requested schema. No preamble, no markdown.`,
 	model: {
-		id: "google/gemini-2.5-flash",
+		id: "google/gemma-3-27b-it",
 	},
 });
 
@@ -26,7 +26,7 @@ Constraint: Must fit a single A4 page.
 ### JSON RULES:
 Your response must be ONLY a valid JSON object matching the requested schema. No preamble, no markdown.`,
 	model: {
-		id: "google/gemini-2.5-flash",
+		id: "google/gemma-3-27b-it",
 	},
 });
 
@@ -65,6 +65,6 @@ Your goal is to choose the best visual layout and theme based on "Career Density
 ### JSON RULES:
 Your response must be ONLY a valid JSON object matching the requested schema. No preamble, no markdown.`,
 	model: {
-		id: "google/gemini-3-flash-preview",
+		id: "google/gemma-3-27b-it",
 	},
 });

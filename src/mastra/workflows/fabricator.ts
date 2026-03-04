@@ -1,6 +1,11 @@
 import { createStep, createWorkflow } from "@mastra/core/workflows";
 import { z } from "zod";
 import { ResumeSchema, DesignSchema, type ResumeData } from "~/schemas/resume";
+import { 
+	AGENT_ANALYSIS_PROMPT, 
+	AGENT_FABRICATION_PROMPT, 
+	STYLIST_PROMPT 
+} from "~/lib/ai/prompts";
 
 const cleanAndParseJson = (text: string) => {
 	const clean = text
@@ -27,7 +32,7 @@ const auditStep = createStep({
 		const { resumeData } = getInitData<{ resumeData: ResumeData }>();
 
 		const prompt = `
-Analyze the impact of each item in this resume.
+${AGENT_ANALYSIS_PROMPT}
 
 ### DATA
 ${JSON.stringify(resumeData)}
@@ -53,9 +58,9 @@ Return ONLY the raw JSON object. No preamble.
 	},
 });
 
-// Step 2: Architect Space Budget
-const architectStep = createStep({
-	id: "architect-layout",
+// Step 2: Budgeting (Renamed for clarity)
+const budgetStep = createStep({
+	id: "budget-resume",
 	inputSchema: z.object({
 		audit: z.string(),
 		impactMap: z.record(z.string(), z.number()),
@@ -63,6 +68,7 @@ const architectStep = createStep({
 	outputSchema: z.object({
 		budget: z.record(z.string(), z.number()),
 		strategy: z.string(),
+		inlineSections: z.array(z.string()),
 	}),
 	execute: async ({ mastra, getStepResult }) => {
 		const architect = mastra?.getAgent("architect-agent");
@@ -73,22 +79,22 @@ const architectStep = createStep({
 			impactMap: Record<string, number>;
 		}>("audit-resume");
 
-		if (!auditResult) throw new Error("Audit result not found");
-
 		const prompt = `
-Create a space budget (bullet counts) for a 1-page resume based on this audit.
+Analyze the Audit and create a bullet budget. 
+Aim for "Maximized Utilization": Use all 1-page A4 space.
 
 ### AUDIT
 ${JSON.stringify(auditResult)}
 
 ### OUTPUT SCHEMA
 {
-  "budget": { "EXPERIENCE_ID": number_of_bullets_0_to_5 },
-  "strategy": "Merging strategy string"
+  "budget": { "EXPERIENCE_ID": bullet_count_0_to_5 },
+  "strategy": "Condensation strategy",
+  "inlineSections": ["Skills", "Languages"]
 }
 
 ### INSTRUCTION
-Return ONLY the raw JSON object. No preamble.
+Return ONLY the raw JSON object.
 `;
 
 		const result = await architect.generate(prompt);
@@ -96,8 +102,8 @@ Return ONLY the raw JSON object. No preamble.
 			const parsed = cleanAndParseJson(result.text);
 			return parsed;
 		} catch (e) {
-			console.error("Architect Parse Error:", result.text);
-			throw new Error("Architect step failed to produce valid JSON");
+			console.error("Budget Parse Error:", result.text);
+			throw new Error("Budget step failed to produce valid JSON");
 		}
 	},
 });
@@ -108,6 +114,7 @@ const fabricateStep = createStep({
 	inputSchema: z.object({
 		budget: z.record(z.string(), z.number()),
 		strategy: z.string(),
+		inlineSections: z.array(z.string()),
 	}),
 	outputSchema: ResumeSchema,
 	execute: async ({ mastra, getInitData, getStepResult }) => {
@@ -115,30 +122,21 @@ const fabricateStep = createStep({
 		if (!fabricator) throw new Error("Fabricator agent not found");
 
 		const { resumeData } = getInitData<{ resumeData: ResumeData }>();
-		const architectResult = getStepResult<{
+		const budgetResult = getStepResult<{
 			budget: Record<string, number>;
 			strategy: string;
-		}>("architect-layout");
-
-		if (!architectResult) throw new Error("Architect result not found");
+		}>("budget-resume");
 
 		const prompt = `
-Semantically reconstruct this resume into a high-density 1-page version.
+${AGENT_FABRICATION_PROMPT}
 
 ### DATA
 Master Resume: ${JSON.stringify(resumeData)}
-Strategy: ${architectResult.strategy}
-Budget: ${JSON.stringify(architectResult.budget)}
-
-### RULES
-1. EVERY bullet must be X-Y-Z formula: "Accomplished [X] as measured by [Y], by doing [Z]".
-2. Merge multiple bullets into dense "Super Bullets".
-3. Keep ALL Education, Skills, and Custom Sections.
-4. NO meta-talk in JSON values.
-5. NO field merging. Keep keys separate.
+Strategy: ${budgetResult?.strategy}
+Budget: ${JSON.stringify(budgetResult?.budget)}
 
 ### OUTPUT
-Return a valid Resume JSON object matching the input structure. NO preamble.
+Return a valid Resume JSON object. Fill the 1-page budget fully.
 `;
 
 		const result = await fabricator.generate(prompt);
@@ -162,30 +160,32 @@ const stylistStep = createStep({
 		if (!stylist) throw new Error("Stylist agent not found");
 
 		const fabricatedResume = getStepResult<ResumeData>("fabricate-resume");
+		const budgetResult = getStepResult<{ inlineSections: string[] }>("budget-resume");
+		
 		if (!fabricatedResume) throw new Error("Fabricated resume not found");
 
-		const prompt = `
-Choose the optimal design layout and theme for this resume.
+		const availableSections = [
+			"experience", 
+			"education", 
+			"skills", 
+			"projects", 
+			...fabricatedResume.customSections.map(s => s.id)
+		];
 
-### RESUME DATA
+		const prompt = `
+${STYLIST_PROMPT}
+
+### DATA
 ${JSON.stringify(fabricatedResume)}
 
-### OUTPUT SCHEMA (DesignSchema)
-{
-  "template": "classic" | "modern" | "sidebar",
-  "theme": {
-    "primaryColor": "hex_string",
-    "fontSize": "small" | "medium" | "large",
-    "lineHeight": "tight" | "relaxed"
-  },
-  "layout": {
-    "mainSections": ["experience", "education", "..."],
-    "sidebarSections": ["skills", "..."]
-  }
-}
+### AVAILABLE SECTIONS
+Assign all: ${availableSections.join(", ")}
 
-### INSTRUCTION
-Return ONLY the raw JSON object for the design settings.
+### INLINE HINTS
+${budgetResult?.inlineSections?.join(", ")}
+
+### OUTPUT
+Return a JSON DesignSchema object.
 `;
 
 		const result = await stylist.generate(prompt);
@@ -199,7 +199,6 @@ Return ONLY the raw JSON object for the design settings.
 			};
 		} catch (e) {
 			console.error("Stylist Parse Error:", result.text);
-			// Fallback to default design if stylist fails
 			return fabricatedResume;
 		}
 	},
@@ -213,7 +212,7 @@ export const fabricatorWorkflow = createWorkflow({
 	outputSchema: ResumeSchema,
 })
 	.then(auditStep)
-	.then(architectStep)
+	.then(budgetStep)
 	.then(fabricateStep)
 	.then(stylistStep)
 	.commit();

@@ -33,29 +33,29 @@ export async function POST(req: NextRequest) {
 					for await (const event of fullStream) {
 						console.log(`📦 Internal Event: ${event.type}`);
 						
-						// Using event.payload.id based on the type information provided
 						const stepId = (event.payload as any)?.id;
 
 						if (event.type === 'workflow-step-start') {
 							console.log(`  -> Step Started: ${stepId}`);
 							
 							const messages: Record<string, string> = {
-								'audit-resume': "Step 1/3: Auditing resume impact...",
-								'architect-layout': "Step 2/3: Architecting 1-page strategy...",
-								'fabricate-resume': "Step 3/3: Fabricating high-density resume...",
+								'audit-resume': "Step 1/4: Auditing resume impact...",
+								'budget-resume': "Step 2/4: Optimizing space budget...",
+								'fabricate-resume': "Step 3/4: Fabricating high-density resume...",
+								'stylist-orchestration': "Step 4/4: Finalizing visual design...",
 							};
 							
 							if (stepId && messages[stepId]) {
-								send({ status: messages[stepId] });
+								send({ status: messages[stepId], stepId });
 							}
 						}
 
 						if (event.type === 'workflow-step-result') {
 							console.log(`  -> Step Result: ${stepId}`);
 							
-							if (stepId === 'fabricate-resume') {
+							if (stepId === 'stylist-orchestration') {
 								const output = (event.payload as any).output;
-								console.log("✅ Final Fabrication Output captured!");
+								console.log("✅ Final Stylized Output captured!");
 								send({ status: "DONE", data: output });
 							}
 						}

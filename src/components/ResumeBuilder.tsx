@@ -11,9 +11,8 @@ import type { ResumeData } from "~/schemas/resume";
 import { RefineButton } from "~/components/ai/RefineButton";
 import { JobTailorModal } from "~/components/ai/JobTailorModal";
 import { CustomSections } from "~/components/editor/CustomSections";
-import { fabricateResume } from "~/app/actions/condense";
+import { FabricationProgressModal } from "~/components/ai/FabricationProgressModal";
 import { Wand2, Check, X, Loader2, Sparkles, BrainCircuit } from "lucide-react";
-import { readStreamableValue } from "@ai-sdk/rsc";
 
 import { type Layout } from "react-resizable-panels";
 
@@ -38,6 +37,7 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 	const [isTailorModalOpen, setIsTailorModalOpen] = useState(false);
 	const [isFabricating, setIsFabricating] = useState(false);
 	const [fabricationStatus, setFabricationStatus] = useState("");
+	const [currentStepId, setCurrentStepId] = useState("");
 
 	// Determine which data to show in editor and preview
 	const activeData = draft || original;
@@ -67,6 +67,7 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 	const handleFabricate = async () => {
 		setIsFabricating(true);
 		setFabricationStatus("Initiating Mastra workflow...");
+		setCurrentStepId("audit-resume");
 		
 		try {
 			const response = await fetch("/api/workflow/fabricate", {
@@ -78,7 +79,7 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 
 			const reader = response.body?.getReader();
 			const textDecoder = new TextDecoder();
-			let buffer = ""; // Buffer for handling fragmented NDJSON chunks
+			let buffer = "";
 
 			if (!reader) return;
 
@@ -88,25 +89,21 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 
 				buffer += textDecoder.decode(value, { stream: true });
 				const lines = buffer.split("\n");
-				
-				// Keep the last partial line in the buffer
 				buffer = lines.pop() || "";
 
 				for (const line of lines) {
 					if (!line.trim()) continue;
 					try {
 						const update = JSON.parse(line);
-						console.log("📥 UI Event:", update.status || "data");
-						
 						if (update.status) {
 							setFabricationStatus(update.status);
 						}
-						
+						if (update.stepId) {
+							setCurrentStepId(update.stepId);
+						}
 						if (update.data) {
-							console.log("✅ SUCCESS: Final Resume Data Received!");
 							setDraft(update.data as ResumeData);
 						}
-						
 						if (update.error) {
 							throw new Error(update.error);
 						}
@@ -116,11 +113,12 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 				}
 			}
 		} catch (error) {
-			console.error("❌ Fabrication Error:", error);
+			console.error(error);
 			alert(error instanceof Error ? error.message : "An unexpected error occurred during fabrication.");
 		} finally {
 			setIsFabricating(false);
 			setFabricationStatus("");
+			setCurrentStepId("");
 		}
 	};
 
@@ -168,9 +166,9 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 						className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all disabled:opacity-50 min-w-[160px] justify-center"
 					>
 						{isFabricating ? (
-							<div className="flex items-center gap-2">
+							<div className="flex items-center gap-2 text-indigo-600">
 								<Loader2 className="h-3.5 w-3.5 animate-spin" />
-								<span className="text-[10px] animate-pulse uppercase tracking-tight truncate max-w-[100px]">{fabricationStatus}</span>
+								<span className="text-[10px] uppercase tracking-tight">Fabricating...</span>
 							</div>
 						) : (
 							<>
@@ -358,6 +356,12 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 			)}
 			{isTailorModalOpen && (
 				<JobTailorModal onClose={() => setIsTailorModalOpen(false)} />
+			)}
+			{isFabricating && (
+				<FabricationProgressModal 
+					status={fabricationStatus} 
+					currentStepId={currentStepId} 
+				/>
 			)}
 		</>
 	);
