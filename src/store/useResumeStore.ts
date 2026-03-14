@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { immer } from "zustand/middleware/immer";
 import {
 	DEFAULT_RESUME,
 	type CustomSection,
@@ -60,202 +59,259 @@ interface ResumeState {
 
 export const useResumeStore = create<ResumeState>()(
 	persist(
-		immer((set) => ({
+		(set) => ({
 			original: DEFAULT_RESUME,
 			draft: null,
 
 			setOriginal: (data) =>
-				set((state) => {
-					state.original = data;
-				}),
+				set((state) => ({
+					...state,
+					original: data,
+				})),
 
 			setDraft: (data) =>
-				set((state) => {
-					state.draft = data;
-				}),
+				set((state) => ({
+					...state,
+					draft: data,
+				})),
 
 			applyDraft: () =>
 				set((state) => {
 					if (state.draft) {
-						state.original = state.draft;
-						state.draft = null;
+						return {
+							...state,
+							original: state.draft,
+							draft: null,
+						};
 					}
+					return state;
 				}),
 
 			discardDraft: () =>
-				set((state) => {
-					state.draft = null;
-				}),
+				set((state) => ({
+					...state,
+					draft: null,
+				})),
 
 			resetResume: () =>
-				set((state) => {
-					state.original = DEFAULT_RESUME;
-					state.draft = null;
+				set({
+					original: DEFAULT_RESUME,
+					draft: null,
 				}),
 
 			updatePersonalInfo: (info) =>
-				set((state) => {
-					state.original.personalInfo = {
-						...state.original.personalInfo,
-						...info,
-					};
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						personalInfo: {
+							...state.original.personalInfo,
+							...info,
+						},
+					},
+				})),
 
 			addExperience: (experience) =>
-				set((state) => {
-					state.original.experience.push(experience);
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						experience: [...state.original.experience, experience],
+					},
+				})),
 
 			updateExperience: (id, updatedExperience) =>
-				set((state) => {
-					const index = state.original.experience.findIndex((exp) => exp.id === id);
-					if (index !== -1) {
-						state.original.experience[index] = {
-							...state.original.experience[index]!,
-							...updatedExperience,
-						};
-					}
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						experience: state.original.experience.map((exp) =>
+							exp.id === id ? { ...exp, ...updatedExperience } : exp,
+						),
+					},
+				})),
 
 			removeExperience: (id) =>
-				set((state) => {
-					state.original.experience = state.original.experience.filter(
-						(exp) => exp.id !== id,
-					);
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						experience: state.original.experience.filter((exp) => exp.id !== id),
+					},
+				})),
 
 			addEducation: (education) =>
-				set((state) => {
-					state.original.education.push(education);
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						education: [...state.original.education, education],
+					},
+				})),
 
 			updateEducation: (id, updatedEducation) =>
-				set((state) => {
-					const index = state.original.education.findIndex((edu) => edu.id === id);
-					if (index !== -1) {
-						state.original.education[index] = {
-							...state.original.education[index]!,
-							...updatedEducation,
-						};
-					}
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						education: state.original.education.map((edu) =>
+							edu.id === id ? { ...edu, ...updatedEducation } : edu,
+						),
+					},
+				})),
 
 			removeEducation: (id) =>
-				set((state) => {
-					state.original.education = state.original.education.filter(
-						(edu) => edu.id !== id,
-					);
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						education: state.original.education.filter((edu) => edu.id !== id),
+					},
+				})),
 
 			addSkill: (skill) =>
-				set((state) => {
-					state.original.skills.push(skill);
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						skills: [...state.original.skills, skill],
+					},
+				})),
 
 			updateSkill: (id, updatedSkill) =>
-				set((state) => {
-					const index = state.original.skills.findIndex((s) => s.id === id);
-					if (index !== -1) {
-						state.original.skills[index] = {
-							...state.original.skills[index]!,
-							...updatedSkill,
-						};
-					}
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						skills: state.original.skills.map((s) =>
+							s.id === id ? { ...s, ...updatedSkill } : s,
+						),
+					},
+				})),
 
 			removeSkill: (id) =>
-				set((state) => {
-					state.original.skills = state.original.skills.filter((s) => s.id !== id);
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						skills: state.original.skills.filter((s) => s.id !== id),
+					},
+				})),
 
 			addProject: (project) =>
-				set((state) => {
-					state.original.projects.push(project);
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						projects: [...state.original.projects, project],
+					},
+				})),
 
 			updateProject: (id, updatedProject) =>
-				set((state) => {
-					const index = state.original.projects.findIndex((p) => p.id === id);
-					if (index !== -1) {
-						state.original.projects[index] = {
-							...state.original.projects[index]!,
-							...updatedProject,
-						};
-					}
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						projects: state.original.projects.map((p) =>
+							p.id === id ? { ...p, ...updatedProject } : p,
+						),
+					},
+				})),
 
 			removeProject: (id) =>
-				set((state) => {
-					state.original.projects = state.original.projects.filter(
-						(p) => p.id !== id,
-					);
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						projects: state.original.projects.filter((p) => p.id !== id),
+					},
+				})),
 
-			// Custom Section Actions
 			setCustomSections: (sections) =>
-				set((state) => {
-					state.original.customSections = sections;
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						customSections: sections,
+					},
+				})),
 
 			addCustomSection: (section) =>
-				set((state) => {
-					state.original.customSections.push(section);
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						customSections: [...state.original.customSections, section],
+					},
+				})),
 
 			updateCustomSection: (id, updatedSection) =>
-				set((state) => {
-					const index = state.original.customSections.findIndex((s) => s.id === id);
-					if (index !== -1) {
-						state.original.customSections[index] = {
-							...state.original.customSections[index]!,
-							...updatedSection,
-						};
-					}
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						customSections: state.original.customSections.map((s) =>
+							s.id === id ? { ...s, ...updatedSection } : s,
+						),
+					},
+				})),
 
 			removeCustomSection: (id) =>
-				set((state) => {
-					state.original.customSections = state.original.customSections.filter(
-						(s) => s.id !== id,
-					);
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						customSections: state.original.customSections.filter(
+							(s) => s.id !== id,
+						),
+					},
+				})),
 
 			addCustomSectionItem: (sectionId, item) =>
-				set((state) => {
-					const section = state.original.customSections.find(
-						(s) => s.id === sectionId,
-					);
-					if (section) {
-						section.items.push(item);
-					}
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						customSections: state.original.customSections.map((s) =>
+							s.id === sectionId ? { ...s, items: [...s.items, item] } : s,
+						),
+					},
+				})),
 
 			updateCustomSectionItem: (sectionId, itemId, updatedItem) =>
-				set((state) => {
-					const section = state.original.customSections.find(
-						(s) => s.id === sectionId,
-					);
-					if (section) {
-						const index = section.items.findIndex((i) => i.id === itemId);
-						if (index !== -1) {
-							section.items[index] = {
-								...section.items[index]!,
-								...updatedItem,
-							};
-						}
-					}
-				}),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						customSections: state.original.customSections.map((s) =>
+							s.id === sectionId
+								? {
+										...s,
+										items: s.items.map((i) =>
+											i.id === itemId ? { ...i, ...updatedItem } : i,
+										),
+									}
+								: s,
+						),
+					},
+				})),
 
 			removeCustomSectionItem: (sectionId, itemId) =>
-				set((state) => {
-					const section = state.original.customSections.find(
-						(s) => s.id === sectionId,
-					);
-					if (section) {
-						section.items = section.items.filter((i) => i.id !== itemId);
-					}
-				}),
-		})),
+				set((state) => ({
+					...state,
+					original: {
+						...state.original,
+						customSections: state.original.customSections.map((s) =>
+							s.id === sectionId
+								? {
+										...s,
+										items: s.items.filter((i) => i.id !== itemId),
+									}
+								: s,
+						),
+					},
+				})),
+		}),
 		{
 			name: "resume-storage",
 		},

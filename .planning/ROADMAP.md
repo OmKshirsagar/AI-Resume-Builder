@@ -41,16 +41,22 @@
 ## Phase 5: Visual Orchestration & Dynamic Templates
 **Goal:** Transition from content fabrication to document design by having the AI choose and configure the visual layout.
 **Requirements:** [DESIGN-SCHEMA, STYLIST-AGENT, MULTI-LAYOUT, SMART-INLINE]
+
 **Plans:** 2 plans
-- [ ] 05-visual-orchestration-01-PLAN.md — Add design settings to schema and implement the Stylist Agent in the Mastra workflow.
-- [ ] 05-visual-orchestration-02-PLAN.md — Implement the dynamic Multi-Layout preview engine and smart inline list rendering.
+- [x] 05-visual-orchestration-01-PLAN.md — Add design settings to schema and implement the Stylist Agent in the Mastra workflow.
+- [x] 05-visual-orchestration-02-PLAN.md — Implement the dynamic Multi-Layout preview engine and smart inline list rendering.
 
 ## Phase 6: UI Editor & PDF Export
-- [ ] Build a robust, sectioned resume editor on the LHS with React Hook Form + Zod.
-- [ ] Integrate a PDF generation library (@react-pdf/renderer) for high-quality exports.
-- [ ] Ensure RHS preview accurately reflects the PDF output.
+**Goal:** Build a robust, sectioned resume editor on the LHS with React Hook Form + Zod, and integrate high-quality PDF generation.
+**Requirements:** [PHASE6-EDITOR-UI, PHASE6-PDF-EXPORT, PHASE6-PREVIEW-SYNC]
+
+**Plans:** 2 plans
+- [ ] 06-01-PLAN.md — Refactor Editor UI with FormProvider and debounced Zustand sync.
+- [ ] 06-02-PLAN.md — Implement PDF Export using @react-pdf/renderer mirroring preview layouts.
 
 ## Phase 7: Persistence & Deployment
-- [ ] Add user authentication (optional).
-- [ ] Deploy to Vercel and perform E2E testing.
-- [ ] Verify linting and formatting with Biome.
+**Goal:** Finalize the application with persistence, deployment, and performance optimizations.
+**Requirements:** [AUTH, DEPLOY, PERFORMANCE, FINAL-CHECK]
+
+**Plans:** To be planned
+- [ ] Build Phase 7 plans.

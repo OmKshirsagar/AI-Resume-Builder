@@ -102,6 +102,7 @@ export function PDFUpload({ onExtracted }: PDFUploadProps) {
 						layout: {
 							mainSections: ["experience", "education", "projects"],
 							sidebarSections: ["skills"],
+							inlineSections: ["skills", "languages"],
 						},
 					},
 				};
