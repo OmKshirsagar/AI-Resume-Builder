@@ -18,7 +18,7 @@ export function ResumeEditor({
 	disabled,
 	children,
 }: ResumeEditorProps) {
-	// Deep clone the data to prevent mutation errors from frozen state
+	// Deep clone the data to prevent mutation errors
 	const clonedData = JSON.parse(JSON.stringify(data));
 
 	const methods = useForm<ResumeData>({
@@ -27,8 +27,9 @@ export function ResumeEditor({
 		mode: "onChange",
 	});
 
-	const { watch, reset } = methods;
+	const { watch, reset, getValues } = methods;
 	const isFirstRender = useRef(true);
+	const lastSyncedDataRef = useRef<string>(JSON.stringify(data));
 	const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	// Watch all form changes
@@ -46,7 +47,11 @@ export function ResumeEditor({
 		}
 
 		syncTimeoutRef.current = setTimeout(() => {
-			onSync(watchedData);
+			const currentStringified = JSON.stringify(watchedData);
+			if (currentStringified !== lastSyncedDataRef.current) {
+				lastSyncedDataRef.current = currentStringified;
+				onSync(watchedData);
+			}
 		}, 400);
 
 		return () => {
@@ -56,13 +61,20 @@ export function ResumeEditor({
 		};
 	}, [watchedData, onSync]);
 
-	// Handle external data changes (e.g., AI extraction)
+	// Handle external data changes (e.g., AI extraction, store updates)
 	useEffect(() => {
-		// Only reset if the incoming data is significantly different from current form state
-		if (JSON.stringify(data) !== JSON.stringify(watchedData)) {
-			reset(JSON.parse(JSON.stringify(data)));
+		const incomingStringified = JSON.stringify(data);
+		
+		// Only reset if the incoming data is different from what we last SYNCED
+		// AND different from what is currently in the form.
+		// This prevents the "reset loop" where a local change triggers a store update
+		// which triggers a reset that kills the local change.
+		if (incomingStringified !== lastSyncedDataRef.current) {
+			console.log("🔄 External data change detected, resetting form...");
+			lastSyncedDataRef.current = incomingStringified;
+			reset(JSON.parse(incomingStringified));
 		}
-	}, [data, reset, watchedData]);
+	}, [data, reset]);
 
 	return (
 		<FormProvider {...methods}>
