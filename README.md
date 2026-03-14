@@ -1,25 +1,27 @@
 # Gemini Resume Builder 🚀
 
-A high-performance, AI-powered resume builder designed for the 2026 talent landscape. Built with **Next.js 15**, **Tailwind CSS 4**, and **Google Gemini 3 Flash**, this application helps you build ATS-optimized, single-column resumes that pass the "10-second recruiter scan."
+A high-performance, AI-powered resume builder designed for the 2026 talent landscape. Built with **Next.js 15**, **Tailwind CSS 4**, and **Mastra**, this application uses an advanced multi-agent workflow to transform multi-page resumes into high-impact, ATS-optimized 1-page documents.
 
 ## ✨ Key Features
 
-- **Split-Pane UI:** Real-time WYSIWYG preview side-by-side with a powerful editor.
-- **AI PDF Extraction:** Upload your existing PDF resume, and Gemini will semantically parse it into structured data automatically.
-- **Dynamic Scaling Engine:** A pixel-perfect A4 preview that fluidly scales to fit your screen size while maintaining document integrity.
-- **ATS-Optimized Templates:** Focus on single-column layouts designed for modern Talent Intelligence Systems.
-- **Recruiter-Centric Feedback (Coming Soon):** Get real-time critiques from an AI acting as a "Senior Technical Recruiter."
-- **Persistent State:** Your progress is automatically saved to local storage and persists across sessions.
+- **Agentic Fabrication (Mastra):** A 4-step reliable AI pipeline (**Audit → Architect → Fabricate → Stylist**) that semantically reconstructs your resume rather than just deleting text.
+- **Visual Orchestration:** The AI dynamically chooses between **Single-Column** and **Sidebar** layouts based on your career density to maximize page real estate.
+- **Smart Inline Formatting:** Automatic transformation of list-heavy sections (Skills, Languages, Awards) into space-saving horizontal lines.
+- **AI PDF Extraction:** Seamlessly parse your existing PDF resume into structured JSON data using Google Gemini.
+- **Dynamic Scaling Engine:** A pixel-perfect A4 preview that fluidly scales to fit any screen while maintaining strictly valid document proportions.
+- **Unified Editor:** A robust, validated form interface with debounced auto-save to the global store.
+- **High-Fidelity PDF Export:** Generate ATS-friendly PDFs that perfectly mirror your AI-optimized on-screen layout using `@react-pdf/renderer`.
 
 ## 🛠️ Tech Stack
 
 - **Framework:** [Next.js 15](https://nextjs.org/) (App Router, Turbopack)
-- **AI Engine:** [Google Gemini 3 Flash](https://ai.google.dev/) via [Vercel AI SDK](https://sdk.vercel.ai/)
+- **Agentic Framework:** [Mastra](https://mastra.ai/) (Reliable Multi-Step Workflows)
+- **AI Engines:** [Gemma 3 27B](https://ai.google.dev/gemma) & [Gemini 2.5 Flash](https://ai.google.dev/)
 - **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
 - **State Management:** [Zustand 5](https://zustand-demo.pmnd.rs/)
 - **Form Handling:** [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
-- **Tooling:** [Biome](https://biomejs.dev/) (Linting & Formatting)
-- **Layout:** [React Resizable Panels](https://github.com/bvaughn/react-resizable-panels)
+- **PDF Generation:** [@react-pdf/renderer](https://react-pdf.org/)
+- **Tooling:** [Biome](https://biomejs.dev/) (Fast Linting & Formatting)
 
 ## 🚀 Getting Started
 
@@ -32,8 +34,8 @@ A high-performance, AI-powered resume builder designed for the 2026 talent lands
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/resume-builder.git
-   cd resume-builder
+   git clone https://github.com/OmKshirsagar/AI-Resume-Builder.git
+   cd AI-Resume-Builder
    ```
 
 2. **Install dependencies:**
@@ -58,8 +60,11 @@ A high-performance, AI-powered resume builder designed for the 2026 talent lands
 
 - [x] **Phase 1: Foundation** - Persistent split-pane layout & A4 scaling engine.
 - [x] **Phase 2: AI Import** - PDF parsing and AI data extraction pipeline.
-- [ ] **Phase 3: AI Enhancement** - Section refinement and job tailoring.
-- [ ] **Phase 4: Export** - High-quality PDF generation.
+- [x] **Phase 3: AI Enhancement** - Section refinement and job tailoring.
+- [x] **Phase 4: Content Condensation** - Agentic multi-step fabrication (Mastra).
+- [x] **Phase 5: Visual Orchestration** - AI-driven layout selection and smart lists.
+- [x] **Phase 6: Editor & Export** - Unified form editor and high-fidelity PDF export.
+- [ ] **Phase 7: Persistence & Deployment** - Vercel deployment and final polish.
 
 ## 🤝 Contributing
 
