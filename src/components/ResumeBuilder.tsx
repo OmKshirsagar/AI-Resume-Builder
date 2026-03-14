@@ -1,44 +1,36 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { BrainCircuit, Check, Loader2, Sparkles, Wand2, X } from "lucide-react";
+import { useCallback, useState } from "react";
+import type { Layout } from "react-resizable-panels";
+import { FabricationProgressModal } from "~/components/ai/FabricationProgressModal";
+import { JobTailorModal } from "~/components/ai/JobTailorModal";
+import { CustomSectionsForm } from "~/components/editor/forms/CustomSectionsForm";
+import { EducationForm } from "~/components/editor/forms/EducationForm";
+import { ExperienceForm } from "~/components/editor/forms/ExperienceForm";
+import { PersonalInfoForm } from "~/components/editor/forms/PersonalInfoForm";
+import { ProjectsForm } from "~/components/editor/forms/ProjectsForm";
+import { SkillsForm } from "~/components/editor/forms/SkillsForm";
+import { ParsedDataReview } from "~/components/editor/ParsedDataReview";
+import { PDFUpload } from "~/components/editor/PDFUpload";
+import { ResumeEditor } from "~/components/editor/ResumeEditor";
+import { DownloadButton } from "~/components/export/DownloadButton";
 import { MainLayout } from "~/components/layout/MainLayout";
 import { PreviewPane } from "~/components/preview/PreviewPane";
 import { ResumeRenderer } from "~/components/preview/ResumeRenderer";
-import { PDFUpload } from "~/components/editor/PDFUpload";
-import { ParsedDataReview } from "~/components/editor/ParsedDataReview";
-import { useResumeStore } from "~/store/useResumeStore";
 import type { ResumeData } from "~/schemas/resume";
-import { JobTailorModal } from "~/components/ai/JobTailorModal";
-import { ResumeEditor } from "~/components/editor/ResumeEditor";
-import { PersonalInfoForm } from "~/components/editor/forms/PersonalInfoForm";
-import { ExperienceForm } from "~/components/editor/forms/ExperienceForm";
-import { EducationForm } from "~/components/editor/forms/EducationForm";
-import { SkillsForm } from "~/components/editor/forms/SkillsForm";
-import { ProjectsForm } from "~/components/editor/forms/ProjectsForm";
-import { CustomSectionsForm } from "~/components/editor/forms/CustomSectionsForm";
-import { FabricationProgressModal } from "~/components/ai/FabricationProgressModal";
-import { DownloadButton } from "~/components/export/DownloadButton";
-import { fabricateResume } from "~/app/actions/condense";
-import { Wand2, Check, X, Loader2, Sparkles, BrainCircuit } from "lucide-react";
-import { readStreamableValue } from "@ai-sdk/rsc";
-
-import { type Layout } from "react-resizable-panels";
+import { useResumeStore } from "~/store/useResumeStore";
 
 interface ResumeBuilderProps {
 	defaultLayout?: Layout;
 }
 
 export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
-	const { 
-		original, 
-		draft, 
-		setOriginal, 
-		setDraft, 
-		applyDraft, 
-		discardDraft, 
-	} = useResumeStore();
-	
-	const [pendingExtractedData, setPendingExtractedData] = useState<ResumeData | null>(null);
+	const { original, draft, setOriginal, setDraft, applyDraft, discardDraft } =
+		useResumeStore();
+
+	const [pendingExtractedData, setPendingExtractedData] =
+		useState<ResumeData | null>(null);
 	const [isTailorModalOpen, setIsTailorModalOpen] = useState(false);
 	const [isFabricating, setIsFabricating] = useState(false);
 	const [fabricationStatus, setFabricationStatus] = useState("");
@@ -63,17 +55,20 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 		setPendingExtractedData(null);
 	};
 
-	const handleSync = useCallback((data: ResumeData) => {
-		if (!isPreviewingDraft) {
-			setOriginal(data);
-		}
-	}, [isPreviewingDraft, setOriginal]);
+	const handleSync = useCallback(
+		(data: ResumeData) => {
+			if (!isPreviewingDraft) {
+				setOriginal(data);
+			}
+		},
+		[isPreviewingDraft, setOriginal],
+	);
 
 	const handleFabricate = async () => {
 		setIsFabricating(true);
 		setFabricationStatus("Initiating Mastra workflow...");
 		setCurrentStepId("audit-resume");
-		
+
 		try {
 			const response = await fetch("/api/workflow/fabricate", {
 				method: "POST",
@@ -119,7 +114,11 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 			}
 		} catch (error) {
 			console.error(error);
-			alert(error instanceof Error ? error.message : "An unexpected error occurred during fabrication.");
+			alert(
+				error instanceof Error
+					? error.message
+					: "An unexpected error occurred during fabrication.",
+			);
 		} finally {
 			setIsFabricating(false);
 			setFabricationStatus("");
@@ -128,27 +127,31 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 	};
 
 	const Editor = (
-		<div className="flex flex-col min-h-full">
+		<div className="flex min-h-full flex-col">
 			{isPreviewingDraft && (
-				<div className="sticky top-0 z-30 m-6 flex items-center justify-between rounded-xl bg-indigo-600 p-4 text-white shadow-xl animate-in slide-in-from-top duration-300 ring-4 ring-indigo-600/20">
+				<div className="slide-in-from-top sticky top-0 z-30 m-6 flex animate-in items-center justify-between rounded-xl bg-indigo-600 p-4 text-white shadow-xl ring-4 ring-indigo-600/20 duration-300">
 					<div className="flex items-center gap-3">
-						<Sparkles className="h-5 w-5 text-indigo-200 animate-pulse" />
+						<Sparkles className="h-5 w-5 animate-pulse text-indigo-200" />
 						<div>
-							<p className="font-bold text-sm">Previewing Agentic Fabrication</p>
-							<p className="text-xs text-indigo-100">AI has redesigned your resume using Mastra. Review in preview.</p>
+							<p className="font-bold text-sm">
+								Previewing Agentic Fabrication
+							</p>
+							<p className="text-indigo-100 text-xs">
+								AI has redesigned your resume using Mastra. Review in preview.
+							</p>
 						</div>
 					</div>
 					<div className="flex gap-2">
 						<button
+							className="flex items-center gap-1 rounded-lg bg-white/10 px-3 py-1.5 font-bold text-xs transition-colors hover:bg-white/20"
 							onClick={discardDraft}
-							className="flex items-center gap-1 rounded-lg bg-white/10 px-3 py-1.5 text-xs font-bold hover:bg-white/20 transition-colors"
 						>
 							<X className="h-3 w-3" />
 							Discard
 						</button>
 						<button
+							className="flex items-center gap-1 rounded-lg bg-white px-3 py-1.5 font-bold text-indigo-600 text-xs transition-colors hover:bg-indigo-50"
 							onClick={applyDraft}
-							className="flex items-center gap-1 rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-colors"
 						>
 							<Check className="h-3 w-3" />
 							Apply
@@ -167,14 +170,16 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 				<div className="flex gap-2">
 					<DownloadButton data={activeData} />
 					<button
-						onClick={handleFabricate}
+						className="flex min-w-[160px] items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700 text-xs transition-all hover:bg-slate-50 disabled:opacity-50"
 						disabled={isFabricating || isPreviewingDraft}
-						className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all disabled:opacity-50 min-w-[160px] justify-center"
+						onClick={handleFabricate}
 					>
 						{isFabricating ? (
 							<div className="flex items-center gap-2 text-indigo-600">
 								<Loader2 className="h-3.5 w-3.5 animate-spin" />
-								<span className="text-[10px] uppercase tracking-tight">Fabricating...</span>
+								<span className="text-[10px] uppercase tracking-tight">
+									Fabricating...
+								</span>
 							</div>
 						) : (
 							<>
@@ -184,9 +189,9 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 						)}
 					</button>
 					<button
-						onClick={() => setIsTailorModalOpen(true)}
+						className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 font-bold text-white text-xs shadow-indigo-500/20 shadow-lg transition-all hover:bg-indigo-700 active:scale-95 disabled:opacity-50"
 						disabled={isPreviewingDraft}
-						className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all active:scale-95 disabled:opacity-50"
+						onClick={() => setIsTailorModalOpen(true)}
 					>
 						<Wand2 className="h-3.5 w-3.5" />
 						Tailor for Job
@@ -195,7 +200,7 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 			</header>
 
 			<div className="p-6">
-				<section className="space-y-4 rounded-xl border border-dashed border-slate-200 bg-slate-50/50 p-6">
+				<section className="space-y-4 rounded-xl border border-slate-200 border-dashed bg-slate-50/50 p-6">
 					<h2 className="font-semibold text-lg text-slate-800">
 						Import Existing Resume
 					</h2>
@@ -203,7 +208,11 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 				</section>
 			</div>
 
-			<ResumeEditor data={activeData} onSync={handleSync} disabled={isPreviewingDraft}>
+			<ResumeEditor
+				data={activeData}
+				disabled={isPreviewingDraft}
+				onSync={handleSync}
+			>
 				<PersonalInfoForm disabled={isPreviewingDraft} />
 				<ExperienceForm disabled={isPreviewingDraft} />
 				<EducationForm disabled={isPreviewingDraft} />
@@ -230,17 +239,17 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 			{pendingExtractedData && (
 				<ParsedDataReview
 					data={pendingExtractedData}
-					onConfirm={handleConfirmExtraction}
 					onCancel={handleCancelExtraction}
+					onConfirm={handleConfirmExtraction}
 				/>
 			)}
 			{isTailorModalOpen && (
 				<JobTailorModal onClose={() => setIsTailorModalOpen(false)} />
 			)}
 			{isFabricating && (
-				<FabricationProgressModal 
-					status={fabricationStatus} 
-					currentStepId={currentStepId} 
+				<FabricationProgressModal
+					currentStepId={currentStepId}
+					status={fabricationStatus}
 				/>
 			)}
 		</>

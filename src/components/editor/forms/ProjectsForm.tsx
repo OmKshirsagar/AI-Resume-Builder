@@ -82,17 +82,19 @@ function ProjectItem({ index, onRemove, disabled }: { index: number, onRemove: (
 				<div className="p-4 space-y-4 animate-in slide-in-from-top-2 duration-200">
 					<div className="grid grid-cols-2 gap-4">
 						<div className="space-y-1">
-							<label className="text-[10px] font-bold text-slate-400 uppercase">Project Name</label>
+							<label htmlFor={`proj-name-${index}`} className="text-[10px] font-bold text-slate-400 uppercase">Project Name</label>
 							<input
 								{...register(`projects.${index}.name`)}
+								id={`proj-name-${index}`}
 								className="h-9 w-full rounded border border-slate-200 px-3 text-sm focus:border-blue-500 focus:outline-none"
 								disabled={disabled}
 							/>
 						</div>
 						<div className="space-y-1">
-							<label className="text-[10px] font-bold text-slate-400 uppercase">Link</label>
+							<label htmlFor={`proj-link-${index}`} className="text-[10px] font-bold text-slate-400 uppercase">Link</label>
 							<input
 								{...register(`projects.${index}.link`)}
+								id={`proj-link-${index}`}
 								placeholder="https://..."
 								className="h-9 w-full rounded border border-slate-200 px-3 text-sm focus:border-blue-500 focus:outline-none"
 								disabled={disabled}

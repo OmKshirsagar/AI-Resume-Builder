@@ -1,11 +1,11 @@
 import { createStep, createWorkflow } from "@mastra/core/workflows";
 import { z } from "zod";
-import { ResumeSchema, DesignSchema, type ResumeData } from "~/schemas/resume";
-import { 
-	AGENT_ANALYSIS_PROMPT, 
-	AGENT_FABRICATION_PROMPT, 
-	STYLIST_PROMPT 
+import {
+	AGENT_ANALYSIS_PROMPT,
+	AGENT_FABRICATION_PROMPT,
+	STYLIST_PROMPT,
 } from "~/lib/ai/prompts";
+import { DesignSchema, type ResumeData, ResumeSchema } from "~/schemas/resume";
 
 const cleanAndParseJson = (text: string) => {
 	const clean = text
@@ -51,7 +51,7 @@ Return ONLY the raw JSON object. No preamble.
 		try {
 			const parsed = cleanAndParseJson(result.text);
 			return parsed;
-		} catch (e) {
+		} catch (_e) {
 			console.error("Audit Parse Error:", result.text);
 			throw new Error("Audit step failed to produce valid JSON");
 		}
@@ -101,7 +101,7 @@ Return ONLY the raw JSON object.
 		try {
 			const parsed = cleanAndParseJson(result.text);
 			return parsed;
-		} catch (e) {
+		} catch (_e) {
 			console.error("Budget Parse Error:", result.text);
 			throw new Error("Budget step failed to produce valid JSON");
 		}
@@ -143,7 +143,7 @@ Return a valid Resume JSON object. Fill the 1-page budget fully.
 		try {
 			const parsed = cleanAndParseJson(result.text);
 			return ResumeSchema.parse(parsed);
-		} catch (e) {
+		} catch (_e) {
 			console.error("Fabricator Parse Error:", result.text);
 			throw new Error("Fabricator step failed to produce valid JSON");
 		}
@@ -160,16 +160,18 @@ const stylistStep = createStep({
 		if (!stylist) throw new Error("Stylist agent not found");
 
 		const fabricatedResume = getStepResult<ResumeData>("fabricate-resume");
-		const budgetResult = getStepResult<{ inlineSections: string[] }>("budget-resume");
-		
+		const budgetResult = getStepResult<{ inlineSections: string[] }>(
+			"budget-resume",
+		);
+
 		if (!fabricatedResume) throw new Error("Fabricated resume not found");
 
 		const availableSections = [
-			"experience", 
-			"education", 
-			"skills", 
-			"projects", 
-			...fabricatedResume.customSections.map(s => s.id)
+			"experience",
+			"education",
+			"skills",
+			"projects",
+			...fabricatedResume.customSections.map((s) => s.id),
 		];
 
 		const prompt = `
@@ -192,12 +194,12 @@ Return a JSON DesignSchema object.
 		try {
 			const designSettings = cleanAndParseJson(result.text);
 			const validatedDesign = DesignSchema.parse(designSettings);
-			
+
 			return {
 				...fabricatedResume,
-				design: validatedDesign
+				design: validatedDesign,
 			};
-		} catch (e) {
+		} catch (_e) {
 			console.error("Stylist Parse Error:", result.text);
 			return fabricatedResume;
 		}

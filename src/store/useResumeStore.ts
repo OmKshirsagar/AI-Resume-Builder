@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import {
-	DEFAULT_RESUME,
 	type CustomSection,
 	type CustomSectionItem,
+	DEFAULT_RESUME,
 	type Education,
 	type Experience,
 	type PersonalInformation,
@@ -136,7 +136,9 @@ export const useResumeStore = create<ResumeState>()(
 					...state,
 					original: {
 						...state.original,
-						experience: state.original.experience.filter((exp) => exp.id !== id),
+						experience: state.original.experience.filter(
+							(exp) => exp.id !== id,
+						),
 					},
 				})),
 

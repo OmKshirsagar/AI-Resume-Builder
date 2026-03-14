@@ -1,9 +1,9 @@
 "use client";
 
+import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import type { ResumeData } from "~/schemas/resume";
-import { Plus, Trash2, ChevronDown, ChevronRight } from "lucide-react";
-import { useState } from "react";
 
 interface CustomSectionsFormProps {
 	disabled?: boolean;
@@ -19,12 +19,16 @@ export function CustomSectionsForm({ disabled }: CustomSectionsFormProps) {
 	return (
 		<div className="space-y-6">
 			<div className="flex items-center justify-between border-b pb-2">
-				<h2 className="font-semibold text-lg text-slate-800">Custom Sections</h2>
+				<h2 className="font-semibold text-lg text-slate-800">
+					Custom Sections
+				</h2>
 				<button
-					type="button"
-					onClick={() => append({ id: crypto.randomUUID(), title: "New Section", items: [] })}
+					className="flex items-center gap-1 font-bold text-blue-600 text-xs hover:text-blue-700 disabled:opacity-50"
 					disabled={disabled}
-					className="flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 disabled:opacity-50"
+					onClick={() =>
+						append({ id: crypto.randomUUID(), title: "New Section", items: [] })
+					}
+					type="button"
 				>
 					<Plus className="h-3.5 w-3.5" />
 					Add Section
@@ -32,16 +36,18 @@ export function CustomSectionsForm({ disabled }: CustomSectionsFormProps) {
 			</div>
 
 			{fields.length === 0 && (
-				<p className="text-sm text-slate-400 italic">No custom sections added yet.</p>
+				<p className="text-slate-400 text-sm italic">
+					No custom sections added yet.
+				</p>
 			)}
 
 			<div className="space-y-4">
 				{fields.map((field, index) => (
 					<CustomSectionItemComponent
-						key={field.id}
-						index={index}
-						onRemove={() => remove(index)}
 						disabled={disabled}
+						index={index}
+						key={field.id}
+						onRemove={() => remove(index)}
 					/>
 				))}
 			</div>
@@ -49,7 +55,15 @@ export function CustomSectionsForm({ disabled }: CustomSectionsFormProps) {
 	);
 }
 
-function CustomSectionItemComponent({ index, onRemove, disabled }: { index: number, onRemove: () => void, disabled?: boolean }) {
+function CustomSectionItemComponent({
+	index,
+	onRemove,
+	disabled,
+}: {
+	index: number;
+	onRemove: () => void;
+	disabled?: boolean;
+}) {
 	const [isOpen, setIsOpen] = useState(true);
 	const { control, register, watch } = useFormContext<ResumeData>();
 	const { fields, append, remove } = useFieldArray({
@@ -60,76 +74,97 @@ function CustomSectionItemComponent({ index, onRemove, disabled }: { index: numb
 	const title = watch(`customSections.${index}.title`);
 
 	return (
-		<div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+		<div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
 			<div className="flex items-center justify-between bg-slate-50 px-4 py-3">
-				<div className="flex items-center gap-2 font-bold text-slate-700 text-sm flex-1">
-					<button 
-						type="button"
+				<div className="flex flex-1 items-center gap-2 font-bold text-slate-700 text-sm">
+					<button
+						className="rounded p-1 transition-colors hover:bg-slate-200"
 						onClick={() => setIsOpen(!isOpen)}
-						className="p-1 hover:bg-slate-200 rounded transition-colors"
+						type="button"
 					>
-						{isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+						{isOpen ? (
+							<ChevronDown className="h-4 w-4" />
+						) : (
+							<ChevronRight className="h-4 w-4" />
+						)}
 					</button>
-					<input 
+					<input
 						{...register(`customSections.${index}.title`)}
-						className="bg-transparent border-none p-0 font-bold focus:ring-0 w-full text-sm"
-						placeholder="Section Title (e.g. Certifications)"
+						className="w-full border-none bg-transparent p-0 font-bold text-sm focus:ring-0"
 						disabled={disabled}
+						placeholder="Section Title (e.g. Certifications)"
 					/>
 				</div>
 				<button
-					type="button"
-					onClick={onRemove}
+					className="text-slate-400 transition-colors hover:text-red-500 disabled:opacity-50"
 					disabled={disabled}
-					className="text-slate-400 hover:text-red-500 transition-colors disabled:opacity-50"
+					onClick={onRemove}
+					type="button"
 				>
 					<Trash2 className="h-4 w-4" />
 				</button>
 			</div>
 
 			{isOpen && (
-				<div className="p-4 space-y-4 animate-in slide-in-from-top-2 duration-200">
+				<div className="slide-in-from-top-2 animate-in space-y-4 p-4 duration-200">
 					<div className="space-y-4">
 						{fields.map((itemField, itemIndex) => (
-							<div key={itemField.id} className="relative pl-4 border-l-2 border-slate-100 space-y-3">
+							<div
+								className="relative space-y-3 border-slate-100 border-l-2 pl-4"
+								key={itemField.id}
+							>
 								<button
-									type="button"
-									onClick={() => remove(itemIndex)}
+									className="absolute top-0 -right-1 text-slate-300 transition-colors hover:text-red-500"
 									disabled={disabled}
-									className="absolute -right-1 top-0 text-slate-300 hover:text-red-500 transition-colors"
+									onClick={() => remove(itemIndex)}
+									type="button"
 								>
 									<Trash2 className="h-3.5 w-3.5" />
 								</button>
-								
-								<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-									<input 
-										{...register(`customSections.${index}.items.${itemIndex}.title`)}
+
+								<div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+									<input
+										{...register(
+											`customSections.${index}.items.${itemIndex}.title`,
+										)}
+										className="h-9 w-full rounded border border-slate-200 px-3 text-xs focus:border-blue-500 focus:outline-none"
+										disabled={disabled}
 										placeholder="Item Title"
-										className="h-9 w-full rounded border border-slate-200 px-3 text-xs focus:border-blue-500 focus:outline-none"
-										disabled={disabled}
 									/>
-									<input 
-										{...register(`customSections.${index}.items.${itemIndex}.date`)}
-										placeholder="Date"
+									<input
+										{...register(
+											`customSections.${index}.items.${itemIndex}.date`,
+										)}
 										className="h-9 w-full rounded border border-slate-200 px-3 text-xs focus:border-blue-500 focus:outline-none"
 										disabled={disabled}
+										placeholder="Date"
 									/>
 								</div>
-								<input 
-									{...register(`customSections.${index}.items.${itemIndex}.subtitle`)}
-									placeholder="Subtitle/Organization"
+								<input
+									{...register(
+										`customSections.${index}.items.${itemIndex}.subtitle`,
+									)}
 									className="h-9 w-full rounded border border-slate-200 px-3 text-xs focus:border-blue-500 focus:outline-none"
 									disabled={disabled}
+									placeholder="Subtitle/Organization"
 								/>
 							</div>
 						))}
 					</div>
 
 					<button
-						type="button"
-						onClick={() => append({ id: crypto.randomUUID(), title: "", subtitle: "", date: "", description: [] })}
+						className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-slate-200 border-dashed px-4 py-2 font-medium text-slate-500 text-xs transition-all hover:bg-slate-50 hover:text-slate-700"
 						disabled={disabled}
-						className="flex items-center gap-1.5 rounded-lg border border-dashed border-slate-200 px-4 py-2 text-xs font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-all w-full justify-center"
+						onClick={() =>
+							append({
+								id: crypto.randomUUID(),
+								title: "",
+								subtitle: "",
+								date: "",
+								description: [],
+							})
+						}
+						type="button"
 					>
 						<Plus className="h-3.5 w-3.5" />
 						Add Item to {title || "Section"}

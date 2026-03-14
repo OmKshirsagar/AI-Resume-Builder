@@ -100,34 +100,38 @@ function ExperienceItem({ index, onRemove, disabled }: { index: number, onRemove
 				<div className="p-4 space-y-4 animate-in slide-in-from-top-2 duration-200">
 					<div className="grid grid-cols-2 gap-4">
 						<div className="space-y-1">
-							<label className="text-[10px] font-bold text-slate-400 uppercase">Company</label>
+							<label htmlFor={`exp-company-${index}`} className="text-[10px] font-bold text-slate-400 uppercase">Company</label>
 							<input
 								{...register(`experience.${index}.company`)}
+								id={`exp-company-${index}`}
 								className="h-9 w-full rounded border border-slate-200 px-3 text-sm focus:border-blue-500 focus:outline-none"
 								disabled={disabled}
 							/>
 						</div>
 						<div className="space-y-1">
-							<label className="text-[10px] font-bold text-slate-400 uppercase">Position</label>
+							<label htmlFor={`exp-position-${index}`} className="text-[10px] font-bold text-slate-400 uppercase">Position</label>
 							<input
 								{...register(`experience.${index}.position`)}
+								id={`exp-position-${index}`}
 								className="h-9 w-full rounded border border-slate-200 px-3 text-sm focus:border-blue-500 focus:outline-none"
 								disabled={disabled}
 							/>
 						</div>
 						<div className="space-y-1">
-							<label className="text-[10px] font-bold text-slate-400 uppercase">Start Date</label>
+							<label htmlFor={`exp-start-${index}`} className="text-[10px] font-bold text-slate-400 uppercase">Start Date</label>
 							<input
 								{...register(`experience.${index}.startDate`)}
+								id={`exp-start-${index}`}
 								placeholder="e.g. Jan 2020"
 								className="h-9 w-full rounded border border-slate-200 px-3 text-sm focus:border-blue-500 focus:outline-none"
 								disabled={disabled}
 							/>
 						</div>
 						<div className="space-y-1">
-							<label className="text-[10px] font-bold text-slate-400 uppercase">End Date</label>
+							<label htmlFor={`exp-end-${index}`} className="text-[10px] font-bold text-slate-400 uppercase">End Date</label>
 							<input
 								{...register(`experience.${index}.endDate`)}
+								id={`exp-end-${index}`}
 								placeholder="e.g. Present"
 								className="h-9 w-full rounded border border-slate-200 px-3 text-sm focus:border-blue-500 focus:outline-none"
 								disabled={disabled}

@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
-import { ResumeBuilder } from "~/components/ResumeBuilder";
 import type { Layout } from "react-resizable-panels";
+import { ResumeBuilder } from "~/components/ResumeBuilder";
 
 export default async function HomePage() {
 	const cookieStore = await cookies();

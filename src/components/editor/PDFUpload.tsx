@@ -126,11 +126,11 @@ export function PDFUpload({ onExtracted }: PDFUploadProps) {
 	return (
 		<div className="flex flex-col gap-4">
 			<button
-				type="button"
 				aria-label="Upload PDF resume"
 				className={`relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 transition-colors ${isUploading ? "border-muted bg-muted/50" : "border-muted-foreground/20 hover:border-primary/50 hover:bg-muted/30"}`}
-				onClick={() => !isUploading && fileInputRef.current?.click()}
 				disabled={isUploading}
+				onClick={() => !isUploading && fileInputRef.current?.click()}
+				type="button"
 			>
 				<input
 					accept="application/pdf"

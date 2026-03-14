@@ -15,7 +15,10 @@ const ExtractionPersonalInformationSchema = z.object({
 	email: z.string().email().describe("The person's email address"),
 	phone: z.string().default("").describe("Phone number, if available"),
 	location: z.string().default("").describe("City and State/Country"),
-	summary: z.string().default("").describe("A brief professional summary or about me section"),
+	summary: z
+		.string()
+		.default("")
+		.describe("A brief professional summary or about me section"),
 });
 
 const ExtractionExperienceSchema = z.object({
@@ -25,7 +28,9 @@ const ExtractionExperienceSchema = z.object({
 	startDate: z.string().default("").describe("Start date (e.g., 'Jan 2020')"),
 	endDate: z.string().default("").describe("End date or 'Present'"),
 	current: z.boolean().describe("Is this the current role?"),
-	description: z.array(z.string()).describe("List of accomplishments and responsibilities"),
+	description: z
+		.array(z.string())
+		.describe("List of accomplishments and responsibilities"),
 });
 
 const ExtractionEducationSchema = z.object({
@@ -34,13 +39,19 @@ const ExtractionEducationSchema = z.object({
 	fieldOfStudy: z.string().default("").describe("Major or field of study"),
 	location: z.string().default("").describe("School location"),
 	startDate: z.string().default("").describe("Start date"),
-	endDate: z.string().default("").describe("Graduation date (e.g., 'May 2022')"),
+	endDate: z
+		.string()
+		.default("")
+		.describe("Graduation date (e.g., 'May 2022')"),
 });
 
 const ExtractionSkillSchema = z.object({
 	name: z.string().describe("Skill name (e.g., 'TypeScript')"),
 	level: z.string().default("").describe("Skill level or proficiency"),
-	category: z.string().default("").describe("Skill category (e.g., 'Languages')"),
+	category: z
+		.string()
+		.default("")
+		.describe("Skill category (e.g., 'Languages')"),
 });
 
 const ExtractionProjectSchema = z.object({
@@ -52,14 +63,25 @@ const ExtractionProjectSchema = z.object({
 });
 
 const ExtractionCustomSectionItemSchema = z.object({
-	title: z.string().describe("The item title (e.g., 'AWS Certified Solutions Architect')"),
-	subtitle: z.string().default("").describe("Secondary detail (e.g., 'Amazon Web Services')"),
+	title: z
+		.string()
+		.describe("The item title (e.g., 'AWS Certified Solutions Architect')"),
+	subtitle: z
+		.string()
+		.default("")
+		.describe("Secondary detail (e.g., 'Amazon Web Services')"),
 	date: z.string().default("").describe("Date or date range"),
-	description: z.array(z.string()).describe("List of details or accomplishments for this item"),
+	description: z
+		.array(z.string())
+		.describe("List of details or accomplishments for this item"),
 });
 
 const ExtractionCustomSectionSchema = z.object({
-	title: z.string().describe("The section title (e.g., 'Certifications', 'Languages', 'Awards')"),
+	title: z
+		.string()
+		.describe(
+			"The section title (e.g., 'Certifications', 'Languages', 'Awards')",
+		),
 	items: z.array(ExtractionCustomSectionItemSchema),
 });
 
@@ -69,7 +91,11 @@ const ExtractionResumeSchema = z.object({
 	education: z.array(ExtractionEducationSchema),
 	skills: z.array(ExtractionSkillSchema),
 	projects: z.array(ExtractionProjectSchema),
-	customSections: z.array(ExtractionCustomSectionSchema).describe("Capture any other sections like Certifications, Languages, Awards, Volunteering, etc."),
+	customSections: z
+		.array(ExtractionCustomSectionSchema)
+		.describe(
+			"Capture any other sections like Certifications, Languages, Awards, Volunteering, etc.",
+		),
 });
 
 export async function extractResumeFromPDF(formData: FormData) {
@@ -83,7 +109,8 @@ export async function extractResumeFromPDF(formData: FormData) {
 
 		const { output } = await generateText({
 			model: google("gemini-3-flash-preview"),
-			system: "You are an expert resume parser. Extract the information from the provided PDF resume accurately into the structured format. Identify sections that do not fit into Experience, Education, Skills, or Projects (e.g., Certifications, Awards, Volunteering, Languages, Publications) and map them to the `customSections` array. Each custom section should have a clear title reflecting its content. If a piece of information is missing, omit it or use an empty array/null where appropriate.",
+			system:
+				"You are an expert resume parser. Extract the information from the provided PDF resume accurately into the structured format. Identify sections that do not fit into Experience, Education, Skills, or Projects (e.g., Certifications, Awards, Volunteering, Languages, Publications) and map them to the `customSections` array. Each custom section should have a clear title reflecting its content. If a piece of information is missing, omit it or use an empty array/null where appropriate.",
 			messages: [
 				{
 					role: "user",

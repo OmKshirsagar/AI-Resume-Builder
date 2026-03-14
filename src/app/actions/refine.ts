@@ -1,8 +1,8 @@
 "use server";
 
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { streamText } from "ai";
 import { createStreamableValue } from "@ai-sdk/rsc";
+import { streamText } from "ai";
 import { env } from "~/env";
 import { REFINE_SYSTEM_PROMPT } from "~/lib/ai/prompts";
 

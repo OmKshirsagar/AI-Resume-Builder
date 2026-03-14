@@ -6,7 +6,7 @@ import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
 const config = {
-  serverExternalPackages: ["@mastra/core", "@mastra/libsql"],
+	serverExternalPackages: ["@mastra/core", "@mastra/libsql"],
 };
 
 export default config;

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Sparkles, Check, X, Loader2 } from "lucide-react";
 import { readStreamableValue } from "@ai-sdk/rsc";
+import { Check, Loader2, Sparkles, X } from "lucide-react";
+import { useState } from "react";
 import { refineText } from "~/app/actions/refine";
 
 interface RefineButtonProps {
@@ -50,11 +50,11 @@ export function RefineButton({ text, onApply }: RefineButtonProps) {
 	return (
 		<div className="relative inline-block">
 			<button
-				type="button"
-				onClick={handleRefine}
+				className="flex items-center gap-1.5 rounded-md bg-blue-50 px-2 py-1 font-medium text-blue-600 text-xs transition-colors hover:bg-blue-100 disabled:opacity-50"
 				disabled={isRefining || !text.trim()}
-				className="flex items-center gap-1.5 rounded-md bg-blue-50 px-2 py-1 text-blue-600 text-xs font-medium transition-colors hover:bg-blue-100 disabled:opacity-50"
+				onClick={handleRefine}
 				title="Refine with AI (X-Y-Z formula)"
+				type="button"
 			>
 				{isRefining ? (
 					<Loader2 className="h-3 w-3 animate-spin" />
@@ -65,38 +65,40 @@ export function RefineButton({ text, onApply }: RefineButtonProps) {
 			</button>
 
 			{showPreview && (
-				<div className="absolute left-0 top-full z-50 mt-2 w-80 rounded-lg border bg-white p-4 shadow-xl ring-1 ring-black/5">
+				<div className="absolute top-full left-0 z-50 mt-2 w-80 rounded-lg border bg-white p-4 shadow-xl ring-1 ring-black/5">
 					<div className="mb-2 flex items-center justify-between">
 						<span className="font-semibold text-slate-900 text-xs uppercase tracking-wider">
 							AI Refinement (X-Y-Z)
 						</span>
 						<button
-							type="button"
-							onClick={handleCancel}
 							className="text-slate-400 hover:text-slate-600"
+							onClick={handleCancel}
+							type="button"
 						>
 							<X className="h-4 w-4" />
 						</button>
 					</div>
 
-					<div className="mb-4 min-h-[4rem] rounded bg-slate-50 p-3 text-sm text-slate-700 leading-relaxed italic">
+					<div className="mb-4 min-h-[4rem] rounded bg-slate-50 p-3 text-slate-700 text-sm italic leading-relaxed">
 						{refinedText || (isRefining && "Generating...")}
-						{isRefining && <span className="inline-block animate-pulse ml-0.5 w-1 h-3 bg-blue-500" />}
+						{isRefining && (
+							<span className="ml-0.5 inline-block h-3 w-1 animate-pulse bg-blue-500" />
+						)}
 					</div>
 
 					{!isRefining && refinedText && (
 						<div className="flex justify-end gap-2">
 							<button
-								type="button"
+								className="rounded px-2.5 py-1.5 font-medium text-slate-600 text-xs hover:bg-slate-100"
 								onClick={handleCancel}
-								className="rounded px-2.5 py-1.5 text-slate-600 text-xs font-medium hover:bg-slate-100"
+								type="button"
 							>
 								Discard
 							</button>
 							<button
-								type="button"
+								className="flex items-center gap-1.5 rounded bg-blue-600 px-2.5 py-1.5 font-medium text-white text-xs hover:bg-blue-700"
 								onClick={handleApply}
-								className="flex items-center gap-1.5 rounded bg-blue-600 px-2.5 py-1.5 text-white text-xs font-medium hover:bg-blue-700"
+								type="button"
 							>
 								<Check className="h-3 w-3" />
 								Apply

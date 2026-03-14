@@ -19,22 +19,24 @@ export function PersonalInfoForm({ disabled }: PersonalInfoFormProps) {
 			</h2>
 			<div className="grid grid-cols-2 gap-4">
 				<div className="space-y-2">
-					<label className="font-medium text-slate-500 text-xs uppercase">
+					<label htmlFor="fullName" className="font-medium text-slate-500 text-xs uppercase">
 						Full Name
 					</label>
 					<input
 						{...register("personalInfo.fullName")}
+						id="fullName"
 						className="h-10 w-full rounded border bg-white px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
 						placeholder="John Doe"
 						disabled={disabled}
 					/>
 				</div>
 				<div className="space-y-2">
-					<label className="font-medium text-slate-500 text-xs uppercase">
+					<label htmlFor="email" className="font-medium text-slate-500 text-xs uppercase">
 						Email
 					</label>
 					<input
 						{...register("personalInfo.email")}
+						id="email"
 						type="email"
 						className="h-10 w-full rounded border bg-white px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
 						placeholder="john@example.com"
@@ -42,22 +44,24 @@ export function PersonalInfoForm({ disabled }: PersonalInfoFormProps) {
 					/>
 				</div>
 				<div className="space-y-2">
-					<label className="font-medium text-slate-500 text-xs uppercase">
+					<label htmlFor="phone" className="font-medium text-slate-500 text-xs uppercase">
 						Phone
 					</label>
 					<input
 						{...register("personalInfo.phone")}
+						id="phone"
 						className="h-10 w-full rounded border bg-white px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
 						placeholder="+1 234 567 890"
 						disabled={disabled}
 					/>
 				</div>
 				<div className="space-y-2">
-					<label className="font-medium text-slate-500 text-xs uppercase">
+					<label htmlFor="location" className="font-medium text-slate-500 text-xs uppercase">
 						Location
 					</label>
 					<input
 						{...register("personalInfo.location")}
+						id="location"
 						className="h-10 w-full rounded border bg-white px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
 						placeholder="City, State"
 						disabled={disabled}
@@ -66,7 +70,7 @@ export function PersonalInfoForm({ disabled }: PersonalInfoFormProps) {
 			</div>
 			<div className="space-y-2">
 				<div className="flex items-center justify-between">
-					<label className="font-medium text-slate-500 text-xs uppercase">
+					<label htmlFor="summary" className="font-medium text-slate-500 text-xs uppercase">
 						Professional Summary
 					</label>
 					{!disabled && (
@@ -78,6 +82,7 @@ export function PersonalInfoForm({ disabled }: PersonalInfoFormProps) {
 				</div>
 				<textarea
 					{...register("personalInfo.summary")}
+					id="summary"
 					className="min-h-[100px] w-full rounded border bg-white p-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
 					placeholder="Briefly describe your professional background and goals..."
 					disabled={disabled}

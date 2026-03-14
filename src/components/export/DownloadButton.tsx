@@ -18,7 +18,7 @@ export function DownloadButton({ data }: DownloadButtonProps) {
 		setIsGenerating(true);
 		try {
 			const blob = await pdf(<PDFDocument data={data} />).toBlob();
-			const fileName = `${data.personalInfo.fullName.replace(/\s+/g, "_")}_Resume.pdf`;
+			const fileName = `${(data.personalInfo.fullName || "Resume").replace(/\s+/g, "_")}_Resume.pdf`;
 			saveAs(blob, fileName);
 		} catch (error) {
 			console.error("PDF Generation failed:", error);
@@ -30,6 +30,7 @@ export function DownloadButton({ data }: DownloadButtonProps) {
 
 	return (
 		<button
+			type="button"
 			onClick={handleDownload}
 			disabled={isGenerating}
 			className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all disabled:opacity-50"

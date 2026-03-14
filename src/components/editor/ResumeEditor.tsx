@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
-import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ResumeSchema, type ResumeData } from "~/schemas/resume";
+import { useEffect, useRef } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { type ResumeData, ResumeSchema } from "~/schemas/resume";
 
 interface ResumeEditorProps {
 	data: ResumeData;
@@ -12,7 +12,12 @@ interface ResumeEditorProps {
 	children: React.ReactNode;
 }
 
-export function ResumeEditor({ data, onSync, disabled, children }: ResumeEditorProps) {
+export function ResumeEditor({
+	data,
+	onSync,
+	disabled,
+	children,
+}: ResumeEditorProps) {
 	// Deep clone the data to prevent mutation errors from frozen state
 	const clonedData = JSON.parse(JSON.stringify(data));
 
@@ -62,7 +67,7 @@ export function ResumeEditor({ data, onSync, disabled, children }: ResumeEditorP
 	return (
 		<FormProvider {...methods}>
 			<form className="mx-auto flex max-w-2xl flex-col space-y-8 p-6 pb-24">
-				<fieldset disabled={disabled} className="space-y-8 contents">
+				<fieldset className="contents space-y-8" disabled={disabled}>
 					{children}
 				</fieldset>
 			</form>

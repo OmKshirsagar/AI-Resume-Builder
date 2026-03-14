@@ -72,24 +72,31 @@ export const CustomSectionSchema = z.object({
 
 export const DesignSchema = z.object({
 	template: z.enum(["classic", "modern", "sidebar"]).default("classic"),
-	theme: z.object({
-		primaryColor: z.string().default("#000000"),
-		fontSize: z.enum(["small", "medium", "large"]).default("medium"),
-		lineHeight: z.enum(["tight", "relaxed"]).default("relaxed"),
-	}).default({
-		primaryColor: "#000000",
-		fontSize: "medium",
-		lineHeight: "relaxed",
-	}),
-	layout: z.object({
-		mainSections: z.array(z.string()).default([]),
-		sidebarSections: z.array(z.string()).default([]),
-		inlineSections: z.array(z.string()).default([]).describe("IDs or titles of sections to render horizontally"),
-	}).default({
-		mainSections: ["experience", "education", "projects"],
-		sidebarSections: ["skills"],
-		inlineSections: ["skills", "languages"],
-	}),
+	theme: z
+		.object({
+			primaryColor: z.string().default("#000000"),
+			fontSize: z.enum(["small", "medium", "large"]).default("medium"),
+			lineHeight: z.enum(["tight", "relaxed"]).default("relaxed"),
+		})
+		.default({
+			primaryColor: "#000000",
+			fontSize: "medium",
+			lineHeight: "relaxed",
+		}),
+	layout: z
+		.object({
+			mainSections: z.array(z.string()).default([]),
+			sidebarSections: z.array(z.string()).default([]),
+			inlineSections: z
+				.array(z.string())
+				.default([])
+				.describe("IDs or titles of sections to render horizontally"),
+		})
+		.default({
+			mainSections: ["experience", "education", "projects"],
+			sidebarSections: ["skills"],
+			inlineSections: ["skills", "languages"],
+		}),
 });
 
 export const ResumeSchema = z.object({

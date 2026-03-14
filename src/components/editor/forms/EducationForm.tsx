@@ -95,33 +95,37 @@ function EducationItem({ index, onRemove, disabled }: { index: number, onRemove:
 				<div className="p-4 space-y-4 animate-in slide-in-from-top-2 duration-200">
 					<div className="grid grid-cols-2 gap-4">
 						<div className="space-y-1">
-							<label className="text-[10px] font-bold text-slate-400 uppercase">School</label>
+							<label htmlFor={`edu-school-${index}`} className="font-bold text-[10px] text-slate-400 uppercase">School</label>
 							<input
 								{...register(`education.${index}.school`)}
+								id={`edu-school-${index}`}
 								className="h-9 w-full rounded border border-slate-200 px-3 text-sm focus:border-blue-500 focus:outline-none"
 								disabled={disabled}
 							/>
 						</div>
 						<div className="space-y-1">
-							<label className="text-[10px] font-bold text-slate-400 uppercase">Degree</label>
+							<label htmlFor={`edu-degree-${index}`} className="font-bold text-[10px] text-slate-400 uppercase">Degree</label>
 							<input
 								{...register(`education.${index}.degree`)}
+								id={`edu-degree-${index}`}
 								className="h-9 w-full rounded border border-slate-200 px-3 text-sm focus:border-blue-500 focus:outline-none"
 								disabled={disabled}
 							/>
 						</div>
 						<div className="space-y-1">
-							<label className="text-[10px] font-bold text-slate-400 uppercase">Major / Field</label>
+							<label htmlFor={`edu-major-${index}`} className="font-bold text-[10px] text-slate-400 uppercase">Major / Field</label>
 							<input
 								{...register(`education.${index}.fieldOfStudy`)}
+								id={`edu-major-${index}`}
 								className="h-9 w-full rounded border border-slate-200 px-3 text-sm focus:border-blue-500 focus:outline-none"
 								disabled={disabled}
 							/>
 						</div>
 						<div className="space-y-1">
-							<label className="text-[10px] font-bold text-slate-400 uppercase">End Date</label>
+							<label htmlFor={`edu-date-${index}`} className="font-bold text-[10px] text-slate-400 uppercase">End Date</label>
 							<input
 								{...register(`education.${index}.endDate`)}
+								id={`edu-date-${index}`}
 								placeholder="e.g. 2023"
 								className="h-9 w-full rounded border border-slate-200 px-3 text-sm focus:border-blue-500 focus:outline-none"
 								disabled={disabled}
