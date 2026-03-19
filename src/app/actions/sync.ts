@@ -64,13 +64,17 @@ export async function syncResumeData(data: ResumeData) {
 			current: exp.current,
 		});
 
-		for (let i = 0; i < (exp.description?.length || 0); i++) {
-			await db.insert(bullets).values({
-				id: crypto.randomUUID(),
-				experienceId: expId,
-				content: exp.description[i],
-				order: i,
-			});
+		const description = exp.description || [];
+		for (let i = 0; i < description.length; i++) {
+			const content = description[i];
+			if (content !== undefined) {
+				await db.insert(bullets).values({
+					id: crypto.randomUUID(),
+					experienceId: expId,
+					content: content,
+					order: i,
+				});
+			}
 		}
 	}
 
