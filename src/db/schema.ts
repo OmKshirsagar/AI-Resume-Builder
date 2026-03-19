@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, real, AnySQLiteColumn } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 
 // 1. Users Table (Synced from Clerk)
@@ -11,14 +11,20 @@ export const users = sqliteTable("users", {
 	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
 
-// 2. Resumes Table (The "Container" for all resume data)
+// 2. Resumes Table
 export const resumes = sqliteTable("resumes", {
 	id: text("id").primaryKey(),
 	userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+	
+	// Self-referencing link for versioning
+	parentId: text("parent_id").references((): AnySQLiteColumn => resumes.id),
+	
 	title: text("title").notNull().default("Untitled Resume"),
 	isMaster: integer("is_master", { mode: "boolean" }).notNull().default(false),
 	
-	// Complex but flatter objects stored as JSON for simplicity
+	// File Uniqueness: Store SHA-256 hash of the source PDF to prevent redundant parsing
+	fileHash: text("file_hash"),
+	
 	personalInfo: text("personal_info", { mode: "json" }).notNull(),
 	design: text("design", { mode: "json" }).notNull(),
 	
@@ -39,13 +45,13 @@ export const experiences = sqliteTable("experiences", {
 	order: integer("order").notNull().default(0),
 });
 
-// 4. Bullets Table (The "Bullet Bank" - Individual accomplishments)
+// 4. Bullets Table
 export const bullets = sqliteTable("bullets", {
 	id: text("id").primaryKey(),
 	experienceId: text("experience_id").notNull().references(() => experiences.id, { onDelete: "cascade" }),
 	content: text("content").notNull(),
 	order: real("order").notNull().default(0),
-	isActive: integer("is_active", { mode: "boolean" }).notNull().default(true), // For cherry-picking
+	isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
 });
 
 // 5. Education Table
@@ -78,7 +84,7 @@ export const projects = sqliteTable("projects", {
 	link: text("link"),
 	startDate: text("start_date"),
 	endDate: text("end_date"),
-	description: text("description", { mode: "json" }).notNull(), // Small array of strings
+	description: text("description", { mode: "json" }).notNull(),
 	order: integer("order").notNull().default(0),
 });
 
@@ -97,7 +103,7 @@ export const customSectionItems = sqliteTable("custom_section_items", {
 	title: text("title").notNull(),
 	subtitle: text("subtitle"),
 	date: text("date"),
-	description: text("description", { mode: "json" }).notNull(), // Small array of strings
+	description: text("description", { mode: "json" }).notNull(),
 	order: integer("order").notNull().default(0),
 });
 
@@ -109,6 +115,12 @@ export const usersRelations = relations(users, ({ many }) => ({
 
 export const resumesRelations = relations(resumes, ({ one, many }) => ({
 	user: one(users, { fields: [resumes.userId], references: [users.id] }),
+	parent: one(resumes, {
+		fields: [resumes.parentId],
+		references: [resumes.id],
+		relationName: "versions",
+	}),
+	versions: many(resumes, { relationName: "versions" }),
 	experiences: many(experiences),
 	education: many(education),
 	skills: many(skills),
