@@ -12,7 +12,9 @@
 		"preview": "next build && next start",
 		"start": "next start",
 		"test": "vitest run",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"db:generate": "drizzle-kit generate",
+		"db:push": "drizzle-kit push"
 	},
 	"dependencies": {
 		"@ai-sdk/google": "^3.0.36",
@@ -37,6 +39,7 @@
 		"react-hook-form": "^7.71.2",
 		"react-pdf-tailwind": "^3.0.0",
 		"react-resizable-panels": "^4.7.0",
+		"svix": "^1.88.0",
 		"tailwind-merge": "^3.5.0",
 		"zod": "^3.24.2",
 		"zustand": "^5.0.11"

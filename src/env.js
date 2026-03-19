@@ -7,11 +7,12 @@ export const env = createEnv({
 	 * isn't built with invalid env vars.
 	 */
 	server: {
-		NODE_ENV: z.enum(["development", "test", "production"]),
+		NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
 		GOOGLE_GENERATIVE_AI_API_KEY: z.string().min(1),
 		CLERK_SECRET_KEY: z.string().min(1),
 		TURSO_DATABASE_URL: z.string().url(),
 		TURSO_AUTH_TOKEN: z.string().min(1),
+		CLERK_WEBHOOK_SECRET: z.string().min(1),
 	},
 
 	/**
@@ -34,6 +35,7 @@ export const env = createEnv({
 		TURSO_DATABASE_URL: process.env.TURSO_DATABASE_URL,
 		TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN,
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+		CLERK_WEBHOOK_SECRET: process.env.CLERK_WEBHOOK_SECRET,
 	},
 	/**
 	 * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
