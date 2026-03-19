@@ -1,82 +1,32 @@
-# Architecture
+# Architecture: Gemini Resume Builder
 
-**Analysis Date:** 2025-05-14
+## System Overview
+A high-performance, agentic web application for resume optimization. The system is divided into a **React-based Editor/Previewer** and a **Mastra-powered Multi-Agent Backend**.
 
-## Pattern Overview
+## Key Components
 
-**Overall:** Next.js 15 App Router Architecture
+### 1. Frontend: The WYSIWYG Engine
+- **State Management**: Zustand 5 with local storage persistence. Manages two primary states: `original` (Master Data) and `draft` (AI-optimized data).
+- **Editor**: Modular architecture using React Hook Form's `FormProvider`. Synchronizes with Zustand using a debounced (400ms) strategy to maintain preview fluidity.
+- **Preview**: Real-time A4 rendering engine using CSS transforms and Container Queries for pixel-perfect document proportions across screen sizes.
+- **Renderer**: Dynamic component that switches between layouts (Classic, Sidebar) based on AI blueprints.
 
-**Key Characteristics:**
-- **Server-First Components:** Next.js App Router defaults to Server Components, enabling better performance by reducing client-side JavaScript.
-- **Modern React:** Leverages React 19 features and standard modern hooks.
-- **Client-Side State Management:** Uses Zustand for global state that needs to be accessed across multiple components (likely for resume state).
-- **Zod-Powered Validation:** Uses Zod for environment variable validation and likely for resume data schema validation.
+### 2. Backend: Agentic Workflows (Mastra)
+- **Framework**: Mastra. Handles deterministic state transitions and complex agent chaining.
+- **Workflow (Fabricator)**:
+    1. **Auditor**: Ranks bullet point impact and identifies high-priority themes.
+    2. **Strategist/Budgeter**: Allocates a "bullet budget" based on career length to ensure 1-page fit.
+    3. **Fabricator**: Semantically merges content into dense, XYZ-formatted "Super Bullets."
+    4. **Stylist**: Chooses the visual layout (Single-Column vs. Sidebar) and spacing settings.
 
-## Layers
+### 3. Data Flow
+- **Input**: PDF Upload -> Gemini Extraction -> Zustand Store.
+- **Modification**: Manual Editing -> Debounced Sync -> Zustand Store -> Preview.
+- **Optimization**: Mastra Workflow -> Draft State -> User Review -> Apply/Discard.
+- **Output**: Zustand Store -> @react-pdf/renderer -> PDF Blob -> Client Download.
 
-**UI Layer (src/app and src/components):**
-- Purpose: Handles the presentation and user interaction.
-- Location: `src/app` (pages/layouts) and `src/components` (reusable UI)
-- Contains: React components, hooks, styles.
-- Depends on: Zustand stores, Zod schemas, React Hook Form.
-
-**State Management Layer (Zustand):**
-- Purpose: Centralized store for the application's global state (e.g., resume data).
-- Location: Not yet created (typically `src/store/` or `src/lib/store.ts`)
-- Contains: Zustand store definitions and actions.
-- Used by: UI components for reactive state updates.
-
-**Environment Layer (src/env.js):**
-- Purpose: Type-safe environment variable management.
-- Location: `src/env.js`
-- Contains: Zod schemas for server and client environment variables.
-- Used by: Entire application to access validated environment variables.
-
-## Data Flow
-
-**Current State Management (Projected):**
-
-1. User interacts with UI components (e.g., `src/components/editor`).
-2. Components update the global store (Zustand).
-3. The store propagates changes back to reactive components (e.g., `src/components/preview`).
-4. Forms handle local validation via React Hook Form and Zod.
-
-**State Management:**
-- Zustand for persistent application state.
-- React Hook Form for local component/form state.
-
-## Key Abstractions
-
-**Environment Configuration:**
-- Purpose: Ensures all required environment variables are present and correctly typed at build and run time.
-- Examples: `src/env.js`
-- Pattern: @t3-oss/env-nextjs
-
-## Entry Points
-
-**Root Page:**
-- Location: `src/app/page.tsx`
-- Triggers: HTTP GET request to `/`.
-- Responsibilities: Main application entry point UI.
-
-**Root Layout:**
-- Location: `src/app/layout.tsx`
-- Triggers: Every page request.
-- Responsibilities: Base HTML structure, global styles import, and provider wrapping.
-
-## Error Handling
-
-**Strategy:** Default Next.js 15 error handling.
-
-**Patterns:**
-- **Zod Validation:** Fails early and loudly if environment variables are incorrect or data doesn't match expected schemas.
-
-## Cross-Cutting Concerns
-
-**Logging:** Not detected (standard console.log).
-**Validation:** Zod-based schema validation (`src/env.js`).
-**Authentication:** Not yet implemented (Next-auth/Auth.js is standard for this stack).
-
----
-
-*Architecture analysis: 2025-05-14*
+## Design Patterns
+- **Provider Pattern**: Centralized form and state providers.
+- **Agentic Chain**: Step-by-step document reconstruction instead of simple text completion.
+- **Semantic Merging**: Using LLM reasoning to condense information without loss of context.
+- **Immutable Store**: Zustand with standard spread updates for compatibility with form libraries.
