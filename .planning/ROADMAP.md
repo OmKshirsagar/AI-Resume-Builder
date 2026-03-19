@@ -1,51 +1,50 @@
 # Roadmap: Gemini Resume Builder
 
-## Phase 1: Foundation & Scaffolding
-**Goal:** Establish a robust project foundation with a resizable split-pane UI, Zustand state management, and a responsive A4 preview scaling engine using Tailwind 4.
+## Milestone 1: Core Utility (v1.0.0) ✅
+**Status:** COMPLETE
 
-**Status:** ✅ COMPLETE
-- [x] 01-01-SUMMARY.md — Refined layout with cookie-based persistence and Tailwind 4 theme variables.
-- [x] 01-02-SUMMARY.md — Implemented Zustand 5 store with SSR-safe hydration and Zod schema validation.
-- [x] 01-03-SUMMARY.md — Implemented auto-scaling A4 preview using CSS transforms and Container Queries.
+- **Phase 1: Foundation & Scaffolding** ✅
+- **Phase 2: PDF Parsing & Data Extraction** ✅
+- **Phase 3: AI Enhancement & Tailoring** ✅
+- **Phase 4: Content Condensation (Mastra)** ✅
+- **Phase 5: Visual Orchestration & Templates** ✅
+- **Phase 6: UI Editor & PDF Export** ✅
+- **Phase 7: Persistence & Deployment** ✅
 
-## Phase 2: PDF Parsing & Data Extraction
-**Goal:** Implement AI-powered resume extraction from PDF files using Gemini and Vercel AI SDK, integrating it into the Zustand store.
+---
 
-**Status:** ✅ COMPLETE
-- [x] 02-01-SUMMARY.md — Implemented PDF upload UI and Server Action for AI-powered data extraction.
-- [x] 02-02-SUMMARY.md — Integrated extraction pipeline with Zustand store and built Review UI.
+## Milestone 2: The Pro SaaS Upgrade 🚀
+**Goal:** Transform the utility into a full SaaS product with user accounts, document versioning, and advanced AI analytics.
 
-## Phase 3: AI Enhancement & Tailoring
-**Goal:** AI-driven resume optimization (Refine Section) and JD-based tailoring (Job Tailor) with streaming feedback.
+### Phase 8: Authentication & Cloud Database (CURRENT)
+- [x] Integrate **Clerk** for user authentication.
+- [ ] Provision **Turso (LibSQL)** and **Drizzle ORM**.
+- [ ] Migrate from `localStorage` to cloud-sync based on User ID.
+- [ ] Implement multi-tenant data isolation.
 
-**Status:** ✅ COMPLETE
-- [x] 03-01-SUMMARY.md — Implemented "Refine Section" Server Action and UI (X-Y-Z formula, streaming).
-- [x] 03-02-SUMMARY.md — Implemented "Job Tailor" flow (JD input, multi-step alignment, suggestions).
+### Phase 9: Local PDF Parser Upgrade
+- [ ] Install and integrate `pdf2json` for coordinate-aware extraction.
+- [ ] Implement a **Layout Reassembly** algorithm to reconstruct columns/sidebars.
+- [ ] Refactor the extraction pipeline to send structured text to Gemini (Cost Saving).
 
-## Phase 4: Dynamic Sections & Content Condensation
-**Goal:** Upgrade the data architecture to support dynamic sections and implement the core "Condense to 1-Page" AI workflow using Mastra.
+### Phase 10: User Dashboard & LinkedIn Import
+- [ ] Build a User Dashboard to manage multiple resumes.
+- [ ] Implement the **LinkedIn-to-PDF** import guidance flow.
+- [ ] Support "Master" vs "Tailored" resume versioning.
 
-**Status:** ✅ COMPLETE
-- [x] 04-01-SUMMARY.md — Upgraded Zod schema/Zustand store for `customSections` and Master/Draft state.
-- [x] 04-02-SUMMARY.md — Implemented the "Resume Fabrication Workflow" in Mastra (Audit, Architect, Fabricate).
+### Phase 11: AI Cover Letter Generator
+- [ ] Create a dedicated Mastra workflow for Cover Letter synthesis.
+- [ ] Implement a matching UI for drafting and editing letters.
 
-## Phase 5: Visual Orchestration & Dynamic Templates
-**Goal:** Transition from content fabrication to document design by having the AI choose and configure the visual layout.
+### Phase 12: ATS Scoring & Semantic Analytics
+- [ ] Implement AI-driven keyword extraction and industry benchmarking.
+- [ ] Create an "Optimization Panel" with real-time "Score Boost" suggestions.
 
-**Status:** ✅ COMPLETE
-- [x] 05-01-SUMMARY.md — Added design settings to schema and implemented the Stylist Agent in Mastra.
-- [x] 05-02-SUMMARY.md — Implemented dynamic Multi-Layout preview engine and smart inline rendering.
+### Phase 13: Pro Template Gallery
+- [ ] Implement "Executive," "Creative," and "Minimal" PDF themes.
+- [ ] Use Atomic Design patterns for modular @react-pdf components.
 
-## Phase 6: UI Editor & PDF Export
-**Goal:** Build a robust, sectioned resume editor on the LHS with React Hook Form + Zod, and integrate high-quality PDF generation.
-
-**Status:** ✅ COMPLETE
-- [x] 06-01-SUMMARY.md — Refactored Editor UI with FormProvider and debounced Zustand sync.
-- [x] 06-02-SUMMARY.md — Implemented PDF Export using @react-pdf/renderer mirroring preview layouts.
-
-## Phase 7: Persistence & Deployment
-**Goal:** Finalize the application with production-ready settings and Vercel deployment verification.
-
-**Status:** ✅ COMPLETE
-- [x] 07-01-SUMMARY.md — Configured Vercel settings, external packages, and serverless timeouts.
-- [x] 07-02-SUMMARY.md — Performed final build check, accessibility sweep, and project-wide cleanup.
+### Phase 14: UI/UX Rehaul & Polish
+- [ ] **Account UI**: Fix account icon placement and navigation header.
+- [ ] **Animations**: Implement smoother Framer Motion transitions between editor sections.
+- [ ] **Themes**: Add Dark Mode support for the editor interface.

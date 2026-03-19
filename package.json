@@ -12,12 +12,16 @@
 		"preview": "next build && next start",
 		"start": "next start",
 		"test": "vitest run",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"db:generate": "drizzle-kit generate",
+		"db:push": "drizzle-kit push"
 	},
 	"dependencies": {
 		"@ai-sdk/google": "^3.0.36",
 		"@ai-sdk/rsc": "^2.0.105",
+		"@clerk/nextjs": "^7.0.5",
 		"@hookform/resolvers": "^5.2.2",
+		"@libsql/client": "^0.17.0",
 		"@mastra/ai-sdk": "^1.1.0",
 		"@mastra/core": "^1.8.0",
 		"@mastra/libsql": "^1.6.2",
@@ -25,6 +29,7 @@
 		"@t3-oss/env-nextjs": "^0.12.0",
 		"ai": "^6.0.105",
 		"clsx": "^2.1.1",
+		"drizzle-orm": "^0.45.1",
 		"file-saver": "^2.0.5",
 		"immer": "^11.1.4",
 		"lucide-react": "^0.575.0",
@@ -34,6 +39,7 @@
 		"react-hook-form": "^7.71.2",
 		"react-pdf-tailwind": "^3.0.0",
 		"react-resizable-panels": "^4.7.0",
+		"svix": "^1.88.0",
 		"tailwind-merge": "^3.5.0",
 		"zod": "^3.24.2",
 		"zustand": "^5.0.11"
@@ -49,6 +55,7 @@
 		"@types/react": "^19.0.0",
 		"@types/react-dom": "^19.0.0",
 		"@vitejs/plugin-react": "^5.1.4",
+		"drizzle-kit": "^0.31.10",
 		"jsdom": "^28.1.0",
 		"postcss": "^8.5.3",
 		"tailwindcss": "^4.0.15",
