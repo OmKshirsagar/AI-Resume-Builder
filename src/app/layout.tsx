@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
 	title: "Gemini Resume Builder",
@@ -14,14 +15,16 @@ const geist = Geist({
 	variable: "--font-geist-sans",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
 	return (
-		<html className={`${geist.variable} font-sans`} lang="en">
-			<body className="h-screen overflow-hidden bg-slate-50 antialiased">
-				{children}
-			</body>
-		</html>
+		<ClerkProvider>
+			<html className={`${geist.variable} font-sans`} lang="en">
+				<body className="h-screen overflow-hidden bg-slate-50 antialiased text-slate-900">
+					{children}
+				</body>
+			</html>
+		</ClerkProvider>
 	);
 }
