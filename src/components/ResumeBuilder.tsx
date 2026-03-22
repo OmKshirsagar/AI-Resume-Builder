@@ -1,8 +1,18 @@
 "use client";
 
 import { UserButton } from "@clerk/nextjs";
-import { BrainCircuit, Check, Loader2, Sparkles, Wand2, X } from "lucide-react";
-import { useCallback, useState } from "react";
+import {
+	BrainCircuit,
+	Check,
+	LayoutDashboard,
+	Loader2,
+	Plus,
+	Sparkles,
+	Wand2,
+	X,
+} from "lucide-react";
+import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
 import type { Layout } from "react-resizable-panels";
 import { FabricationProgressModal } from "~/components/ai/FabricationProgressModal";
 import { JobTailorModal } from "~/components/ai/JobTailorModal";
@@ -12,6 +22,7 @@ import { ExperienceForm } from "~/components/editor/forms/ExperienceForm";
 import { PersonalInfoForm } from "~/components/editor/forms/PersonalInfoForm";
 import { ProjectsForm } from "~/components/editor/forms/ProjectsForm";
 import { SkillsForm } from "~/components/editor/forms/SkillsForm";
+import { LinkedInImportModal } from "~/components/editor/LinkedInImportModal";
 import { ParsedDataReview } from "~/components/editor/ParsedDataReview";
 import { PDFUpload } from "~/components/editor/PDFUpload";
 import { ResumeEditor } from "~/components/editor/ResumeEditor";
@@ -24,18 +35,32 @@ import { useResumeStore } from "~/store/useResumeStore";
 
 interface ResumeBuilderProps {
 	defaultLayout?: Layout;
+	initialData?: ResumeData;
+	resumeId?: string;
 }
 
-export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
+export function ResumeBuilder({
+	defaultLayout,
+	initialData,
+	resumeId,
+}: ResumeBuilderProps) {
 	const { original, draft, setOriginal, setDraft, applyDraft, discardDraft } =
 		useResumeStore();
 
 	const [pendingExtractedData, setPendingExtractedData] =
 		useState<ResumeData | null>(null);
 	const [isTailorModalOpen, setIsTailorModalOpen] = useState(false);
+	const [isLinkedInModalOpen, setIsLinkedInModalOpen] = useState(false);
 	const [isFabricating, setIsFabricating] = useState(false);
 	const [fabricationStatus, setFabricationStatus] = useState("");
 	const [currentStepId, setCurrentStepId] = useState("");
+
+	// Initialize store with initialData if provided (from SSR)
+	useEffect(() => {
+		if (initialData) {
+			setOriginal(initialData);
+		}
+	}, [initialData, setOriginal]);
 
 	// Determine which data to show in editor and preview
 	const activeData = draft || original;
@@ -171,12 +196,27 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 						<h1 className="mb-1 font-bold text-slate-900 text-xl leading-none tracking-tight">
 							Resume Editor
 						</h1>
-						<p className="font-bold text-[10px] text-slate-400 uppercase tracking-widest">
-							v1.0.0 Stable
-						</p>
+						<div className="flex items-center gap-2">
+							<p className="font-bold text-[10px] text-slate-400 uppercase tracking-widest">
+								v1.0.0 Stable
+							</p>
+							{resumeId && (
+								<span className="rounded-full bg-slate-100 px-2 py-0.5 font-bold text-[10px] text-slate-500 uppercase tracking-tight">
+									Editing Saved Copy
+								</span>
+							)}
+						</div>
 					</div>
 				</div>
 				<div className="flex items-center gap-2">
+					<Link
+						className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700 text-xs transition-all hover:bg-slate-50"
+						href="/dashboard"
+					>
+						<LayoutDashboard className="h-3.5 w-3.5" />
+						Dashboard
+					</Link>
+					<div className="mx-1 h-6 w-px bg-slate-100" />
 					<DownloadButton data={activeData} />
 					<div className="mx-1 h-6 w-px bg-slate-100" />
 					<button
@@ -212,12 +252,42 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 			</header>
 
 			<div className="p-6">
-				<section className="space-y-4 rounded-xl border border-slate-200 border-dashed bg-slate-50/50 p-6">
-					<h2 className="font-semibold text-lg text-slate-800">
-						Import Existing Resume
-					</h2>
-					<PDFUpload onExtracted={handleExtracted} />
-				</section>
+				<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+					<section className="flex flex-col justify-center space-y-4 rounded-3xl border-2 border-slate-200 border-dashed bg-slate-50/50 p-8 text-center transition-colors hover:border-indigo-200">
+						<div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-slate-400 shadow-sm">
+							<Sparkles className="h-6 w-6" />
+						</div>
+						<div>
+							<h3 className="font-bold text-slate-900">
+								LinkedIn Quick Import
+							</h3>
+							<p className="mt-1 text-slate-500 text-sm">
+								Upload your LinkedIn PDF to populate your resume instantly.
+							</p>
+						</div>
+						<button
+							className="mx-auto flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-2.5 font-bold text-white text-xs shadow-lg transition-all hover:bg-slate-800 active:scale-95"
+							onClick={() => setIsLinkedInModalOpen(true)}
+							type="button"
+						>
+							<Plus className="h-3.5 w-3.5" />
+							Start LinkedIn Import
+						</button>
+					</section>
+
+					<section className="flex flex-col justify-center space-y-4 rounded-3xl border-2 border-slate-200 border-dashed bg-slate-50/50 p-8 text-center transition-colors hover:border-indigo-200">
+						<div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-slate-400 shadow-sm">
+							<BrainCircuit className="h-6 w-6" />
+						</div>
+						<div>
+							<h3 className="font-bold text-slate-900">Import Any PDF</h3>
+							<p className="mt-1 text-slate-500 text-sm">
+								Our AI will extract data from any existing resume file.
+							</p>
+						</div>
+						<PDFUpload onExtracted={handleExtracted} />
+					</section>
+				</div>
 			</div>
 
 			<ResumeEditor
@@ -257,6 +327,12 @@ export function ResumeBuilder({ defaultLayout }: ResumeBuilderProps) {
 			)}
 			{isTailorModalOpen && (
 				<JobTailorModal onClose={() => setIsTailorModalOpen(false)} />
+			)}
+			{isLinkedInModalOpen && (
+				<LinkedInImportModal
+					onClose={() => setIsLinkedInModalOpen(false)}
+					onExtracted={handleExtracted}
+				/>
 			)}
 			{isFabricating && (
 				<FabricationProgressModal
