@@ -76,14 +76,17 @@ function ExperienceItem({
 }) {
 	const [isOpen, setIsOpen] = useState(true);
 	const { control, register, watch, setValue } = useFormContext<ResumeData>();
+
+	// biome-ignore lint/suspicious/noExplicitAny: complex field path for nested arrays
+	const fieldName = `experience.${index}.description` as any;
+
 	const {
 		fields: bulletFields,
 		append: appendBullet,
 		remove: removeBullet,
 	} = useFieldArray({
 		control,
-		// biome-ignore lint/suspicious/noExplicitAny: complex field path
-		name: `experience.${index}.description` as any,
+		name: fieldName,
 	});
 
 	const company = watch(`experience.${index}.company`);
@@ -199,9 +202,10 @@ function ExperienceItem({
 
 						<div className="space-y-3" id={`exp-bullets-label-${index}`}>
 							{bulletFields.map((bulletField, bIndex) => {
+								const bPath = `experience.${index}.description.${bIndex}`;
 								const bulletValue = watch(
 									// biome-ignore lint/suspicious/noExplicitAny: complex field path
-									`experience.${index}.description.${bIndex}` as any,
+									bPath as any,
 								);
 								return (
 									<div className="group relative" key={bulletField.id}>
@@ -214,11 +218,9 @@ function ExperienceItem({
 													<RefineButton
 														onApply={(newText) =>
 															// biome-ignore lint/suspicious/noExplicitAny: complex field path
-															setValue(
-																`experience.${index}.description.${bIndex}` as any,
-																newText,
-																{ shouldDirty: true },
-															)
+															setValue(bPath as any, newText, {
+																shouldDirty: true,
+															})
 														}
 														text={bulletValue || ""}
 													/>
@@ -235,9 +237,7 @@ function ExperienceItem({
 										</div>
 										<textarea
 											// biome-ignore lint/suspicious/noExplicitAny: complex field path
-											{...register(
-												`experience.${index}.description.${bIndex}` as any,
-											)}
+											{...register(bPath as any)}
 											className="w-full rounded border border-slate-200 bg-slate-50 p-2 text-xs shadow-sm transition-all focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
 											disabled={disabled}
 											rows={2}

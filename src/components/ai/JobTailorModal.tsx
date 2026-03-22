@@ -282,8 +282,8 @@ export function JobTailorModal({ onClose }: JobTailorModalProps) {
 														{exp.description.map((b, bidx) => (
 															<li
 																className="flex gap-2 text-slate-600 text-xs"
-																// biome-ignore lint/suspicious/noArrayIndexKey: hash suffix for stability
-																key={`${exp.id}-current-${bidx}-${b.slice(0, 5)}`}
+																// biome-ignore lint/suspicious/noArrayIndexKey: grouping key
+																key={`${exp.id}-current-${bidx}`}
 															>
 																<div className="mt-1 h-1 w-1 shrink-0 rounded-full bg-slate-400" />
 																{b}
@@ -299,8 +299,8 @@ export function JobTailorModal({ onClose }: JobTailorModalProps) {
 														{change.newBullets.map((b, bidx) => (
 															<li
 																className="flex gap-2 font-medium text-indigo-900 text-xs"
-																// biome-ignore lint/suspicious/noArrayIndexKey: hash suffix for stability
-																key={`${exp.id}-new-${bidx}-${b.slice(0, 5)}`}
+																// biome-ignore lint/suspicious/noArrayIndexKey: grouping key
+																key={`${exp.id}-new-${bidx}`}
 															>
 																<div className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500" />
 																{b}
