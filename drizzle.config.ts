@@ -1,12 +1,19 @@
 import { defineConfig } from "drizzle-kit";
-import { env } from "~/env";
+import * as dotenv from "dotenv";
+
+// Load .env for Turso Cloud credentials
+dotenv.config();
+
+const dbUrl = process.env.TURSO_DATABASE_URL || "file:local.db";
+const isLocal = dbUrl.startsWith("file:");
 
 export default defineConfig({
 	schema: "./src/db/schema.ts",
 	out: "./drizzle",
 	dialect: "turso",
 	dbCredentials: {
-		url: env.TURSO_DATABASE_URL,
-		authToken: env.TURSO_AUTH_TOKEN,
+		url: dbUrl,
+		// Skip authToken if using a local SQLite file
+		authToken: isLocal ? undefined : process.env.TURSO_AUTH_TOKEN,
 	},
 });
