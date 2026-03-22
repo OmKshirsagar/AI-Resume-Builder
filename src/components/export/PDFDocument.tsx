@@ -69,11 +69,7 @@ export function PDFDocument({ data }: PDFDocumentProps) {
 		return (
 			<View style={tw("mt-1 ml-2")}>
 				{items.map((item, idx) => (
-					<View
-						// biome-ignore lint/suspicious/noArrayIndexKey: using content hash for stability
-						key={`${item.slice(0, 10)}-${idx}`}
-						style={tw("flex-row mb-0.5")}
-					>
+					<View key={idx} style={tw("flex-row mb-0.5")}>
 						<Text style={tw("text-[9px] mr-2")}>•</Text>
 						<Text style={tw("text-[9px] text-slate-800 flex-1")}>{item}</Text>
 					</View>

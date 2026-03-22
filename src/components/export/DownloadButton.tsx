@@ -1,11 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
 import { Download, Loader2 } from "lucide-react";
-import { useState } from "react";
-import type { ResumeData } from "~/schemas/resume";
 import { PDFDocument } from "./PDFDocument";
+import type { ResumeData } from "~/schemas/resume";
 
 interface DownloadButtonProps {
 	data: ResumeData;
@@ -30,10 +30,10 @@ export function DownloadButton({ data }: DownloadButtonProps) {
 
 	return (
 		<button
-			className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700 text-xs transition-all hover:bg-slate-50 disabled:opacity-50"
-			disabled={isGenerating}
-			onClick={handleDownload}
 			type="button"
+			onClick={handleDownload}
+			disabled={isGenerating}
+			className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all disabled:opacity-50"
 		>
 			{isGenerating ? (
 				<>

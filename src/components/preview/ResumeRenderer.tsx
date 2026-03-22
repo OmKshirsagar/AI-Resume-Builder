@@ -34,11 +34,7 @@ function SmartList({
 	return (
 		<ul className={clsx("ml-4 list-disc space-y-0.5", className)}>
 			{items.map((item, idx) => (
-				<li
-					className="text-slate-800 text-xs leading-tight"
-					// biome-ignore lint/suspicious/noArrayIndexKey: using content snippet for stability
-					key={`${item.slice(0, 10)}-${idx}`}
-				>
+				<li className="text-slate-800 text-xs leading-tight" key={idx}>
 					{item}
 				</li>
 			))}

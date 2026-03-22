@@ -16,49 +16,43 @@ const google = createGoogleGenerativeAI({
 });
 
 export async function fabricateResume(resumeData: ResumeData) {
-	// biome-ignore lint/suspicious/noExplicitAny: complex AI stream object
 	const stream = createStreamableValue<any>();
 
 	(async () => {
 		try {
-			// Step 1: Audit & Architect (Strategic Analysis)
+			// Step 1: Combined Audit & Budget (using 2.5 Flash for speed)
+			stream.update({ status: "Analyzing career themes & impact..." });
 			const { object: strategy } = await generateObject({
-				model: google("gemma-3-27b-it"),
+				model: google("gemini-3-flash-preview"),
+				system: AGENT_ANALYSIS_PROMPT,
+				messages: [{ role: "user", content: JSON.stringify(resumeData) }],
 				schema: z.object({
-					budget: z.record(z.string(), z.number()),
-					inlineSections: z.array(z.string()),
-					reasoning: z.string(),
+					audit: z.string().describe("Internal reasoning for the strategy"),
+					budget: z.record(
+						z.string(),
+						z.number().describe("Bullet count allocated to this entry ID"),
+					),
 				}),
-				prompt: `
-${AGENT_ANALYSIS_PROMPT}
-
-### DATA
-${JSON.stringify(resumeData)}
-`,
 			});
 
-			stream.update({ status: "Architecting 1-page strategy..." });
-
-			// Step 2: Fabricate (Semantic Reconstruction)
+			// Step 2: Fabrication (using 3 Flash Preview for best reasoning)
+			stream.update({
+				status: "Redesigning resume for high-density impact...",
+			});
 			const { partialObjectStream } = streamObject({
-				model: google("gemma-3-27b-it"),
+				model: google("gemini-3-flash-preview"),
+				system: AGENT_FABRICATION_PROMPT,
+				messages: [
+					{
+						role: "user",
+						content: `Master Resume: ${JSON.stringify(resumeData)}\n\nCondensation Strategy: ${JSON.stringify(strategy)}`,
+					},
+				],
 				schema: ResumeSchema,
-				prompt: `
-${AGENT_FABRICATION_PROMPT}
-
-### STRATEGY
-${strategy.reasoning}
-
-### BULLET BUDGET
-${JSON.stringify(strategy.budget)}
-
-### DATA
-${JSON.stringify(resumeData)}
-`,
 			});
 
-			for await (const partial of partialObjectStream) {
-				stream.update({ data: partial });
+			for await (const partialObject of partialObjectStream) {
+				stream.update({ data: partialObject });
 			}
 
 			stream.done();
