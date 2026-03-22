@@ -2,8 +2,8 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useRef } from "react";
-import { useResumeStore } from "~/store/useResumeStore";
 import { syncResumeData } from "~/app/actions/sync";
+import { useResumeStore } from "~/store/useResumeStore";
 
 export function SyncObserver() {
 	const { user, isLoaded } = useUser();

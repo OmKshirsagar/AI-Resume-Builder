@@ -14,7 +14,8 @@
 		"test": "vitest run",
 		"typecheck": "tsc --noEmit",
 		"db:generate": "drizzle-kit generate",
-		"db:push": "drizzle-kit push"
+		"db:push": "drizzle-kit push",
+		"prepare": "husky"
 	},
 	"dependencies": {
 		"@ai-sdk/google": "^3.0.36",
@@ -56,6 +57,7 @@
 		"@types/react-dom": "^19.0.0",
 		"@vitejs/plugin-react": "^5.1.4",
 		"drizzle-kit": "^0.31.10",
+		"husky": "^9.1.7",
 		"jsdom": "^28.1.0",
 		"postcss": "^8.5.3",
 		"tailwindcss": "^4.0.15",
