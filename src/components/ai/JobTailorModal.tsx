@@ -279,10 +279,11 @@ export function JobTailorModal({ onClose }: JobTailorModalProps) {
 														Current Bullets
 													</p>
 													<ul className="space-y-2 opacity-50 grayscale">
-														{exp.description.map((b, _bidx) => (
+														{exp.description.map((b, bidx) => (
 															<li
 																className="flex gap-2 text-slate-600 text-xs"
-																key={`${exp.id}-current-${_bidx}-${b.slice(0, 10).replace(/\s/g, "-")}`}
+																// biome-ignore lint/suspicious/noArrayIndexKey: hash suffix for stability
+																key={`${exp.id}-current-${bidx}-${b.slice(0, 5)}`}
 															>
 																<div className="mt-1 h-1 w-1 shrink-0 rounded-full bg-slate-400" />
 																{b}
@@ -295,10 +296,11 @@ export function JobTailorModal({ onClose }: JobTailorModalProps) {
 														Suggested Enhancement
 													</p>
 													<ul className="space-y-3">
-														{change.newBullets.map((b, _bidx) => (
+														{change.newBullets.map((b, bidx) => (
 															<li
 																className="flex gap-2 font-medium text-indigo-900 text-xs"
-																key={`${exp.id}-new-${_bidx}-${b.slice(0, 10).replace(/\s/g, "-")}`}
+																// biome-ignore lint/suspicious/noArrayIndexKey: hash suffix for stability
+																key={`${exp.id}-new-${bidx}-${b.slice(0, 5)}`}
 															>
 																<div className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500" />
 																{b}

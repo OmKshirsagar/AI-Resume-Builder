@@ -82,6 +82,7 @@ function ExperienceItem({
 		remove: removeBullet,
 	} = useFieldArray({
 		control,
+		// biome-ignore lint/suspicious/noExplicitAny: complex field path
 		name: `experience.${index}.description` as any,
 	});
 
@@ -199,6 +200,7 @@ function ExperienceItem({
 						<div className="space-y-3" id={`exp-bullets-label-${index}`}>
 							{bulletFields.map((bulletField, bIndex) => {
 								const bulletValue = watch(
+									// biome-ignore lint/suspicious/noExplicitAny: complex field path
 									`experience.${index}.description.${bIndex}` as any,
 								);
 								return (
@@ -211,6 +213,7 @@ function ExperienceItem({
 												{!disabled && (
 													<RefineButton
 														onApply={(newText) =>
+															// biome-ignore lint/suspicious/noExplicitAny: complex field path
 															setValue(
 																`experience.${index}.description.${bIndex}` as any,
 																newText,
@@ -231,6 +234,7 @@ function ExperienceItem({
 											</div>
 										</div>
 										<textarea
+											// biome-ignore lint/suspicious/noExplicitAny: complex field path
 											{...register(
 												`experience.${index}.description.${bIndex}` as any,
 											)}

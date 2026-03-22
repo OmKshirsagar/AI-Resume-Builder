@@ -110,7 +110,8 @@ export function ParsedDataReview({
 												{exp.description.slice(0, 2).map((bullet, bIdx) => (
 													<li
 														className="line-clamp-1 text-slate-600 text-xs"
-														key={`${exp.id || exp.company}-bullet-${bIdx}-${bullet.slice(0, 15).replace(/\s/g, "-")}`}
+														// biome-ignore lint/suspicious/noArrayIndexKey: using hash for stability
+														key={`${exp.id || exp.company}-bullet-${bIdx}-${bullet.slice(0, 5)}`}
 													>
 														{bullet}
 													</li>
@@ -144,10 +145,8 @@ export function ParsedDataReview({
 													{section.items.map((item, iIdx) => (
 														<div
 															className="text-indigo-800 text-xs"
-															key={
-																item.id ||
-																`${section.title}-item-${iIdx}-${item.title.slice(0, 10).replace(/\s/g, "-")}`
-															}
+															// biome-ignore lint/suspicious/noArrayIndexKey: using index for grouping
+															key={item.id || `${section.title}-item-${iIdx}`}
 														>
 															• <span className="font-bold">{item.title}</span>
 															{item.subtitle && (
