@@ -7,6 +7,9 @@ export default defineConfig({
 	dialect: "turso",
 	dbCredentials: {
 		url: env.TURSO_DATABASE_URL,
-		authToken: env.TURSO_AUTH_TOKEN,
+		// Skip authToken if using a local SQLite file (file:dev.db)
+		authToken: env.TURSO_DATABASE_URL.startsWith("file:")
+			? undefined
+			: env.TURSO_AUTH_TOKEN,
 	},
 });
