@@ -22,13 +22,12 @@ export function ResumeEditor({
 	const clonedData = JSON.parse(JSON.stringify(data));
 
 	const methods = useForm<ResumeData>({
-		// biome-ignore lint/suspicious/noExplicitAny: complex Zod resolver type
 		resolver: zodResolver(ResumeSchema) as any,
 		defaultValues: clonedData,
 		mode: "onChange",
 	});
 
-	const { watch, reset } = methods;
+	const { watch, reset, getValues } = methods;
 	const isFirstRender = useRef(true);
 	const lastSyncedDataRef = useRef<string>(JSON.stringify(data));
 	const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -65,7 +64,7 @@ export function ResumeEditor({
 	// Handle external data changes (e.g., AI extraction, store updates)
 	useEffect(() => {
 		const incomingStringified = JSON.stringify(data);
-
+		
 		// Only reset if the incoming data is different from what we last SYNCED
 		// AND different from what is currently in the form.
 		// This prevents the "reset loop" where a local change triggers a store update

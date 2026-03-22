@@ -21,7 +21,6 @@ export async function POST(req: NextRequest) {
 			async start(controller) {
 				const encoder = new TextEncoder();
 
-				// biome-ignore lint/suspicious/noExplicitAny: complex stream data
 				const send = (data: any) => {
 					console.log(`📡 Sending to client: ${data.status || "data"}`);
 					controller.enqueue(encoder.encode(`${JSON.stringify(data)}\n`));
@@ -36,7 +35,6 @@ export async function POST(req: NextRequest) {
 					for await (const event of fullStream) {
 						console.log(`📦 Internal Event: ${event.type}`);
 
-						// biome-ignore lint/suspicious/noExplicitAny: complex workflow payload
 						const stepId = (event.payload as any)?.id;
 
 						if (event.type === "workflow-step-start") {
@@ -60,7 +58,6 @@ export async function POST(req: NextRequest) {
 							console.log(`  -> Step Result: ${stepId}`);
 
 							if (stepId === "stylist-orchestration") {
-								// biome-ignore lint/suspicious/noExplicitAny: complex workflow output
 								const output = (event.payload as any).output;
 								console.log("✅ Final Stylized Output captured!");
 								send({ status: "DONE", data: output });

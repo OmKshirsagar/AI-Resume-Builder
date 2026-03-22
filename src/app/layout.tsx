@@ -1,10 +1,7 @@
 import "~/styles/globals.css";
 
-import { ClerkProvider, UserButton } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { SyncObserver } from "~/components/ai/SyncObserver";
 
 export const metadata: Metadata = {
 	title: "Gemini Resume Builder",
@@ -17,24 +14,14 @@ const geist = Geist({
 	variable: "--font-geist-sans",
 });
 
-export default async function RootLayout({
+export default function RootLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
-	const { userId } = await auth();
-
 	return (
-		<ClerkProvider>
-			<html className={`${geist.variable} font-sans`} lang="en">
-				<body className="h-screen overflow-hidden bg-slate-50 text-slate-900 antialiased">
-					<SyncObserver />
-					{userId && (
-						<div className="fixed top-4 right-4 z-[100]">
-							<UserButton />
-						</div>
-					)}
-					{children}
-				</body>
-			</html>
-		</ClerkProvider>
+		<html className={`${geist.variable} font-sans`} lang="en">
+			<body className="h-screen overflow-hidden bg-slate-50 antialiased">
+				{children}
+			</body>
+		</html>
 	);
 }
