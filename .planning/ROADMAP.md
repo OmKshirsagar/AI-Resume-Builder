@@ -16,18 +16,19 @@
 ## Milestone 2: The Pro SaaS Upgrade 🚀
 **Goal:** Transform the utility into a full SaaS product with user accounts, document versioning, and advanced AI analytics.
 
-### Phase 8: Authentication & Cloud Database (CURRENT)
+### Phase 8: Authentication & Cloud Database ✅
 - [x] Integrate **Clerk** for user authentication.
-- [ ] Provision **Turso (LibSQL)** and **Drizzle ORM**.
-- [ ] Migrate from `localStorage` to cloud-sync based on User ID.
-- [ ] Implement multi-tenant data isolation.
+- [x] Provision **Turso (LibSQL)** and **Drizzle ORM**.
+- [x] Migrate from `localStorage` to cloud-sync based on User ID.
+- [x] Implement multi-tenant data isolation.
 
-### Phase 9: Local PDF Parser Upgrade
-- [ ] Install and integrate `pdf2json` for coordinate-aware extraction.
-- [ ] Implement a **Layout Reassembly** algorithm to reconstruct columns/sidebars.
-- [ ] Refactor the extraction pipeline to send structured text to Gemini (Cost Saving).
+### Phase 9: Local PDF Parser Upgrade ✅
+- [x] Install and integrate `pdf2json` for coordinate-aware extraction.
+- [x] Implement a **Layout Reassembly** algorithm to reconstruct columns/sidebars.
+- [x] Refactor the extraction pipeline to send structured text to Gemini (Cost Saving).
+- [x] Implement SHA-256 file hashing and instant deduplication lookup.
 
-### Phase 10: User Dashboard & LinkedIn Import
+### Phase 10: User Dashboard & LinkedIn Import (NEXT)
 - [ ] Build a User Dashboard to manage multiple resumes.
 - [ ] Implement the **LinkedIn-to-PDF** import guidance flow.
 - [ ] Support "Master" vs "Tailored" resume versioning.
