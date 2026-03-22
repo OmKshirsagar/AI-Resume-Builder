@@ -1,9 +1,9 @@
 import "~/styles/globals.css";
 
-import type { Metadata } from "next";
-import { Geist } from "next/font/google";
 import { ClerkProvider, UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
+import type { Metadata } from "next";
+import { Geist } from "next/font/google";
 import { SyncObserver } from "~/components/ai/SyncObserver";
 
 export const metadata: Metadata = {
@@ -25,7 +25,7 @@ export default async function RootLayout({
 	return (
 		<ClerkProvider>
 			<html className={`${geist.variable} font-sans`} lang="en">
-				<body className="h-screen overflow-hidden bg-slate-50 antialiased text-slate-900">
+				<body className="h-screen overflow-hidden bg-slate-50 text-slate-900 antialiased">
 					<SyncObserver />
 					{userId && (
 						<div className="fixed top-4 right-4 z-[100]">

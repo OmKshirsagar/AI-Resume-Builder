@@ -1,90 +1,56 @@
 # Codebase Concerns
 
-**Analysis Date:** 2026-03-01
+**Analysis Date:** 2025-05-15
 
 ## Tech Debt
 
-**Empty Component Scaffolding:**
-- Issue: Directories for `editor`, `layout`, and `preview` are present but contain no implementation files. `src/app/page.tsx` is still the boilerplate template.
-- Files: `src/components/editor/`, `src/components/layout/`, `src/components/preview/`, `src/app/page.tsx`
-- Impact: Project is currently just a shell with no functional UI components.
-- Fix approach: Implement the base layout and core components (Split-pane UI, Editor forms, Preview area).
+**Lack of Standard UI Library:**
+- Issue: Standard components like `Button`, `Input`, `Dialog/Modal`, `Dropdown` are implemented ad-hoc with raw Tailwind classes in each feature.
+- Files: `src/components/ai/JobTailorModal.tsx`, `src/components/editor/forms/PersonalInfoForm.tsx`, etc.
+- Impact: Increased maintenance, inconsistent UI across features, code duplication.
+- Fix approach: Integrate a UI library like `shadcn/ui` or create a `src/components/ui/` directory for shared atomic components.
 
-**Missing Global State Management:**
-- Issue: `zustand` is listed in `package.json` but no store has been implemented to handle the complex resume data model.
-- Files: `src/store/` (Missing)
-- Impact: No way to sync data between the Editor and Preview components.
-- Fix approach: Create a robust Zustand store with Zod-validated resume schemas.
+**Manual Form Field Registration:**
+- Issue: `PersonalInfoForm.tsx` and others use `register` manually on raw `input` tags.
+- Files: `src/components/editor/forms/PersonalInfoForm.tsx`
+- Impact: Verbose code, lack of standard styling for error states, missing accessibility features.
+- Fix approach: Create a reusable `FormField` wrapper or use `shadcn/ui` form patterns.
 
 ## Known Bugs
 
-**No functional code detected:**
-- Symptoms: App displays "Create T3 App" boilerplate.
-- Files: `src/app/page.tsx`
-- Trigger: Running `npm run dev` and visiting localhost.
-- Workaround: None; requires implementation of the project features.
+**External Data Sync Loop:**
+- Symptoms: Local form changes might be overwritten by external store updates if not handled carefully.
+- Files: `src/components/editor/ResumeEditor.tsx`
+- Current mitigation: Uses `lastSyncedDataRef` and `JSON.stringify` to prevent sync loops.
 
 ## Security Considerations
 
-**PII in LocalStorage:**
-- Risk: Requirements specify "LocalStorage for persistence". Resumes contain highly sensitive Personal Identifiable Information (PII) like phone numbers, addresses, and email. Storing this unencrypted in LocalStorage on shared devices is a security risk.
-- Files: `src/store/` (Planned implementation)
-- Current mitigation: None.
-- Recommendations: Add a clear "Clear Data" button and warn users about shared device usage. Consider optional encryption for stored data.
+**API Webhook Secret Handling:**
+- Risk: Verification of webhooks requires secrets.
+- Files: `src/app/api/webhooks/clerk/route.ts`
+- Current mitigation: Uses environment variables.
 
 ## Performance Bottlenecks
 
-**Real-time PDF Preview:**
-- Problem: Rendering a high-fidelity PDF preview on every keystroke in the editor could lead to UI lag.
-- Files: `src/components/preview/` (Planned)
-- Cause: Complex layout calculations and potential re-renders of the preview engine.
-- Improvement path: Use debouncing for preview updates and consider offloading heavy rendering tasks to Web Workers.
+**Deep Form Watching:**
+- Problem: `ResumeEditor.tsx` watches the entire `ResumeData` object.
+- Files: `src/components/editor/ResumeEditor.tsx`
+- Cause: `react-hook-form` `watch()` on a large object.
+- Improvement path: Optimize by watching only specific fields where necessary or use `useWatch` at the field level.
 
 ## Fragile Areas
 
-**PDF Parsing Accuracy:**
-- Files: `src/lib/pdf-parser.ts` (Planned)
-- Why fragile: PDF is a visual format, not a structural one. Extracting semantic data (work history, skills) accurately from arbitrary layouts is highly error-prone.
-- Safe modification: Implement a "Review & Edit" step after parsing to allow users to correct AI extraction errors.
-- Test coverage: Gaps (None)
-
-**One-Page Enforcement:**
-- Files: `src/components/preview/` (Planned)
-- Why fragile: Dynamically scaling or trimming content to fit exactly one page is difficult across different browser engines and zoom levels.
-- Safe modification: Use a standard PDF rendering library (like `@react-pdf/renderer`) that handles pagination/overflow predictably.
-
-## Scaling Limits
-
-**Browser Memory Limits:**
-- Current capacity: Dependent on browser.
-- Limit: Large PDFs or complex AI-generated content could exceed LocalStorage limits (typically 5MB-10MB).
-- Scaling path: Move to IndexedDB for larger data storage or transition to a lightweight backend.
-
-## Dependencies at Risk
-
-**Gemini API Rate Limits:**
-- Risk: Heavy usage of Gemini 1.5 Pro for resume enhancement could hit API rate limits or incur high costs.
-- Impact: Users may experience "Service Unavailable" errors during peak times.
-- Migration plan: Implement fallback to Gemini 1.5 Flash for simpler tasks and optimize prompts to reduce token usage.
-
-## Missing Critical Features
-
-**PDF Generation & Export:**
-- Problem: No library for generating high-quality PDFs is currently installed or configured.
-- Blocks: Users cannot export their resumes.
-
-**AI Integration Layer:**
-- Problem: Vercel AI SDK and Google Gemini configuration are missing from the codebase.
-- Blocks: All AI features (Enhancement, XYZ Builder, ATS Scoring).
+**PDF Generation Rendering:**
+- Files: `src/components/export/PDFDocument.tsx`
+- Why fragile: `@react-pdf/renderer` has a different layout engine than web CSS.
+- Safe modification: Test exports frequently after making layout changes.
 
 ## Test Coverage Gaps
 
-**Total Absence of Testing:**
-- What's not tested: Everything. No testing framework is installed.
-- Files: All.
-- Risk: Regressions in resume data handling or UI rendering will go unnoticed.
-- Priority: High. Need to install Vitest and Playwright immediately.
+**UI Components:**
+- What's not tested: Complex interactions in `JobTailorModal.tsx` and `ResumeEditor.tsx`.
+- Priority: Medium.
 
 ---
 
-*Concerns audit: 2026-03-01*
+*Concerns audit: 2025-05-15*

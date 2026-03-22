@@ -1,8 +1,8 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import type { ResumeData } from "~/schemas/resume";
 import { RefineButton } from "~/components/ai/RefineButton";
+import type { ResumeData } from "~/schemas/resume";
 
 interface PersonalInfoFormProps {
 	disabled?: boolean;
@@ -19,73 +19,90 @@ export function PersonalInfoForm({ disabled }: PersonalInfoFormProps) {
 			</h2>
 			<div className="grid grid-cols-2 gap-4">
 				<div className="space-y-2">
-					<label htmlFor="fullName" className="font-medium text-slate-500 text-xs uppercase">
+					<label
+						className="font-medium text-slate-500 text-xs uppercase"
+						htmlFor="fullName"
+					>
 						Full Name
 					</label>
 					<input
 						{...register("personalInfo.fullName")}
-						id="fullName"
-						className="h-10 w-full rounded border bg-white px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-						placeholder="John Doe"
+						className="h-10 w-full rounded border bg-white px-3 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 						disabled={disabled}
+						id="fullName"
+						placeholder="John Doe"
 					/>
 				</div>
 				<div className="space-y-2">
-					<label htmlFor="email" className="font-medium text-slate-500 text-xs uppercase">
+					<label
+						className="font-medium text-slate-500 text-xs uppercase"
+						htmlFor="email"
+					>
 						Email
 					</label>
 					<input
 						{...register("personalInfo.email")}
-						id="email"
-						type="email"
-						className="h-10 w-full rounded border bg-white px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-						placeholder="john@example.com"
+						className="h-10 w-full rounded border bg-white px-3 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 						disabled={disabled}
+						id="email"
+						placeholder="john@example.com"
+						type="email"
 					/>
 				</div>
 				<div className="space-y-2">
-					<label htmlFor="phone" className="font-medium text-slate-500 text-xs uppercase">
+					<label
+						className="font-medium text-slate-500 text-xs uppercase"
+						htmlFor="phone"
+					>
 						Phone
 					</label>
 					<input
 						{...register("personalInfo.phone")}
-						id="phone"
-						className="h-10 w-full rounded border bg-white px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-						placeholder="+1 234 567 890"
+						className="h-10 w-full rounded border bg-white px-3 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 						disabled={disabled}
+						id="phone"
+						placeholder="+1 234 567 890"
 					/>
 				</div>
 				<div className="space-y-2">
-					<label htmlFor="location" className="font-medium text-slate-500 text-xs uppercase">
+					<label
+						className="font-medium text-slate-500 text-xs uppercase"
+						htmlFor="location"
+					>
 						Location
 					</label>
 					<input
 						{...register("personalInfo.location")}
-						id="location"
-						className="h-10 w-full rounded border bg-white px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-						placeholder="City, State"
+						className="h-10 w-full rounded border bg-white px-3 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 						disabled={disabled}
+						id="location"
+						placeholder="City, State"
 					/>
 				</div>
 			</div>
 			<div className="space-y-2">
 				<div className="flex items-center justify-between">
-					<label htmlFor="summary" className="font-medium text-slate-500 text-xs uppercase">
+					<label
+						className="font-medium text-slate-500 text-xs uppercase"
+						htmlFor="summary"
+					>
 						Professional Summary
 					</label>
 					{!disabled && (
 						<RefineButton
+							onApply={(newText) =>
+								setValue("personalInfo.summary", newText, { shouldDirty: true })
+							}
 							text={summary || ""}
-							onApply={(newText) => setValue("personalInfo.summary", newText, { shouldDirty: true })}
 						/>
 					)}
 				</div>
 				<textarea
 					{...register("personalInfo.summary")}
-					id="summary"
-					className="min-h-[100px] w-full rounded border bg-white p-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-					placeholder="Briefly describe your professional background and goals..."
+					className="min-h-[100px] w-full rounded border bg-white p-3 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 					disabled={disabled}
+					id="summary"
+					placeholder="Briefly describe your professional background and goals..."
 				/>
 			</div>
 		</section>

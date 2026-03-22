@@ -1,5 +1,11 @@
-import { sqliteTable, text, integer, real, AnySQLiteColumn } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
+import {
+	type AnySQLiteColumn,
+	integer,
+	real,
+	sqliteTable,
+	text,
+} from "drizzle-orm/sqlite-core";
 
 // 1. Users Table (Synced from Clerk)
 export const users = sqliteTable("users", {
@@ -14,20 +20,22 @@ export const users = sqliteTable("users", {
 // 2. Resumes Table
 export const resumes = sqliteTable("resumes", {
 	id: text("id").primaryKey(),
-	userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-	
+	userId: text("user_id")
+		.notNull()
+		.references(() => users.id, { onDelete: "cascade" }),
+
 	// Self-referencing link for versioning
 	parentId: text("parent_id").references((): AnySQLiteColumn => resumes.id),
-	
+
 	title: text("title").notNull().default("Untitled Resume"),
 	isMaster: integer("is_master", { mode: "boolean" }).notNull().default(false),
-	
+
 	// File Uniqueness: Store SHA-256 hash of the source PDF to prevent redundant parsing
 	fileHash: text("file_hash"),
-	
+
 	personalInfo: text("personal_info", { mode: "json" }).notNull(),
 	design: text("design", { mode: "json" }).notNull(),
-	
+
 	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
 	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
@@ -35,7 +43,9 @@ export const resumes = sqliteTable("resumes", {
 // 3. Experience Table
 export const experiences = sqliteTable("experiences", {
 	id: text("id").primaryKey(),
-	resumeId: text("resume_id").notNull().references(() => resumes.id, { onDelete: "cascade" }),
+	resumeId: text("resume_id")
+		.notNull()
+		.references(() => resumes.id, { onDelete: "cascade" }),
 	company: text("company").notNull(),
 	position: text("position").notNull(),
 	location: text("location"),
@@ -48,7 +58,9 @@ export const experiences = sqliteTable("experiences", {
 // 4. Bullets Table
 export const bullets = sqliteTable("bullets", {
 	id: text("id").primaryKey(),
-	experienceId: text("experience_id").notNull().references(() => experiences.id, { onDelete: "cascade" }),
+	experienceId: text("experience_id")
+		.notNull()
+		.references(() => experiences.id, { onDelete: "cascade" }),
 	content: text("content").notNull(),
 	order: real("order").notNull().default(0),
 	isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
@@ -57,7 +69,9 @@ export const bullets = sqliteTable("bullets", {
 // 5. Education Table
 export const education = sqliteTable("education", {
 	id: text("id").primaryKey(),
-	resumeId: text("resume_id").notNull().references(() => resumes.id, { onDelete: "cascade" }),
+	resumeId: text("resume_id")
+		.notNull()
+		.references(() => resumes.id, { onDelete: "cascade" }),
 	school: text("school").notNull(),
 	degree: text("degree"),
 	fieldOfStudy: text("field_of_study"),
@@ -70,7 +84,9 @@ export const education = sqliteTable("education", {
 // 6. Skills Table
 export const skills = sqliteTable("skills", {
 	id: text("id").primaryKey(),
-	resumeId: text("resume_id").notNull().references(() => resumes.id, { onDelete: "cascade" }),
+	resumeId: text("resume_id")
+		.notNull()
+		.references(() => resumes.id, { onDelete: "cascade" }),
 	name: text("name").notNull(),
 	level: text("level"),
 	order: integer("order").notNull().default(0),
@@ -79,7 +95,9 @@ export const skills = sqliteTable("skills", {
 // 7. Projects Table
 export const projects = sqliteTable("projects", {
 	id: text("id").primaryKey(),
-	resumeId: text("resume_id").notNull().references(() => resumes.id, { onDelete: "cascade" }),
+	resumeId: text("resume_id")
+		.notNull()
+		.references(() => resumes.id, { onDelete: "cascade" }),
 	name: text("name").notNull(),
 	link: text("link"),
 	startDate: text("start_date"),
@@ -91,7 +109,9 @@ export const projects = sqliteTable("projects", {
 // 8. Custom Sections Table
 export const customSections = sqliteTable("custom_sections", {
 	id: text("id").primaryKey(),
-	resumeId: text("resume_id").notNull().references(() => resumes.id, { onDelete: "cascade" }),
+	resumeId: text("resume_id")
+		.notNull()
+		.references(() => resumes.id, { onDelete: "cascade" }),
 	title: text("title").notNull(),
 	order: integer("order").notNull().default(0),
 });
@@ -99,7 +119,9 @@ export const customSections = sqliteTable("custom_sections", {
 // 9. Custom Section Items Table
 export const customSectionItems = sqliteTable("custom_section_items", {
 	id: text("id").primaryKey(),
-	sectionId: text("section_id").notNull().references(() => customSections.id, { onDelete: "cascade" }),
+	sectionId: text("section_id")
+		.notNull()
+		.references(() => customSections.id, { onDelete: "cascade" }),
 	title: text("title").notNull(),
 	subtitle: text("subtitle"),
 	date: text("date"),
@@ -129,19 +151,37 @@ export const resumesRelations = relations(resumes, ({ one, many }) => ({
 }));
 
 export const experiencesRelations = relations(experiences, ({ one, many }) => ({
-	resume: one(resumes, { fields: [experiences.resumeId], references: [resumes.id] }),
+	resume: one(resumes, {
+		fields: [experiences.resumeId],
+		references: [resumes.id],
+	}),
 	bullets: many(bullets),
 }));
 
 export const bulletsRelations = relations(bullets, ({ one }) => ({
-	experience: one(experiences, { fields: [bullets.experienceId], references: [experiences.id] }),
+	experience: one(experiences, {
+		fields: [bullets.experienceId],
+		references: [experiences.id],
+	}),
 }));
 
-export const customSectionsRelations = relations(customSections, ({ one, many }) => ({
-	resume: one(resumes, { fields: [customSections.resumeId], references: [resumes.id] }),
-	items: many(customSectionItems),
-}));
+export const customSectionsRelations = relations(
+	customSections,
+	({ one, many }) => ({
+		resume: one(resumes, {
+			fields: [customSections.resumeId],
+			references: [resumes.id],
+		}),
+		items: many(customSectionItems),
+	}),
+);
 
-export const customSectionItemsRelations = relations(customSectionItems, ({ one }) => ({
-	section: one(customSections, { fields: [customSectionItems.sectionId], references: [customSections.id] }),
-}));
+export const customSectionItemsRelations = relations(
+	customSectionItems,
+	({ one }) => ({
+		section: one(customSections, {
+			fields: [customSectionItems.sectionId],
+			references: [customSections.id],
+		}),
+	}),
+);

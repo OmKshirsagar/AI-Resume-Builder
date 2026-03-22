@@ -1,31 +1,44 @@
 "use server";
 
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { db } from "~/db";
-import { users, resumes, experiences, bullets, education, skills, projects, customSections, customSectionItems } from "~/db/schema";
-import { type ResumeData } from "~/schemas/resume";
 import { eq } from "drizzle-orm";
+import { db } from "~/db";
+import {
+	bullets,
+	customSectionItems,
+	customSections,
+	education,
+	experiences,
+	projects,
+	resumes,
+	skills,
+	users,
+} from "~/db/schema";
+import type { ResumeData } from "~/schemas/resume";
 
 export async function syncResumeData(data: ResumeData) {
 	const { userId } = await auth();
 	const user = await currentUser();
-	
+
 	if (!userId || !user) throw new Error("Unauthorized");
 
 	// Ensure user exists in our DB (prevents race condition with webhook)
-	await db.insert(users).values({
-		id: userId,
-		email: user.emailAddresses[0]?.emailAddress || "",
-		name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || null,
-		imageUrl: user.imageUrl || null,
-		createdAt: new Date(),
-		updatedAt: new Date(),
-	}).onConflictDoUpdate({
-		target: users.id,
-		set: {
+	await db
+		.insert(users)
+		.values({
+			id: userId,
+			email: user.emailAddresses[0]?.emailAddress || "",
+			name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || null,
+			imageUrl: user.imageUrl || null,
+			createdAt: new Date(),
 			updatedAt: new Date(),
-		}
-	});
+		})
+		.onConflictDoUpdate({
+			target: users.id,
+			set: {
+				updatedAt: new Date(),
+			},
+		});
 
 	// Check if user already has a master resume
 	const existingMaster = await db.query.resumes.findFirst({

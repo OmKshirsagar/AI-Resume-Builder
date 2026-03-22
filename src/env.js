@@ -7,7 +7,9 @@ export const env = createEnv({
 	 * isn't built with invalid env vars.
 	 */
 	server: {
-		NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+		NODE_ENV: z
+			.enum(["development", "test", "production"])
+			.default("development"),
 		GOOGLE_GENERATIVE_AI_API_KEY: z.string().min(1),
 		CLERK_SECRET_KEY: z.string().min(1),
 		TURSO_DATABASE_URL: z.string().url(),
@@ -34,7 +36,8 @@ export const env = createEnv({
 		CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
 		TURSO_DATABASE_URL: process.env.TURSO_DATABASE_URL,
 		TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN,
-		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
+			process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 		CLERK_WEBHOOK_SECRET: process.env.CLERK_WEBHOOK_SECRET,
 	},
 	/**

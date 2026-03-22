@@ -1,6 +1,6 @@
-import { Webhook } from "svix";
+import type { WebhookEvent } from "@clerk/nextjs/server";
 import { headers } from "next/headers";
-import { WebhookEvent } from "@clerk/nextjs/server";
+import { Webhook } from "svix";
 import { db } from "~/db";
 import { users } from "~/db/schema";
 import { env } from "~/env";
@@ -9,7 +9,9 @@ export async function POST(req: Request) {
 	const WEBHOOK_SECRET = env.CLERK_WEBHOOK_SECRET;
 
 	if (!WEBHOOK_SECRET) {
-		throw new Error("Please add CLERK_WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local");
+		throw new Error(
+			"Please add CLERK_WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local",
+		);
 	}
 
 	// Get the headers
@@ -59,22 +61,25 @@ export async function POST(req: Request) {
 			return new Response("Missing ID or Email", { status: 400 });
 		}
 
-		await db.insert(users).values({
-			id,
-			email,
-			name: `${first_name || ""} ${last_name || ""}`.trim() || null,
-			imageUrl: image_url || null,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		}).onConflictDoUpdate({
-			target: users.id,
-			set: {
+		await db
+			.insert(users)
+			.values({
+				id,
 				email,
 				name: `${first_name || ""} ${last_name || ""}`.trim() || null,
 				imageUrl: image_url || null,
+				createdAt: new Date(),
 				updatedAt: new Date(),
-			}
-		});
+			})
+			.onConflictDoUpdate({
+				target: users.id,
+				set: {
+					email,
+					name: `${first_name || ""} ${last_name || ""}`.trim() || null,
+					imageUrl: image_url || null,
+					updatedAt: new Date(),
+				},
+			});
 	}
 
 	return new Response("", { status: 200 });
