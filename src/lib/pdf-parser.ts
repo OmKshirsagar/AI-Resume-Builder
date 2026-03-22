@@ -11,31 +11,43 @@ interface Column {
 	blocks: PDFText[];
 }
 
+interface RawPDFData {
+	Pages: Array<{
+		Texts: Array<{
+			x: number;
+			y: number;
+			R: Array<{
+				T: string;
+			}>;
+		}>;
+	}>;
+}
+
 /**
  * Layout-aware PDF text extraction.
  * Reconstructs the reading order by grouping text objects into columns
  * and sorting them by vertical position.
  */
 export async function parsePDF(buffer: Buffer): Promise<string> {
-	// @ts-expect-error - pdf2json lacks proper types
+	// biome-ignore lint/suspicious/noExplicitAny: library lacks types
 	const pdfParser = new (PDFParser as any)();
 
 	return new Promise((resolve, reject) => {
-		// @ts-expect-error
-		pdfParser.on("pdfParser_dataError", (errData: { parserError: unknown }) =>
+		// biome-ignore lint/suspicious/noExplicitAny: library lacks types
+		pdfParser.on("pdfParser_dataError", (errData: any) =>
 			reject(errData.parserError),
 		);
 
-		// @ts-expect-error
+		// biome-ignore lint/suspicious/noExplicitAny: library lacks types
 		pdfParser.on("pdfParser_dataReady", (pdfData: any) => {
 			let fullText = "";
-			const pages = pdfData.Pages;
+			const pages = (pdfData as RawPDFData).Pages;
 
 			for (const page of pages) {
-				const texts: PDFText[] = page.Texts.map((t: any) => ({
+				const texts: PDFText[] = page.Texts.map((t) => ({
 					x: t.x,
 					y: t.y,
-					text: decodeURIComponent(t.R[0].T),
+					text: t.R[0] ? decodeURIComponent(t.R[0].T) : "",
 				}));
 
 				// Group objects into columns by X-coordinate (tolerance ≈ 2.0 units)

@@ -56,6 +56,7 @@ export function PDFUpload({ onExtracted }: PDFUploadProps) {
 			const result = await extractResumeFromPDF(formData, hash);
 
 			if (result.success && result.data) {
+				// biome-ignore lint/suspicious/noExplicitAny: complex AI output mapping
 				onExtracted(result.data as any, hash);
 			} else {
 				setError(result.error || "Failed to extract data");
@@ -73,10 +74,13 @@ export function PDFUpload({ onExtracted }: PDFUploadProps) {
 
 	return (
 		<div className="space-y-4">
-			<div
-				className="group relative flex min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-slate-200 border-dashed bg-white p-8 transition-all hover:border-indigo-400 hover:bg-indigo-50/30"
+			<button
+				aria-label="Upload PDF Resume"
+				className="group relative flex min-h-[200px] w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-slate-200 border-dashed bg-white p-8 transition-all hover:border-indigo-400 hover:bg-indigo-50/30 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+				disabled={isExtracting}
 				onClick={() => fileInputRef.current?.click()}
 				onKeyDown={(e) => e.key === "Enter" && fileInputRef.current?.click()}
+				type="button"
 			>
 				<input
 					accept=".pdf"
@@ -113,7 +117,7 @@ export function PDFUpload({ onExtracted }: PDFUploadProps) {
 						</div>
 					</div>
 				)}
-			</div>
+			</button>
 
 			{error && (
 				<div className="fade-in slide-in-from-top-2 flex animate-in items-center gap-2 rounded-xl bg-red-50 p-4 text-red-600">

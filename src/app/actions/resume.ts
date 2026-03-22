@@ -43,8 +43,8 @@ export async function checkExistingResume(fileHash: string) {
 
 	// Transform DB record back to ResumeData schema
 	const resumeData: ResumeData = {
-		personalInfo: existing.personalInfo as any,
-		design: existing.design as any,
+		personalInfo: existing.personalInfo as ResumeData["personalInfo"],
+		design: existing.design as ResumeData["design"],
 		experience: existing.experiences.map((exp) => ({
 			id: exp.id,
 			company: exp.company,
@@ -76,7 +76,7 @@ export async function checkExistingResume(fileHash: string) {
 		projects: existing.projects.map((p) => ({
 			id: p.id,
 			name: p.name,
-			description: p.description as any,
+			description: p.description as string[],
 			link: p.link || "",
 			startDate: p.startDate || "",
 			endDate: p.endDate || "",
@@ -89,7 +89,7 @@ export async function checkExistingResume(fileHash: string) {
 				title: item.title,
 				subtitle: item.subtitle || "",
 				date: item.date || "",
-				description: item.description as any,
+				description: item.description as string[],
 			})),
 		})),
 	};

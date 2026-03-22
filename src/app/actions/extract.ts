@@ -1,12 +1,10 @@
 "use server";
 
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { generateText, Output } from "ai";
+import { generateObject } from "ai";
 import { z } from "zod";
 import { env } from "~/env";
 import { parsePDF } from "~/lib/pdf-parser";
-
-export const maxDuration = 60;
 
 const google = createGoogleGenerativeAI({
 	apiKey: env.GOOGLE_GENERATIVE_AI_API_KEY,
@@ -119,8 +117,9 @@ export async function extractResumeFromPDF(
 
 		// Step 2: Use Gemini to map the structured text to our JSON schema
 		console.log("🤖 Mapping text to Resume schema with Gemini...");
-		const { object } = await generateText({
+		const { object } = await generateObject({
 			model: google("gemini-3-flash-preview"),
+			schema: ExtractionResumeSchema,
 			system: `You are an expert resume parser. 
       You will receive text extracted from a PDF. 
       The text has been pre-processed to maintain logical column and reading order.
@@ -130,9 +129,6 @@ export async function extractResumeFromPDF(
       Each custom section should have a clear title reflecting its content. 
       If a piece of information is missing, omit it or use an empty array/null where appropriate.`,
 			prompt: `EXTRACTED TEXT:\n\n${extractedText}`,
-			output: Output.object({
-				schema: ExtractionResumeSchema,
-			}),
 		});
 
 		// Attach the fileHash if provided so the client can save it
