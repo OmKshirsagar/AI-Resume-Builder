@@ -7,8 +7,14 @@ export const env = createEnv({
 	 * isn't built with invalid env vars.
 	 */
 	server: {
-		NODE_ENV: z.enum(["development", "test", "production"]),
+		NODE_ENV: z
+			.enum(["development", "test", "production"])
+			.default("development"),
 		GOOGLE_GENERATIVE_AI_API_KEY: z.string().min(1),
+		CLERK_SECRET_KEY: z.string().min(1),
+		TURSO_DATABASE_URL: z.string().url(),
+		TURSO_AUTH_TOKEN: z.string().min(1),
+		CLERK_WEBHOOK_SECRET: z.string().min(1).default("placeholder_secret"),
 	},
 
 	/**
@@ -17,7 +23,7 @@ export const env = createEnv({
 	 * `NEXT_PUBLIC_`.
 	 */
 	client: {
-		// NEXT_PUBLIC_CLIENTVAR: z.string(),
+		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 	},
 
 	/**
@@ -27,7 +33,12 @@ export const env = createEnv({
 	runtimeEnv: {
 		NODE_ENV: process.env.NODE_ENV,
 		GOOGLE_GENERATIVE_AI_API_KEY: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
-		// NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+		CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+		TURSO_DATABASE_URL: process.env.TURSO_DATABASE_URL,
+		TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN,
+		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
+			process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+		CLERK_WEBHOOK_SECRET: process.env.CLERK_WEBHOOK_SECRET,
 	},
 	/**
 	 * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
@@ -36,6 +47,7 @@ export const env = createEnv({
 	skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 	/**
 	 * Makes it so that empty strings are treated as undefined. `SOME_VAR: z.string()` and
-	 * `SOME_VAR=''` will throw an error.\n\t */
+	 * `SOME_VAR=''` will throw an error.
+	 */
 	emptyStringAsUndefined: true,
 });
