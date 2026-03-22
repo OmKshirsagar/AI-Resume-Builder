@@ -4,6 +4,9 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText, Output } from "ai";
 import { z } from "zod";
 import { env } from "~/env";
+import { parsePDF } from "~/lib/pdf-parser";
+
+export const maxDuration = 60;
 
 const google = createGoogleGenerativeAI({
 	apiKey: env.GOOGLE_GENERATIVE_AI_API_KEY,
@@ -98,41 +101,46 @@ const ExtractionResumeSchema = z.object({
 		),
 });
 
-export async function extractResumeFromPDF(formData: FormData) {
+export async function extractResumeFromPDF(
+	formData: FormData,
+	fileHash?: string,
+) {
 	try {
 		const file = formData.get("file") as File;
 		if (!file) {
 			return { success: false, error: "No file uploaded" };
 		}
 
-		const buffer = await file.arrayBuffer();
+		const buffer = Buffer.from(await file.arrayBuffer());
 
-		const { output } = await generateText({
+		// Step 1: Extract structured text locally (saves AI tokens and preserves layout)
+		console.log("📄 Parsing PDF locally with coordinate-aware extraction...");
+		const extractedText = await parsePDF(buffer);
+
+		// Step 2: Use Gemini to map the structured text to our JSON schema
+		console.log("🤖 Mapping text to Resume schema with Gemini...");
+		const { object } = await generateText({
 			model: google("gemini-3-flash-preview"),
-			system:
-				"You are an expert resume parser. Extract the information from the provided PDF resume accurately into the structured format. Identify sections that do not fit into Experience, Education, Skills, or Projects (e.g., Certifications, Awards, Volunteering, Languages, Publications) and map them to the `customSections` array. Each custom section should have a clear title reflecting its content. If a piece of information is missing, omit it or use an empty array/null where appropriate.",
-			messages: [
-				{
-					role: "user",
-					content: [
-						{
-							type: "text",
-							text: "Extract all structured data from this resume PDF.",
-						},
-						{
-							type: "file",
-							data: buffer,
-							mediaType: "application/pdf",
-						},
-					],
-				},
-			],
+			system: `You are an expert resume parser. 
+      You will receive text extracted from a PDF. 
+      The text has been pre-processed to maintain logical column and reading order.
+      
+      Your task: Extract the information accurately into the structured format. 
+      Identify sections that do not fit into Experience, Education, Skills, or Projects (e.g., Certifications, Awards, Volunteering, Languages, Publications) and map them to the 'customSections' array. 
+      Each custom section should have a clear title reflecting its content. 
+      If a piece of information is missing, omit it or use an empty array/null where appropriate.`,
+			prompt: `EXTRACTED TEXT:\n\n${extractedText}`,
 			output: Output.object({
 				schema: ExtractionResumeSchema,
 			}),
 		});
 
-		return { success: true, data: output };
+		// Attach the fileHash if provided so the client can save it
+		return {
+			success: true,
+			data: object,
+			fileHash,
+		};
 	} catch (error) {
 		console.error("Extraction error:", error);
 		return {
