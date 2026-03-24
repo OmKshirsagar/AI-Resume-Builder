@@ -1,7 +1,7 @@
 "use client";
 
-import type { Layout } from "react-resizable-panels";
 import {
+	type Layout,
 	Separator as ResizableHandle,
 	Panel as ResizablePanel,
 	Group as ResizablePanelGroup,
@@ -32,17 +32,17 @@ export function MainLayout({
 					orientation="horizontal"
 				>
 					<ResizablePanel
-						className="bg-slate-50"
+						className="h-full bg-white"
 						defaultSize={defaultLayout ? defaultLayout[0] : 40}
 						minSize={30}
 					>
-						<div className="h-full overflow-y-auto">{editor}</div>
+						<div className="h-full overflow-hidden">{editor}</div>
 					</ResizablePanel>
 
-					<ResizableHandle className="w-2 bg-slate-200 transition-colors hover:bg-slate-300" />
+					<ResizableHandle className="w-1 bg-slate-100 transition-colors hover:bg-indigo-200" />
 
 					<ResizablePanel
-						className="bg-slate-100"
+						className="h-full bg-slate-100/50"
 						defaultSize={defaultLayout ? defaultLayout[1] : 60}
 					>
 						<div className="h-full overflow-hidden">{preview}</div>
