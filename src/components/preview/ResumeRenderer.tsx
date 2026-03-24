@@ -248,7 +248,7 @@ export function ResumeRenderer({ data }: ResumeRendererProps) {
 	return (
 		<div
 			className={clsx(
-				"flex h-full w-full flex-col gap-4 bg-white p-10 font-sans text-slate-900",
+				"flex min-h-full w-full flex-col gap-4 bg-white p-10 font-sans text-slate-900",
 				fontSize === "small"
 					? "text-[11px]"
 					: fontSize === "large"
@@ -291,7 +291,7 @@ export function ResumeRenderer({ data }: ResumeRendererProps) {
 			{/* Layout Engine */}
 			<div
 				className={clsx(
-					"grid flex-1 items-start gap-8",
+					"grid flex-1 items-stretch gap-8",
 					isSidebar ? "grid-cols-[1.8fr_1fr]" : "grid-cols-1",
 				)}
 			>
@@ -300,7 +300,7 @@ export function ResumeRenderer({ data }: ResumeRendererProps) {
 				</div>
 
 				{isSidebar && (
-					<div className="h-full min-h-[600px] space-y-6 border-slate-100 border-l pl-8">
+					<div className="space-y-6 border-slate-100 border-l pl-8">
 						{finalSidebar.map((id) => renderSection(id))}
 					</div>
 				)}

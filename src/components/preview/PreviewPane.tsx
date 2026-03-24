@@ -32,8 +32,8 @@ export function PreviewPane({ children }: PreviewPaneProps) {
 			setScale(newScale);
 
 			// Check for overflow (if content is taller than A4 height)
-			// Using a small buffer for rounding errors
-			setIsOverflowing(contentRef.current.scrollHeight > A4_HEIGHT + 2);
+			// Using a small buffer for rounding errors and sub-pixel rendering
+			setIsOverflowing(contentRef.current.scrollHeight > A4_HEIGHT + 5);
 		};
 
 		const observer = new ResizeObserver(updateScale);
