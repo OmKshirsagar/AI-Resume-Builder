@@ -165,6 +165,27 @@ export const bulletsRelations = relations(bullets, ({ one }) => ({
 	}),
 }));
 
+export const educationRelations = relations(education, ({ one }) => ({
+	resume: one(resumes, {
+		fields: [education.resumeId],
+		references: [resumes.id],
+	}),
+}));
+
+export const skillsRelations = relations(skills, ({ one }) => ({
+	resume: one(resumes, {
+		fields: [skills.resumeId],
+		references: [resumes.id],
+	}),
+}));
+
+export const projectsRelations = relations(projects, ({ one }) => ({
+	resume: one(resumes, {
+		fields: [projects.resumeId],
+		references: [resumes.id],
+	}),
+}));
+
 export const customSectionsRelations = relations(
 	customSections,
 	({ one, many }) => ({
