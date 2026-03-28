@@ -101,7 +101,10 @@ export function ResumeBuilder({
 				body: JSON.stringify({ resumeData: original }),
 			});
 
-			if (!response.ok) throw new Error("Fabrication failed");
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.error || "Fabrication failed");
+			}
 
 			const reader = response.body?.getReader();
 			const textDecoder = new TextDecoder();

@@ -39,11 +39,7 @@ Extract requirements, technical skills, culture, and suggested tone.
 Return ONLY the raw JSON object.
 `;
 
-		const result = await analyzer.generate(prompt, {
-			modelSettings: {
-				temperature: 0.4,
-			},
-		});
+		const result = await analyzer.generate(prompt);
 		try {
 			return cleanAndParseJson(result.text);
 		} catch (_e) {
@@ -93,11 +89,7 @@ Identify the best matches and define an overall strategy.
 Return ONLY the raw JSON object.
 `;
 
-		const result = await matcher.generate(prompt, {
-			modelSettings: {
-				temperature: 0.5,
-			},
-		});
+		const result = await matcher.generate(prompt);
 		try {
 			return cleanAndParseJson(result.text);
 		} catch (_e) {
@@ -164,11 +156,7 @@ Focus on the matched experience and stay grounded in the provided data.
 Variety: Be creative with phrasing and storytelling while staying grounded in the proof points.
 `;
 
-		const result = await writer.generate(prompt, {
-			modelSettings: {
-				temperature: 0.8,
-			},
-		});
+		const result = await writer.generate(prompt);
 		return {
 			content: result.text,
 		};

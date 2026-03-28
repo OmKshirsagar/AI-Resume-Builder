@@ -47,11 +47,7 @@ ${JSON.stringify(resumeData)}
 Return ONLY the raw JSON object. No preamble.
 `;
 
-		const result = await auditor.generate(prompt, {
-			modelSettings: {
-				temperature: 0.7,
-			},
-		});
+		const result = await auditor.generate(prompt);
 		try {
 			const parsed = cleanAndParseJson(result.text);
 			return parsed;
@@ -101,11 +97,7 @@ ${JSON.stringify(auditResult)}
 Return ONLY the raw JSON object.
 `;
 
-		const result = await architect.generate(prompt, {
-			modelSettings: {
-				temperature: 0.7,
-			},
-		});
+		const result = await architect.generate(prompt);
 		try {
 			const parsed = cleanAndParseJson(result.text);
 			return parsed;
@@ -147,11 +139,7 @@ Budget: ${JSON.stringify(budgetResult?.budget)}
 Return a valid Resume JSON object. Fill the 1-page budget fully.
 `;
 
-		const result = await fabricator.generate(prompt, {
-			modelSettings: {
-				temperature: 0.8,
-			},
-		});
+		const result = await fabricator.generate(prompt);
 		try {
 			const parsed = cleanAndParseJson(result.text);
 			return ResumeSchema.parse(parsed);
@@ -202,11 +190,7 @@ ${budgetResult?.inlineSections?.join(", ")}
 Return a JSON DesignSchema object.
 `;
 
-		const result = await stylist.generate(prompt, {
-			modelSettings: {
-				temperature: 0.5,
-			},
-		});
+		const result = await stylist.generate(prompt);
 		try {
 			const designSettings = cleanAndParseJson(result.text);
 			const validatedDesign = DesignSchema.parse(designSettings);
