@@ -1,3 +1,4 @@
+import { google } from "@ai-sdk/google";
 import { Agent } from "@mastra/core/agent";
 
 export const auditorAgent = new Agent({
@@ -6,13 +7,12 @@ export const auditorAgent = new Agent({
 	instructions: `You are a Senior Technical Recruiter. Analyze the resume JSON.
 Goal: Identify "High-Signal" achievements.
 Task: Rank entries by impact score (1-10).
+Variety: Be creative in your analysis—different runs should explore different angles of the candidate's strengths (e.g., leadership vs technical depth).
 Non-negotiable: Education, Skills, and Certifications.
 
 ### JSON RULES:
 Your response must be ONLY a valid JSON object matching the requested schema. No preamble, no markdown.`,
-	model: {
-		id: "google/gemma-3-27b-it",
-	},
+	model: google("gemini-1.5-flash"),
 });
 
 export const architectAgent = new Agent({
@@ -21,13 +21,12 @@ export const architectAgent = new Agent({
 	instructions: `You are a Resume Architect.
 Goal: Create a "1-Page Space Budget".
 Task: Allocate a bullet count (0-5) to each entry.
+Variety: Experiment with different structural balances—sometimes lean into recent roles, sometimes highlight projects or diverse skills.
 Constraint: Must fit a single A4 page.
 
 ### JSON RULES:
 Your response must be ONLY a valid JSON object matching the requested schema. No preamble, no markdown.`,
-	model: {
-		id: "google/gemma-3-27b-it",
-	},
+	model: google("gemini-1.5-flash"),
 });
 
 export const fabricatorAgent = new Agent({
@@ -40,13 +39,12 @@ export const fabricatorAgent = new Agent({
 2.  **NO FIELD MERGING**: Keep "company", "position", "startDate", "endDate", and "description" as SEPARATE JSON fields.
 3.  **XYZ FORMULA**: Every experience bullet MUST be: "Accomplished [X] as measured by [Y], by doing [Z]".
 4.  **SYNTHESIS**: Merge multiple bullets into dense "Super Bullets".
-5.  **ID INTEGRITY**: Keep all 'id' fields exactly as in the master.
-6.  **ZERO LOSS**: Education, Skills, and ALL Custom Sections (Certifications, etc.) MUST be included.
+5.  **VARIETY**: Vary your writing style and sentence structure between runs while maintaining the XYZ formula. Explore different high-impact verbs and phrasing.
+6.  **ID INTEGRITY**: Keep all 'id' fields exactly as in the master.
+7.  **ZERO LOSS**: Education, Skills, and ALL Custom Sections (Certifications, etc.) MUST be included.
 
 Output must be a valid Resume JSON.`,
-	model: {
-		id: "google/gemma-3-27b-it",
-	},
+	model: google("gemini-1.5-flash"),
 });
 
 export const stylistAgent = new Agent({
@@ -64,9 +62,7 @@ Your goal is to choose the best visual layout and theme based on "Career Density
 
 ### JSON RULES:
 Your response must be ONLY a valid JSON object matching the requested schema. No preamble, no markdown.`,
-	model: {
-		id: "google/gemma-3-27b-it",
-	},
+	model: google("gemini-1.5-flash"),
 });
 
 export const jdAnalyzerAgent = new Agent({
@@ -85,9 +81,7 @@ Your task is to extract key requirements, technical skills, and company culture/
 
 ### JSON RULES:
 Your response must be ONLY a valid JSON object matching the requested schema. No preamble, no markdown.`,
-	model: {
-		id: "google/gemma-3-27b-it",
-	},
+	model: google("gemini-1.5-flash"),
 });
 
 export const experienceMatcherAgent = new Agent({
@@ -110,9 +104,7 @@ Given a Resume JSON and a list of job requirements, identify the most relevant a
 
 ### JSON RULES:
 Your response must be ONLY a valid JSON object matching the requested schema. No preamble, no markdown.`,
-	model: {
-		id: "google/gemma-3-27b-it",
-	},
+	model: google("gemini-1.5-flash"),
 });
 
 export const coverLetterWriterAgent = new Agent({
@@ -132,7 +124,5 @@ Your goal is to write a compelling, grounded, and tailored cover letter.
 
 ### OUTPUT:
 Return the cover letter in Markdown format.`,
-	model: {
-		id: "google/gemma-3-27b-it",
-	},
+	model: google("gemini-1.5-flash"),
 });

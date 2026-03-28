@@ -39,7 +39,11 @@ Extract requirements, technical skills, culture, and suggested tone.
 Return ONLY the raw JSON object.
 `;
 
-		const result = await analyzer.generate(prompt);
+		const result = await analyzer.generate(prompt, {
+			modelSettings: {
+				temperature: 0.4,
+			},
+		});
 		try {
 			return cleanAndParseJson(result.text);
 		} catch (_e) {
@@ -89,7 +93,11 @@ Identify the best matches and define an overall strategy.
 Return ONLY the raw JSON object.
 `;
 
-		const result = await matcher.generate(prompt);
+		const result = await matcher.generate(prompt, {
+			modelSettings: {
+				temperature: 0.5,
+			},
+		});
 		try {
 			return cleanAndParseJson(result.text);
 		} catch (_e) {
@@ -153,9 +161,14 @@ Target Length: ${length || "medium"}
 ### INSTRUCTION
 Write a compelling cover letter in Markdown. 
 Focus on the matched experience and stay grounded in the provided data.
+Variety: Be creative with phrasing and storytelling while staying grounded in the proof points.
 `;
 
-		const result = await writer.generate(prompt);
+		const result = await writer.generate(prompt, {
+			modelSettings: {
+				temperature: 0.8,
+			},
+		});
 		return {
 			content: result.text,
 		};

@@ -47,7 +47,11 @@ ${JSON.stringify(resumeData)}
 Return ONLY the raw JSON object. No preamble.
 `;
 
-		const result = await auditor.generate(prompt);
+		const result = await auditor.generate(prompt, {
+			modelSettings: {
+				temperature: 0.7,
+			},
+		});
 		try {
 			const parsed = cleanAndParseJson(result.text);
 			return parsed;
@@ -58,7 +62,7 @@ Return ONLY the raw JSON object. No preamble.
 	},
 });
 
-// Step 2: Budgeting (Renamed for clarity)
+// Step 2: Budgeting
 const budgetStep = createStep({
 	id: "budget-resume",
 	inputSchema: z.object({
@@ -97,7 +101,11 @@ ${JSON.stringify(auditResult)}
 Return ONLY the raw JSON object.
 `;
 
-		const result = await architect.generate(prompt);
+		const result = await architect.generate(prompt, {
+			modelSettings: {
+				temperature: 0.7,
+			},
+		});
 		try {
 			const parsed = cleanAndParseJson(result.text);
 			return parsed;
@@ -139,7 +147,11 @@ Budget: ${JSON.stringify(budgetResult?.budget)}
 Return a valid Resume JSON object. Fill the 1-page budget fully.
 `;
 
-		const result = await fabricator.generate(prompt);
+		const result = await fabricator.generate(prompt, {
+			modelSettings: {
+				temperature: 0.8,
+			},
+		});
 		try {
 			const parsed = cleanAndParseJson(result.text);
 			return ResumeSchema.parse(parsed);
@@ -190,7 +202,11 @@ ${budgetResult?.inlineSections?.join(", ")}
 Return a JSON DesignSchema object.
 `;
 
-		const result = await stylist.generate(prompt);
+		const result = await stylist.generate(prompt, {
+			modelSettings: {
+				temperature: 0.5,
+			},
+		});
 		try {
 			const designSettings = cleanAndParseJson(result.text);
 			const validatedDesign = DesignSchema.parse(designSettings);

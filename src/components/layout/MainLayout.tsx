@@ -28,12 +28,14 @@ export function MainLayout({
 			<main className="flex-1 overflow-hidden">
 				<ResizablePanelGroup
 					className="h-full items-stretch"
+					id="main-layout-group"
 					onLayoutChange={onLayoutChange}
 					orientation="horizontal"
 				>
 					<ResizablePanel
 						className="h-full bg-white"
 						defaultSize={defaultLayout ? defaultLayout[0] : 40}
+						id="editor-panel"
 						minSize={30}
 					>
 						<div className="h-full overflow-hidden">{editor}</div>
@@ -44,6 +46,7 @@ export function MainLayout({
 					<ResizablePanel
 						className="h-full bg-slate-100/50"
 						defaultSize={defaultLayout ? defaultLayout[1] : 60}
+						id="preview-panel"
 					>
 						<div className="h-full overflow-hidden">{preview}</div>
 					</ResizablePanel>

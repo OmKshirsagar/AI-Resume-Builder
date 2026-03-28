@@ -1,12 +1,32 @@
 import type { NextRequest } from "next/server";
 import { mastra } from "~/mastra";
+import { ResumeSchema } from "~/schemas/resume";
 
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
 	console.log("🚀 Fabrication request received");
 	try {
-		const { resumeData } = await req.json();
+		const body = await req.json();
+		const { resumeData } = body;
+
+		if (!resumeData) {
+			console.error("❌ Missing resumeData in request body");
+			return Response.json({ error: "Missing resume data" }, { status: 400 });
+		}
+
+		// Validate incoming data
+		const validation = ResumeSchema.safeParse(resumeData);
+		if (!validation.success) {
+			console.error("❌ Resume validation failed:", validation.error.format());
+			return Response.json(
+				{
+					error: "Invalid resume data format",
+					details: validation.error.format(),
+				},
+				{ status: 400 },
+			);
+		}
 
 		const workflow = mastra.getWorkflow("fabricatorWorkflow");
 		if (!workflow) {
@@ -23,25 +43,20 @@ export async function POST(req: NextRequest) {
 
 				// biome-ignore lint/suspicious/noExplicitAny: complex stream data
 				const send = (data: any) => {
-					console.log(`📡 Sending to client: ${data.status || "data"}`);
 					controller.enqueue(encoder.encode(`${JSON.stringify(data)}\n`));
 				};
 
 				try {
 					console.log("⏱️ Starting Workflow Stream...");
 					const { fullStream } = run.stream({
-						inputData: { resumeData },
+						inputData: { resumeData: validation.data },
 					});
 
 					for await (const event of fullStream) {
-						console.log(`📦 Internal Event: ${event.type}`);
-
 						// biome-ignore lint/suspicious/noExplicitAny: complex workflow payload
 						const stepId = (event.payload as any)?.id;
 
 						if (event.type === "workflow-step-start") {
-							console.log(`  -> Step Started: ${stepId}`);
-
 							const messages: Record<string, string> = {
 								"audit-resume": "Step 1/4: Auditing resume impact...",
 								"budget-resume": "Step 2/4: Optimizing space budget...",
@@ -57,22 +72,18 @@ export async function POST(req: NextRequest) {
 						}
 
 						if (event.type === "workflow-step-result") {
-							console.log(`  -> Step Result: ${stepId}`);
-
-							if (stepId === "stylist-orchestration") {
+							if (
+								stepId === "stylized-output" ||
+								stepId === "stylist-orchestration"
+							) {
 								// biome-ignore lint/suspicious/noExplicitAny: complex workflow output
 								const output = (event.payload as any).output;
 								console.log("✅ Final Stylized Output captured!");
 								send({ status: "DONE", data: output });
 							}
 						}
-
-						if (event.type === "workflow-finish") {
-							console.log("🏁 Workflow Finish event received");
-						}
 					}
 
-					console.log("🏁 Stream closed");
 					controller.close();
 				} catch (err) {
 					console.error("❌ Workflow execution error:", err);
@@ -93,6 +104,9 @@ export async function POST(req: NextRequest) {
 		});
 	} catch (error) {
 		console.error("❌ API Route error:", error);
-		return Response.json({ error: "Invalid request" }, { status: 400 });
+		return Response.json(
+			{ error: error instanceof Error ? error.message : "Invalid request" },
+			{ status: 400 },
+		);
 	}
 }
