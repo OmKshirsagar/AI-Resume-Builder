@@ -68,3 +68,71 @@ Your response must be ONLY a valid JSON object matching the requested schema. No
 		id: "google/gemma-3-27b-it",
 	},
 });
+
+export const jdAnalyzerAgent = new Agent({
+	id: "jd-analyzer-agent",
+	name: "JD Analyzer",
+	instructions: `You are a specialized Job Description Analyst. 
+Your task is to extract key requirements, technical skills, and company culture/values from a job description.
+
+### OUTPUT SCHEMA:
+{
+  "requirements": ["requirement 1", "requirement 2"],
+  "technicalSkills": ["skill 1", "skill 2"],
+  "culture": "brief description of company culture",
+  "tone": "suggested tone based on JD"
+}
+
+### JSON RULES:
+Your response must be ONLY a valid JSON object matching the requested schema. No preamble, no markdown.`,
+	model: {
+		id: "google/gemma-3-27b-it",
+	},
+});
+
+export const experienceMatcherAgent = new Agent({
+	id: "experience-matcher-agent",
+	name: "Experience Matcher",
+	instructions: `You are an expert at matching candidate experience to job requirements.
+Given a Resume JSON and a list of job requirements, identify the most relevant achievements and skills.
+
+### OUTPUT SCHEMA:
+{
+  "matches": [
+    {
+      "requirement": "the requirement being matched",
+      "achievement": "the specific bullet point or achievement from the resume",
+      "reason": "why this is a good match"
+    }
+  ],
+  "overallStrategy": "how to position the candidate for this role"
+}
+
+### JSON RULES:
+Your response must be ONLY a valid JSON object matching the requested schema. No preamble, no markdown.`,
+	model: {
+		id: "google/gemma-3-27b-it",
+	},
+});
+
+export const coverLetterWriterAgent = new Agent({
+	id: "cover-letter-writer-agent",
+	name: "Cover Letter Writer",
+	instructions: `You are a professional Career Coach and Ghostwriter.
+Your goal is to write a compelling, grounded, and tailored cover letter.
+
+### RULES:
+1. **NO FLUFF**: Avoid generic corporate jargon. Use specific evidence.
+2. **MATCH TONE**: Align with the company's culture and the user's requested tone.
+3. **GROUNDED**: Only use information provided in the resume and matched experience. Do not hallucinate achievements.
+4. **STRUCTURE**:
+   - Hook: Why you're excited about this specific role/company.
+   - Body: 2-3 paragraphs connecting your specific experience to their needs.
+   - Closing: Call to action.
+
+### OUTPUT:
+Return the cover letter in Markdown format.`,
+	model: {
+		id: "google/gemma-3-27b-it",
+	},
+});
