@@ -34,8 +34,12 @@
 - [ ] Support "Master" vs "Tailored" resume versioning.
 
 ### Phase 11: AI Cover Letter Generator
-- [ ] Create a dedicated Mastra workflow for Cover Letter synthesis.
-- [ ] Implement a matching UI for drafting and editing letters.
+**Goal:** Implement a dedicated AI workflow and UI for generating cover letters based on a resume and a job description.
+**Plans:** 2 plans
+- [ ] 11-01-PLAN.md — Backend, Database & Mastra Workflow.
+- [ ] 11-02-PLAN.md — Drafting Lab UI & PDF Export.
+
+**Requirements:** [PHASE-11-BACKEND, PHASE-11-WORKFLOW, PHASE-11-UI, PHASE-11-EXPORT]
 
 ### Phase 12: ATS Scoring & Semantic Analytics
 - [ ] Implement AI-driven keyword extraction and industry benchmarking.

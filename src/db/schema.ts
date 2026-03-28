@@ -129,10 +129,29 @@ export const customSectionItems = sqliteTable("custom_section_items", {
 	order: integer("order").notNull().default(0),
 });
 
+// 10. Cover Letters Table
+export const coverLetters = sqliteTable("cover_letters", {
+	id: text("id").primaryKey(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => users.id, { onDelete: "cascade" }),
+	resumeId: text("resume_id")
+		.notNull()
+		.references(() => resumes.id, { onDelete: "cascade" }),
+	jobDescription: text("job_description").notNull(),
+	content: text("content").notNull(),
+	companyName: text("company_name"),
+	tone: text("tone").notNull().default("professional"),
+	length: text("length").notNull().default("medium"),
+	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+});
+
 // --- Relations ---
 
 export const usersRelations = relations(users, ({ many }) => ({
 	resumes: many(resumes),
+	coverLetters: many(coverLetters),
 }));
 
 export const resumesRelations = relations(resumes, ({ one, many }) => ({
@@ -148,6 +167,7 @@ export const resumesRelations = relations(resumes, ({ one, many }) => ({
 	skills: many(skills),
 	projects: many(projects),
 	customSections: many(customSections),
+	coverLetters: many(coverLetters),
 }));
 
 export const experiencesRelations = relations(experiences, ({ one, many }) => ({
@@ -206,3 +226,11 @@ export const customSectionItemsRelations = relations(
 		}),
 	}),
 );
+
+export const coverLettersRelations = relations(coverLetters, ({ one }) => ({
+	user: one(users, { fields: [coverLetters.userId], references: [users.id] }),
+	resume: one(resumes, {
+		fields: [coverLetters.resumeId],
+		references: [resumes.id],
+	}),
+}));
