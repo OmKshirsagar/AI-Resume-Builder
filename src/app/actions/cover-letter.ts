@@ -165,21 +165,19 @@ export async function generateCoverLetter(
 /**
  * Persists a generated cover letter to the database.
  */
-export async function saveCoverLetter(
-	id: string | undefined,
-	data: {
-		resumeId: string;
-		jobDescription: string;
-		content: string;
-		companyName?: string;
-		tone: string;
-		length: string;
-	},
-) {
+export async function saveCoverLetter(data: {
+	id?: string;
+	resumeId: string;
+	jobDescription: string;
+	content: string;
+	companyName?: string;
+	tone: string;
+	length: string;
+}) {
 	const { userId } = await auth();
 	if (!userId) throw new Error("Unauthorized");
 
-	const finalId = id || crypto.randomUUID();
+	const finalId = data.id || crypto.randomUUID();
 
 	await db
 		.insert(coverLetters)
@@ -208,7 +206,7 @@ export async function saveCoverLetter(
 		});
 
 	revalidatePath("/dashboard");
-	return finalId;
+	return { success: true, id: finalId };
 }
 
 /**

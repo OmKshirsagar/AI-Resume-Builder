@@ -28,18 +28,18 @@
 - [x] Refactor the extraction pipeline to send structured text to Gemini (Cost Saving).
 - [x] Implement SHA-256 file hashing and instant deduplication lookup.
 
-### Phase 10: User Dashboard & LinkedIn Import (NEXT)
-- [ ] Build a User Dashboard to manage multiple resumes.
-- [ ] Implement the **LinkedIn-to-PDF** import guidance flow.
-- [ ] Support "Master" vs "Tailored" resume versioning.
+### Phase 10: User Dashboard & LinkedIn Import ✅
+- [x] Build a User Dashboard to manage multiple resumes.
+- [x] Implement the **LinkedIn-to-PDF** import guidance flow.
+- [x] Support "Master" vs "Tailored" resume versioning.
+- [x] Optimize UI/UX for independent editor/preview scrolling.
 
-### Phase 11: AI Cover Letter Generator
-**Goal:** Implement a dedicated AI workflow and UI for generating cover letters based on a resume and a job description.
-**Plans:** 2 plans
-- [ ] 11-01-PLAN.md — Backend, Database & Mastra Workflow.
-- [ ] 11-02-PLAN.md — Drafting Lab UI & PDF Export.
-
-**Requirements:** [PHASE-11-BACKEND, PHASE-11-WORKFLOW, PHASE-11-UI, PHASE-11-EXPORT]
+### Phase 11: AI Cover Letter Generator (IN PROGRESS)
+- [x] Update database schema with `cover_letters` table.
+- [x] Implement multi-agent Mastra synthesis workflow (Analysis -> Match -> Write).
+- [x] Create server actions for generation and persistence.
+- [ ] Build the "Drafting Lab" UI with live preview and tone controls.
+- [ ] Implement Cover Letter PDF export matching resume branding.
 
 ### Phase 12: ATS Scoring & Semantic Analytics
 - [ ] Implement AI-driven keyword extraction and industry benchmarking.
