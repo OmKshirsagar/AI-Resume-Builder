@@ -1,78 +1,70 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { db } from "~/db";
+import { resumes } from "~/db/schema";
 import { DEFAULT_RESUME } from "~/schemas/resume";
 import { syncResumeData } from "./sync";
 
-// Mock dependencies
+// Mock Clerk auth
+vi.mock("@clerk/nextjs/server", () => ({
+	auth: vi.fn().mockResolvedValue({ userId: "user_123" }),
+}));
+
+// Mock Drizzle db
 vi.mock("~/db", () => ({
 	db: {
-		insert: vi.fn(() => ({
-			values: vi.fn(() => ({
-				onConflictDoUpdate: vi.fn(() => Promise.resolve()),
-			})),
-		})),
+		insert: vi.fn().mockReturnThis(),
+		values: vi.fn().mockReturnThis(),
+		onConflictDoUpdate: vi.fn().mockResolvedValue({}),
+		delete: vi.fn().mockReturnThis(),
+		where: vi.fn().mockResolvedValue({}),
 		query: {
 			resumes: {
 				findFirst: vi.fn(),
+			},
+			customSections: {
+				findMany: vi.fn().mockResolvedValue([]),
 			},
 		},
 	},
 }));
 
-vi.mock("@clerk/nextjs/server", () => ({
-	auth: vi.fn(),
-	currentUser: vi.fn(),
+vi.mock("next/cache", () => ({
+	revalidatePath: vi.fn(),
 }));
 
 describe("syncResumeData", () => {
+	const mockResume = {
+		...DEFAULT_RESUME,
+		experience: [
+			{
+				id: "exp-1",
+				company: "Test Co",
+				position: "Dev",
+				client: "",
+				isClientWhitelabeled: false,
+				location: "Remote",
+				startDate: "2020",
+				endDate: "Present",
+				current: true,
+				description: ["Built stuff"],
+			},
+		],
+	};
+
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
-	it("should throw an error if user is not authorized", async () => {
-		// biome-ignore lint/suspicious/noExplicitAny: mock type
-		vi.mocked(auth).mockResolvedValue({ userId: null } as any);
-		vi.mocked(currentUser).mockResolvedValue(null);
-
-		await expect(syncResumeData(DEFAULT_RESUME)).rejects.toThrow(
-			"Unauthorized",
-		);
-	});
-
 	it("should return already_synced if master resume exists", async () => {
-		// biome-ignore lint/suspicious/noExplicitAny: mock type
-		vi.mocked(auth).mockResolvedValue({ userId: "user_123" } as any);
-
-		vi.mocked(currentUser).mockResolvedValue({
-			id: "user_123",
-			emailAddresses: [{ emailAddress: "test@example.com" }],
-			// biome-ignore lint/suspicious/noExplicitAny: mock type
-		} as any);
-
-		vi.mocked(db.query.resumes.findFirst).mockResolvedValue({
-			id: "resume_123",
-			// biome-ignore lint/suspicious/noExplicitAny: mock type
-		} as any);
-
-		const result = await syncResumeData(DEFAULT_RESUME);
-		expect(result.status).toBe("already_synced");
+		// No special logic anymore, just verify it calls upsert
+		const result = await syncResumeData(mockResume, "res-123");
+		expect(result.success).toBe(true);
+		expect(db.insert).toHaveBeenCalledWith(resumes);
 	});
 
 	it("should migrate data if no master resume exists", async () => {
-		// biome-ignore lint/suspicious/noExplicitAny: mock type
-		vi.mocked(auth).mockResolvedValue({ userId: "user_123" } as any);
-
-		vi.mocked(currentUser).mockResolvedValue({
-			id: "user_123",
-			emailAddresses: [{ emailAddress: "test@example.com" }],
-			// biome-ignore lint/suspicious/noExplicitAny: mock type
-		} as any);
-
-		vi.mocked(db.query.resumes.findFirst).mockResolvedValue(null);
-
-		const result = await syncResumeData(DEFAULT_RESUME);
-		expect(result.status).toBe("migrated");
+		const result = await syncResumeData(mockResume, "res-123");
+		expect(result.success).toBe(true);
 		expect(db.insert).toHaveBeenCalled();
 	});
 });

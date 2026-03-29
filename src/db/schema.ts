@@ -48,6 +48,10 @@ export const experiences = sqliteTable("experiences", {
 		.references(() => resumes.id, { onDelete: "cascade" }),
 	company: text("company").notNull(),
 	position: text("position").notNull(),
+	client: text("client"),
+	isClientWhitelabeled: integer("is_client_whitelabeled", { mode: "boolean" })
+		.notNull()
+		.default(false),
 	location: text("location"),
 	startDate: text("start_date"),
 	endDate: text("end_date"),
@@ -99,6 +103,10 @@ export const projects = sqliteTable("projects", {
 		.notNull()
 		.references(() => resumes.id, { onDelete: "cascade" }),
 	name: text("name").notNull(),
+	client: text("client"),
+	isClientWhitelabeled: integer("is_client_whitelabeled", { mode: "boolean" })
+		.notNull()
+		.default(false),
 	link: text("link"),
 	startDate: text("start_date"),
 	endDate: text("end_date"),
@@ -139,7 +147,7 @@ export const coverLetters = sqliteTable("cover_letters", {
 		.notNull()
 		.references(() => resumes.id, { onDelete: "cascade" }),
 	jobDescription: text("job_description").notNull(),
-	content: text("content").notNull(),
+	content: text("content").notNull(), // Generated Markdown
 	companyName: text("company_name"),
 	tone: text("tone").notNull().default("professional"),
 	length: text("length").notNull().default("medium"),

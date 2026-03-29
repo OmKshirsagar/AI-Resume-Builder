@@ -51,6 +51,8 @@ export default async function CoverLetterPage({
 			id: exp.id,
 			company: exp.company,
 			position: exp.position,
+			client: exp.client || "",
+			isClientWhitelabeled: exp.isClientWhitelabeled,
 			location: exp.location || "",
 			startDate: exp.startDate || "",
 			endDate: exp.endDate || "",
@@ -78,6 +80,8 @@ export default async function CoverLetterPage({
 		projects: existing.projects.map((p) => ({
 			id: p.id,
 			name: p.name,
+			client: p.client || "",
+			isClientWhitelabeled: p.isClientWhitelabeled,
 			description: p.description as string[],
 			link: p.link || "",
 			startDate: p.startDate || "",

@@ -31,6 +31,8 @@ export function ExperienceForm({ disabled }: ExperienceFormProps) {
 							id: crypto.randomUUID(),
 							company: "",
 							position: "",
+							client: "",
+							isClientWhitelabeled: false,
 							location: "",
 							startDate: "",
 							endDate: "",
@@ -153,6 +155,36 @@ function ExperienceItem({
 						<div className="space-y-1">
 							<label
 								className="font-bold text-[10px] text-slate-400 uppercase"
+								htmlFor={`exp-client-${index}`}
+							>
+								Client (Optional)
+							</label>
+							<input
+								{...register(`experience.${index}.client`)}
+								className="h-9 w-full rounded border border-slate-200 px-3 text-sm focus:border-blue-500 focus:outline-none"
+								disabled={disabled}
+								id={`exp-client-${index}`}
+								placeholder="e.g. Goldman Sachs"
+							/>
+						</div>
+						<div className="flex items-center gap-2 pt-4">
+							<input
+								{...register(`experience.${index}.isClientWhitelabeled`)}
+								className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+								disabled={disabled}
+								id={`exp-whitelabel-${index}`}
+								type="checkbox"
+							/>
+							<label
+								className="font-medium text-slate-600 text-xs"
+								htmlFor={`exp-whitelabel-${index}`}
+							>
+								Whitelabel client in AI synthesis
+							</label>
+						</div>
+						<div className="space-y-1">
+							<label
+								className="font-bold text-[10px] text-slate-400 uppercase"
 								htmlFor={`exp-start-${index}`}
 							>
 								Start Date
@@ -236,8 +268,10 @@ function ExperienceItem({
 											</div>
 										</div>
 										<textarea
-											// biome-ignore lint/suspicious/noExplicitAny: complex field path
-											{...register(bPath as any)}
+											{...register(
+												// biome-ignore lint/suspicious/noExplicitAny: complex field path
+												bPath as any,
+											)}
 											className="w-full rounded border border-slate-200 bg-slate-50 p-2 text-xs shadow-sm transition-all focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
 											disabled={disabled}
 											rows={2}

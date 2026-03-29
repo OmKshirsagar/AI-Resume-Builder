@@ -27,6 +27,8 @@ export function ProjectsForm({ disabled }: ProjectsFormProps) {
 						append({
 							id: crypto.randomUUID(),
 							name: "",
+							client: "",
+							isClientWhitelabeled: false,
 							description: [""],
 							link: "",
 							startDate: "",
@@ -39,6 +41,12 @@ export function ProjectsForm({ disabled }: ProjectsFormProps) {
 					Add Project
 				</button>
 			</div>
+
+			{fields.length === 0 && (
+				<p className="py-4 text-center text-slate-400 text-sm italic">
+					No projects added yet.
+				</p>
+			)}
 
 			<div className="space-y-4">
 				{fields.map((field, index) => (
@@ -64,18 +72,21 @@ function ProjectItem({
 	disabled?: boolean;
 }) {
 	const [isOpen, setIsOpen] = useState(true);
-	const { register, watch, control } = useFormContext<ResumeData>();
-	const name = watch(`projects.${index}.name`);
+	const { control, register, watch } = useFormContext<ResumeData>();
+
+	// biome-ignore lint/suspicious/noExplicitAny: complex field path
+	const descriptionPath = `projects.${index}.description` as any;
 
 	const {
-		fields: bulletFields,
-		append: appendBullet,
-		remove: removeBullet,
+		fields: descFields,
+		append: appendDesc,
+		remove: removeDesc,
 	} = useFieldArray({
 		control,
-		// biome-ignore lint/suspicious/noExplicitAny: complex field path
-		name: `projects.${index}.description` as any,
+		name: descriptionPath,
 	});
+
+	const name = watch(`projects.${index}.name`);
 
 	return (
 		<div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -108,7 +119,7 @@ function ProjectItem({
 						<div className="space-y-1">
 							<label
 								className="font-bold text-[10px] text-slate-400 uppercase"
-								htmlFor={`proj-name-${index}`}
+								htmlFor={`project-name-${index}`}
 							>
 								Project Name
 							</label>
@@ -116,61 +127,90 @@ function ProjectItem({
 								{...register(`projects.${index}.name`)}
 								className="h-9 w-full rounded border border-slate-200 px-3 text-sm focus:border-blue-500 focus:outline-none"
 								disabled={disabled}
-								id={`proj-name-${index}`}
+								id={`project-name-${index}`}
 							/>
 						</div>
 						<div className="space-y-1">
 							<label
 								className="font-bold text-[10px] text-slate-400 uppercase"
-								htmlFor={`proj-link-${index}`}
+								htmlFor={`project-link-${index}`}
 							>
-								Link
+								Project Link
 							</label>
 							<input
 								{...register(`projects.${index}.link`)}
 								className="h-9 w-full rounded border border-slate-200 px-3 text-sm focus:border-blue-500 focus:outline-none"
 								disabled={disabled}
-								id={`proj-link-${index}`}
+								id={`project-link-${index}`}
 								placeholder="https://..."
 							/>
 						</div>
+						<div className="space-y-1">
+							<label
+								className="font-bold text-[10px] text-slate-400 uppercase"
+								htmlFor={`project-client-${index}`}
+							>
+								Client (Optional)
+							</label>
+							<input
+								{...register(`projects.${index}.client`)}
+								className="h-9 w-full rounded border border-slate-200 px-3 text-sm focus:border-blue-500 focus:outline-none"
+								disabled={disabled}
+								id={`project-client-${index}`}
+								placeholder="e.g. Client Name"
+							/>
+						</div>
+						<div className="flex items-center gap-2 pt-4">
+							<input
+								{...register(`projects.${index}.isClientWhitelabeled`)}
+								className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+								disabled={disabled}
+								id={`project-whitelabel-${index}`}
+								type="checkbox"
+							/>
+							<label
+								className="font-medium text-slate-600 text-xs"
+								htmlFor={`project-whitelabel-${index}`}
+							>
+								Whitelabel client in AI synthesis
+							</label>
+						</div>
 					</div>
 
-					<div className="space-y-2">
+					<div className="space-y-3">
 						<div className="flex items-center justify-between">
 							<label
 								className="font-bold text-[10px] text-slate-400 uppercase"
-								htmlFor={`proj-desc-label-${index}`}
+								htmlFor={`project-desc-label-${index}`}
 							>
-								Description
+								Description Bullets
 							</label>
 							<button
-								className="font-bold text-[10px] text-blue-600"
+								className="font-bold text-[10px] text-blue-600 hover:text-blue-700"
 								disabled={disabled}
-								onClick={() => appendBullet("")}
+								onClick={() => appendDesc("")}
 								type="button"
 							>
-								+ Add Detail
+								+ Add Bullet
 							</button>
 						</div>
-						<div className="space-y-2" id={`proj-desc-label-${index}`}>
-							{bulletFields.map((bField, bIndex) => (
-								<div className="flex gap-2" key={bField.id}>
-									<input
-										{...register(
-											// biome-ignore lint/suspicious/noExplicitAny: complex field path
-											`projects.${index}.description.${bIndex}` as any,
-										)}
-										className="h-9 w-full rounded border border-slate-200 px-3 text-xs focus:border-blue-500 focus:outline-none"
+
+						<div className="space-y-2" id={`project-desc-label-${index}`}>
+							{descFields.map((field, dIndex) => (
+								<div className="flex gap-2" key={field.id}>
+									<textarea
+										{...register(`projects.${index}.description.${dIndex}`)}
+										className="w-full rounded border border-slate-200 bg-slate-50 p-2 text-xs transition-all focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
 										disabled={disabled}
+										rows={2}
 									/>
 									<button
-										className="text-slate-300 transition-colors hover:text-red-500"
+										className="mt-2 text-slate-300 transition-colors hover:text-red-500 disabled:opacity-50"
 										disabled={disabled}
-										onClick={() => removeBullet(bIndex)}
+										onClick={() => removeDesc(dIndex)}
 										type="button"
 									>
-										<Trash2 className="h-3.5 w-3.5" />
+										<Trash2 className="h-3 w-3" />
 									</button>
 								</div>
 							))}

@@ -43,12 +43,15 @@ export default async function EditorPage({
 
 	// Reconstitute ResumeData schema
 	const initialData: ResumeData = {
+		id: existing.id,
 		personalInfo: existing.personalInfo as ResumeData["personalInfo"],
 		design: existing.design as ResumeData["design"],
 		experience: existing.experiences.map((exp) => ({
 			id: exp.id,
 			company: exp.company,
 			position: exp.position,
+			client: exp.client || "",
+			isClientWhitelabeled: exp.isClientWhitelabeled,
 			location: exp.location || "",
 			startDate: exp.startDate || "",
 			endDate: exp.endDate || "",
@@ -76,6 +79,8 @@ export default async function EditorPage({
 		projects: existing.projects.map((p) => ({
 			id: p.id,
 			name: p.name,
+			client: p.client || "",
+			isClientWhitelabeled: p.isClientWhitelabeled,
 			description: p.description as string[],
 			link: p.link || "",
 			startDate: p.startDate || "",

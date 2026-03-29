@@ -22,6 +22,11 @@ export const ExperienceSchema = z.object({
 	id: z.string(),
 	company: z.string().min(1, "Company name is required"),
 	position: z.string().min(1, "Position is required"),
+	client: z.string().default("").describe("Optional client worked for"),
+	isClientWhitelabeled: z
+		.boolean()
+		.default(false)
+		.describe("If true, AI will hide specific client name"),
 	location: z.string().default(""),
 	startDate: z.string().default(""),
 	endDate: z.string().default(""),
@@ -50,6 +55,11 @@ export const SkillSchema = z.object({
 export const ProjectSchema = z.object({
 	id: z.string(),
 	name: z.string().min(1, "Project name is required"),
+	client: z.string().default("").describe("Optional client for this project"),
+	isClientWhitelabeled: z
+		.boolean()
+		.default(false)
+		.describe("If true, AI will hide specific client name"),
 	description: z.array(z.string()).default([]),
 	link: z.string().default(""),
 	startDate: z.string().default(""),
@@ -100,6 +110,7 @@ export const DesignSchema = z.object({
 });
 
 export const ResumeSchema = z.object({
+	id: z.string().optional(),
 	personalInfo: PersonalInformationSchema,
 	experience: z.array(ExperienceSchema).default([]),
 	education: z.array(EducationSchema).default([]),
@@ -132,6 +143,7 @@ export type Design = z.infer<typeof DesignSchema>;
 export type ResumeData = z.infer<typeof ResumeSchema>;
 
 export const DEFAULT_RESUME: ResumeData = {
+	id: "",
 	personalInfo: {
 		fullName: "",
 		email: "",

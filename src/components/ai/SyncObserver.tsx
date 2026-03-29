@@ -1,31 +1,34 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { syncResumeData } from "~/app/actions/sync";
 import { useResumeStore } from "~/store/useResumeStore";
 
+/**
+ * Background component that observes the store and ensures
+ * local storage data is migrated to the cloud for signed-in users.
+ */
 export function SyncObserver() {
-	const { user, isLoaded } = useUser();
 	const { original } = useResumeStore();
-	const hasSynced = useRef(false);
 
 	useEffect(() => {
-		if (isLoaded && user && !hasSynced.current) {
-			// Trigger migration if there is data in the local store
-			if (original.personalInfo.fullName !== "Your Name") {
-				console.log("☁️ Syncing local data to cloud for new user...");
-				syncResumeData(original).then((res) => {
-					if (res.status === "migrated") {
-						console.log("✅ Data successfully migrated to cloud.");
-					}
-					hasSynced.current = true;
-				});
-			} else {
-				hasSynced.current = true;
+		const sync = async () => {
+			// Only auto-sync if there is actually data to sync
+			if (original.personalInfo.fullName !== "") {
+				console.log("☁️ Syncing local data to cloud...");
+				try {
+					// For new users without a specific resumeId yet,
+					// we use a default ID or create one.
+					const resumeId = original.id || crypto.randomUUID();
+					await syncResumeData(original, resumeId);
+				} catch (e) {
+					console.error("Failed to background sync:", e);
+				}
 			}
-		}
-	}, [isLoaded, user, original]);
+		};
+
+		sync();
+	}, [original]);
 
 	return null;
 }

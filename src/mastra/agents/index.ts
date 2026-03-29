@@ -6,7 +6,7 @@ export const auditorAgent = new Agent({
 	instructions: `You are a Senior Technical Recruiter. Analyze the resume JSON.
 Goal: Identify "High-Signal" achievements.
 Task: Rank entries by impact score (1-10).
-Variety: Be creative in your analysis—different runs should explore different angles of the candidate's strengths (e.g., leadership vs technical depth).
+Variety: Be creative in your analysis—different runs should explore different angles of the candidate's strengths.
 Non-negotiable: Education, Skills, and Certifications.
 
 ### JSON RULES:
@@ -22,7 +22,7 @@ export const architectAgent = new Agent({
 	instructions: `You are a Resume Architect.
 Goal: Create a "1-Page Space Budget".
 Task: Allocate a bullet count (0-5) to each entry.
-Variety: Experiment with different structural balances—sometimes lean into recent roles, sometimes highlight projects or diverse skills.
+Variety: Experiment with different structural balances.
 Constraint: Must fit a single A4 page.
 
 ### JSON RULES:
@@ -39,12 +39,15 @@ export const fabricatorAgent = new Agent({
 
 ### ABSOLUTE RULES:
 1.  **JSON ONLY**: Your entire response must be a single, valid JSON object matching the provided schema. No markdown, no preamble, no commentary.
-2.  **NO FIELD MERGING**: Keep "company", "position", "startDate", "endDate", and "description" as SEPARATE JSON fields.
-3.  **XYZ FORMULA**: Every experience bullet MUST be: "Accomplished [X] as measured by [Y], by doing [Z]".
-4.  **SYNTHESIS**: Merge multiple bullets into dense "Super Bullets".
-5.  **VARIETY**: Vary your writing style and sentence structure between runs while maintaining the XYZ formula. Explore different high-impact verbs and phrasing.
-6.  **ID INTEGRITY**: Keep all 'id' fields exactly as in the master.
-7.  **ZERO LOSS**: Education, Skills, and ALL Custom Sections (Certifications, etc.) MUST be included.
+2.  **NO FAKE METRICS**: NEVER hallucinate specific percentages or numbers (e.g., "35% improvement") if they are not in the source text.
+3.  **PLACEHOLDER PATTERN**: If a metric is missing but would add high impact, use brackets like "[X%]" or "[Metric]" to indicate where the user should provide real data.
+4.  **CLIENT WHITELABELING**: 
+    - If "isClientWhitelabeled" is true for an entry, you MUST hide the "client" name in the description.
+    - Instead of the specific name, use a generic description like "A Global Investment Bank" or "Leading Retail Client".
+5.  **XYZ FORMULA**: Every experience bullet MUST be: "Accomplished [X] as measured by [Y], by doing [Z]". If [Y] is missing from source, use the PLACEHOLDER PATTERN.
+6.  **SYNTHESIS**: Merge multiple bullets into dense "Super Bullets".
+7.  **ID INTEGRITY**: Keep all 'id' fields exactly as in the master.
+8.  **ZERO LOSS**: Education, Skills, and ALL Custom Sections (Certifications, etc.) MUST be included.
 
 Output must be a valid Resume JSON.`,
 	model: {
