@@ -47,12 +47,16 @@ export async function POST(req: NextRequest) {
 				// biome-ignore lint/suspicious/noExplicitAny: complex stream data
 				const send = (data: any) => {
 					try {
+						const json = JSON.stringify(data);
 						console.log(
 							`📡 [Fabricate] Sending to client: ${data.status || "data"}`,
 						);
-						controller.enqueue(encoder.encode(`${JSON.stringify(data)}\n`));
+						controller.enqueue(encoder.encode(`${json}\n`));
 					} catch (e) {
-						console.error("❌ [Fabricate] Failed to enqueue stream chunk:", e);
+						console.error(
+							"❌ [Fabricate] Failed to stringify or enqueue data:",
+							e,
+						);
 					}
 				};
 
@@ -114,12 +118,16 @@ export async function POST(req: NextRequest) {
 			},
 		});
 	} catch (error) {
-		console.error("❌ [Fabricate] API Route crash:", error);
-		return Response.json(
-			{
+		console.error("❌ [Fabricate] API Route critical failure:", error);
+		// Return JSON error even for route crashes to avoid plain text 500s
+		return new Response(
+			JSON.stringify({
 				error: error instanceof Error ? error.message : "Internal Server Error",
+			}),
+			{
+				status: 500,
+				headers: { "Content-Type": "application/json" },
 			},
-			{ status: 500 },
 		);
 	}
 }

@@ -11,9 +11,7 @@ Non-negotiable: Education, Skills, and Certifications.
 
 ### JSON RULES:
 Your response must be ONLY a valid JSON object matching the requested schema. No preamble, no markdown.`,
-	model: {
-		id: "google/gemma-3-27b-it",
-	},
+	model: "google/gemma-3-27b-it",
 });
 
 export const architectAgent = new Agent({
@@ -27,9 +25,7 @@ Constraint: Must fit a single A4 page.
 
 ### JSON RULES:
 Your response must be ONLY a valid JSON object matching the requested schema. No preamble, no markdown.`,
-	model: {
-		id: "google/gemma-3-27b-it",
-	},
+	model: "google/gemma-3-27b-it",
 });
 
 export const fabricatorAgent = new Agent({
@@ -50,9 +46,7 @@ export const fabricatorAgent = new Agent({
 8.  **ZERO LOSS**: Education, Skills, and ALL Custom Sections (Certifications, etc.) MUST be included.
 
 Output must be a valid Resume JSON.`,
-	model: {
-		id: "google/gemma-3-27b-it",
-	},
+	model: "google/gemma-3-27b-it",
 });
 
 export const stylistAgent = new Agent({
@@ -70,9 +64,7 @@ Your goal is to choose the best visual layout and theme based on "Career Density
 
 ### JSON RULES:
 Your response must be ONLY a valid JSON object matching the requested schema. No preamble, no markdown.`,
-	model: {
-		id: "google/gemma-3-27b-it",
-	},
+	model: "google/gemma-3-27b-it",
 });
 
 export const jdAnalyzerAgent = new Agent({
@@ -91,9 +83,7 @@ Your task is to extract key requirements, technical skills, and company culture/
 
 ### JSON RULES:
 Your response must be ONLY a valid JSON object matching the requested schema. No preamble, no markdown.`,
-	model: {
-		id: "google/gemma-3-27b-it",
-	},
+	model: "google/gemma-3-27b-it",
 });
 
 export const experienceMatcherAgent = new Agent({
@@ -116,9 +106,7 @@ Given a Resume JSON and a list of job requirements, identify the most relevant a
 
 ### JSON RULES:
 Your response must be ONLY a valid JSON object matching the requested schema. No preamble, no markdown.`,
-	model: {
-		id: "google/gemma-3-27b-it",
-	},
+	model: "google/gemma-3-27b-it",
 });
 
 export const coverLetterWriterAgent = new Agent({
@@ -138,7 +126,5 @@ Your goal is to write a compelling, grounded, and tailored cover letter.
 
 ### OUTPUT:
 Return the cover letter in Markdown format.`,
-	model: {
-		id: "google/gemma-3-27b-it",
-	},
+	model: "google/gemma-3-27b-it",
 });
