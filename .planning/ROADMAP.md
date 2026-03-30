@@ -34,16 +34,18 @@
 - [x] Support "Master" vs "Tailored" resume versioning.
 - [x] Optimize UI/UX for independent editor/preview scrolling.
 
-### Phase 11: AI Cover Letter Generator (IN PROGRESS)
+### Phase 11: AI Cover Letter Generator ✅
 - [x] Update database schema with `cover_letters` table.
 - [x] Implement multi-agent Mastra synthesis workflow (Analysis -> Match -> Write).
 - [x] Create server actions for generation and persistence.
-- [ ] Build the "Drafting Lab" UI with live preview and tone controls.
-- [ ] Implement Cover Letter PDF export matching resume branding.
+- [x] Build the "Drafting Lab" UI with live preview and tone controls.
+- [x] Implement Cover Letter PDF export matching resume branding.
+- [x] Implement AI Metric Grounding and Client Whitelabeling.
 
-### Phase 12: ATS Scoring & Semantic Analytics
+### Phase 12: ATS Scoring & Semantic Analytics (NEXT)
 - [ ] Implement AI-driven keyword extraction and industry benchmarking.
 - [ ] Create an "Optimization Panel" with real-time "Score Boost" suggestions.
+- [ ] Add semantic similarity scoring between Resume and JD.
 
 ### Phase 13: Pro Template Gallery
 - [ ] Implement "Executive," "Creative," and "Minimal" PDF themes.
